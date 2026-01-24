@@ -2,7 +2,7 @@
     "dbUrl": "",
     "dbInstance": "",
     "dbTrustServerCertificate": "Y",
-    "dbDatabase": "DBNAME",
+    "dbDatabase": "",
     "dbPort": 1433,
     "codeGenLogin": "",
     "codeGenPwD": "",

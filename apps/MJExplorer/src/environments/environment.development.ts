@@ -1,1 +1,22 @@
-export const environment = {"GRAPHQL_URI":"http://localhost:4000/","GRAPHQL_WS_URI":"ws://localhost:4000/","REDIRECT_URI":"http://localhost:4200/","CLIENT_ID":"","TENANT_ID":"","CLIENT_AUTHORITY":"","AUTH_TYPE":"MSAL","NODE_ENV":"development","AUTOSAVE_DEBOUNCE_MS":1200,"SEARCH_DEBOUNCE_MS":800,"MIN_SEARCH_LENGTH":3,"MJ_CORE_SCHEMA_NAME":"__mj","production":false,"APPLICATION_NAME":"CDP","APPLICATION_INSTANCE":"DEV","AUTH0_DOMAIN":"","AUTH0_CLIENTID":""}
+import { MJEnvironmentConfig } from '@memberjunction/ng-bootstrap';
+
+export const environment = {
+  GRAPHQL_URI: 'http://localhost:4000/',
+  GRAPHQL_WS_URI: 'ws://localhost:4000/',
+  REDIRECT_URI: 'http://localhost:4201/',
+  CLIENT_ID: '7e6e6ecf-66ff-4733-9c60-1e6def949897',
+  TENANT_ID: 'ff10ade7-5d03-40a9-be28-cb7ab99670b1',
+  CLIENT_AUTHORITY:
+    'https://login.microsoftonline.com/ff10ade7-5d03-40a9-be28-cb7ab99670b1',
+  AUTH_TYPE: 'msal',
+  NODE_ENV: 'production',
+  AUTOSAVE_DEBOUNCE_MS: 1200,
+  SEARCH_DEBOUNCE_MS: 800,
+  MIN_SEARCH_LENGTH: 3,
+  MJ_CORE_SCHEMA_NAME: '__mj',
+  production: true,
+  APPLICATION_NAME: 'MJ Explorer',
+  APPLICATION_INSTANCE: 'DEV',
+  AUTH0_DOMAIN: '',
+  AUTH0_CLIENTID: '',
+} as const satisfies MJEnvironmentConfig;
