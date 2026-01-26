@@ -19,17 +19,17 @@ export const ActionItemSchema = z.object({
         * * Default Value: newsequentialid()`),
     CommitteeID: z.string().describe(`
         * * Field Name: CommitteeID
-        * * Display Name: Committee ID
+        * * Display Name: Committee
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Committees (vwCommittees.ID)`),
     MeetingID: z.string().nullable().describe(`
         * * Field Name: MeetingID
-        * * Display Name: Meeting ID
+        * * Display Name: Meeting
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)`),
     AgendaItemID: z.string().nullable().describe(`
         * * Field Name: AgendaItemID
-        * * Display Name: Agenda Item ID
+        * * Display Name: Agenda Item
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)`),
     Title: z.string().describe(`
@@ -44,12 +44,12 @@ export const ActionItemSchema = z.object({
         * * Description: Detailed description of what needs to be done`),
     AssignedToUserID: z.string().describe(`
         * * Field Name: AssignedToUserID
-        * * Display Name: Assigned To User ID
+        * * Display Name: Assigned To
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     AssignedByUserID: z.string().nullable().describe(`
         * * Field Name: AssignedByUserID
-        * * Display Name: Assigned By User ID
+        * * Display Name: Assigned By
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     DueDate: z.date().nullable().describe(`
@@ -106,6 +106,10 @@ export const ActionItemSchema = z.object({
         * * Field Name: Committee
         * * Display Name: Committee
         * * SQL Data Type: nvarchar(255)`),
+    Meeting: z.string().nullable().describe(`
+        * * Field Name: Meeting
+        * * Display Name: Meeting
+        * * SQL Data Type: nvarchar(255)`),
     AssignedToUser: z.string().describe(`
         * * Field Name: AssignedToUser
         * * Display Name: Assigned To User
@@ -129,12 +133,12 @@ export const AgendaItemSchema = z.object({
         * * Default Value: newsequentialid()`),
     MeetingID: z.string().describe(`
         * * Field Name: MeetingID
-        * * Display Name: Meeting ID
+        * * Display Name: Meeting
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)`),
     ParentAgendaItemID: z.string().nullable().describe(`
         * * Field Name: ParentAgendaItemID
-        * * Display Name: Parent Agenda Item ID
+        * * Display Name: Parent Agenda Item
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)`),
     Sequence: z.number().describe(`
@@ -154,12 +158,12 @@ export const AgendaItemSchema = z.object({
         * * Description: Detailed description of the agenda item`),
     PresenterUserID: z.string().nullable().describe(`
         * * Field Name: PresenterUserID
-        * * Display Name: Presenter User ID
+        * * Display Name: Presenter
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     DurationMinutes: z.number().nullable().describe(`
         * * Field Name: DurationMinutes
-        * * Display Name: Duration Minutes
+        * * Display Name: Duration (Minutes)
         * * SQL Data Type: int
         * * Description: Estimated duration in minutes`),
     ItemType: z.union([z.literal('Action'), z.literal('Discussion'), z.literal('Information'), z.literal('Other'), z.literal('Report'), z.literal('Vote')]).describe(`
@@ -209,6 +213,18 @@ export const AgendaItemSchema = z.object({
         * * Display Name: Updated At
         * * SQL Data Type: datetimeoffset
         * * Default Value: getutcdate()`),
+    Meeting: z.string().describe(`
+        * * Field Name: Meeting
+        * * Display Name: Meeting Name
+        * * SQL Data Type: nvarchar(255)`),
+    PresenterUser: z.string().nullable().describe(`
+        * * Field Name: PresenterUser
+        * * Display Name: Presenter User
+        * * SQL Data Type: nvarchar(100)`),
+    RootParentAgendaItemID: z.string().nullable().describe(`
+        * * Field Name: RootParentAgendaItemID
+        * * Display Name: Root Parent Agenda Item
+        * * SQL Data Type: uniqueidentifier`),
 });
 
 export type AgendaItemEntityType = z.infer<typeof AgendaItemSchema>;
@@ -224,22 +240,22 @@ export const ArtifactSchema = z.object({
         * * Default Value: newsequentialid()`),
     CommitteeID: z.string().nullable().describe(`
         * * Field Name: CommitteeID
-        * * Display Name: Committee ID
+        * * Display Name: Committee
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Committees (vwCommittees.ID)`),
     MeetingID: z.string().nullable().describe(`
         * * Field Name: MeetingID
-        * * Display Name: Meeting ID
+        * * Display Name: Meeting
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)`),
     AgendaItemID: z.string().nullable().describe(`
         * * Field Name: AgendaItemID
-        * * Display Name: Agenda Item ID
+        * * Display Name: Agenda Item
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)`),
     ActionItemID: z.string().nullable().describe(`
         * * Field Name: ActionItemID
-        * * Display Name: Action Item ID
+        * * Display Name: Action Item
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Action Items (vwActionItems.ID)`),
     Title: z.string().describe(`
@@ -277,7 +293,7 @@ export const ArtifactSchema = z.object({
         * * Description: Direct URL to access the artifact`),
     MimeType: z.string().nullable().describe(`
         * * Field Name: MimeType
-        * * Display Name: Mime Type
+        * * Display Name: MIME Type
         * * SQL Data Type: nvarchar(100)
         * * Description: MIME type of the file`),
     FileSize: z.number().nullable().describe(`
@@ -287,7 +303,7 @@ export const ArtifactSchema = z.object({
         * * Description: File size in bytes`),
     UploadedByUserID: z.string().nullable().describe(`
         * * Field Name: UploadedByUserID
-        * * Display Name: Uploaded By User ID
+        * * Display Name: Uploaded By User
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     ArtifactType: z.union([z.literal('Agenda'), z.literal('Document'), z.literal('Image'), z.literal('Minutes'), z.literal('Other'), z.literal('Presentation'), z.literal('Recording'), z.literal('Spreadsheet'), z.literal('Transcript')]).describe(`
@@ -317,6 +333,22 @@ export const ArtifactSchema = z.object({
         * * Display Name: Updated At
         * * SQL Data Type: datetimeoffset
         * * Default Value: getutcdate()`),
+    Committee: z.string().nullable().describe(`
+        * * Field Name: Committee
+        * * Display Name: Committee
+        * * SQL Data Type: nvarchar(255)`),
+    Meeting: z.string().nullable().describe(`
+        * * Field Name: Meeting
+        * * Display Name: Meeting
+        * * SQL Data Type: nvarchar(255)`),
+    ActionItem: z.string().nullable().describe(`
+        * * Field Name: ActionItem
+        * * Display Name: Action Item
+        * * SQL Data Type: nvarchar(255)`),
+    UploadedByUser: z.string().nullable().describe(`
+        * * Field Name: UploadedByUser
+        * * Display Name: Uploaded By User
+        * * SQL Data Type: nvarchar(100)`),
 });
 
 export type ArtifactEntityType = z.infer<typeof ArtifactSchema>;
@@ -332,12 +364,12 @@ export const AttendanceSchema = z.object({
         * * Default Value: newsequentialid()`),
     MeetingID: z.string().describe(`
         * * Field Name: MeetingID
-        * * Display Name: Meeting ID
+        * * Display Name: Meeting
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)`),
     UserID: z.string().describe(`
         * * Field Name: UserID
-        * * Display Name: User ID
+        * * Display Name: User
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     AttendanceStatus: z.union([z.literal('Absent'), z.literal('Excused'), z.literal('Expected'), z.literal('Partial'), z.literal('Present')]).describe(`
@@ -378,6 +410,10 @@ export const AttendanceSchema = z.object({
         * * Display Name: Updated At
         * * SQL Data Type: datetimeoffset
         * * Default Value: getutcdate()`),
+    Meeting: z.string().describe(`
+        * * Field Name: Meeting
+        * * Display Name: Meeting
+        * * SQL Data Type: nvarchar(255)`),
     User: z.string().describe(`
         * * Field Name: User
         * * Display Name: User
@@ -407,17 +443,17 @@ export const CommitteeSchema = z.object({
         * * Description: Detailed description of the committee purpose and scope`),
     TypeID: z.string().describe(`
         * * Field Name: TypeID
-        * * Display Name: Type ID
+        * * Display Name: Type
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Types (vwTypes.ID)`),
     ParentCommitteeID: z.string().nullable().describe(`
         * * Field Name: ParentCommitteeID
-        * * Display Name: Parent Committee ID
+        * * Display Name: Parent Committee
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Committees (vwCommittees.ID)`),
     OrganizationID: z.string().nullable().describe(`
         * * Field Name: OrganizationID
-        * * Display Name: Organization ID
+        * * Display Name: Organization
         * * SQL Data Type: uniqueidentifier`),
     CharterDocumentURL: z.string().nullable().describe(`
         * * Field Name: CharterDocumentURL
@@ -443,7 +479,7 @@ export const CommitteeSchema = z.object({
         * * Description: Current status: Active, Inactive, Pending, or Dissolved`),
     IsPublic: z.boolean().describe(`
         * * Field Name: IsPublic
-        * * Display Name: Is Public
+        * * Display Name: Public
         * * SQL Data Type: bit
         * * Default Value: 1
         * * Description: Whether the committee is visible to all users`),
@@ -467,6 +503,18 @@ export const CommitteeSchema = z.object({
         * * Display Name: Updated At
         * * SQL Data Type: datetimeoffset
         * * Default Value: getutcdate()`),
+    Type: z.string().describe(`
+        * * Field Name: Type
+        * * Display Name: Type
+        * * SQL Data Type: nvarchar(100)`),
+    ParentCommittee: z.string().nullable().describe(`
+        * * Field Name: ParentCommittee
+        * * Display Name: Parent Committee Name
+        * * SQL Data Type: nvarchar(255)`),
+    RootParentCommitteeID: z.string().nullable().describe(`
+        * * Field Name: RootParentCommitteeID
+        * * Display Name: Root Parent Committee
+        * * SQL Data Type: uniqueidentifier`),
 });
 
 export type CommitteeEntityType = z.infer<typeof CommitteeSchema>;
@@ -497,12 +545,12 @@ export const MeetingSchema = z.object({
         * * Description: Detailed description or purpose of the meeting`),
     StartDateTime: z.date().describe(`
         * * Field Name: StartDateTime
-        * * Display Name: Start Date Time
+        * * Display Name: Start Date & Time
         * * SQL Data Type: datetimeoffset
         * * Description: Scheduled start date and time with timezone offset`),
     EndDateTime: z.date().nullable().describe(`
         * * Field Name: EndDateTime
-        * * Display Name: End Date Time
+        * * Display Name: End Date & Time
         * * SQL Data Type: datetimeoffset
         * * Description: Scheduled end date and time with timezone offset`),
     TimeZone: z.string().describe(`
@@ -524,7 +572,7 @@ export const MeetingSchema = z.object({
         * * Description: Meeting format: Virtual, InPerson, or Hybrid`),
     LocationText: z.string().nullable().describe(`
         * * Field Name: LocationText
-        * * Display Name: Location Text
+        * * Display Name: Location
         * * SQL Data Type: nvarchar(500)
         * * Description: Physical address or room name for in-person meetings`),
     VideoProvider: z.string().nullable().describe(`
@@ -600,22 +648,22 @@ export const MembershipSchema = z.object({
         * * Default Value: newsequentialid()`),
     CommitteeID: z.string().describe(`
         * * Field Name: CommitteeID
-        * * Display Name: Committee ID
+        * * Display Name: Committee
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Committees (vwCommittees.ID)`),
     UserID: z.string().describe(`
         * * Field Name: UserID
-        * * Display Name: User ID
+        * * Display Name: User
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Users (vwUsers.ID)`),
     RoleID: z.string().describe(`
         * * Field Name: RoleID
-        * * Display Name: Role ID
+        * * Display Name: Role
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Roles__Committees (vwRoles__Committees.ID)`),
     TermID: z.string().nullable().describe(`
         * * Field Name: TermID
-        * * Display Name: Term ID
+        * * Display Name: Term
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Terms (vwTerms.ID)`),
     StartDate: z.date().describe(`
@@ -662,19 +710,19 @@ export const MembershipSchema = z.object({
         * * Default Value: getutcdate()`),
     Committee: z.string().describe(`
         * * Field Name: Committee
-        * * Display Name: Committee
+        * * Display Name: Committee Name
         * * SQL Data Type: nvarchar(255)`),
     User: z.string().describe(`
         * * Field Name: User
-        * * Display Name: User
+        * * Display Name: User Name
         * * SQL Data Type: nvarchar(100)`),
     Role: z.string().describe(`
         * * Field Name: Role
-        * * Display Name: Role
+        * * Display Name: Role Name
         * * SQL Data Type: nvarchar(100)`),
     Term: z.string().nullable().describe(`
         * * Field Name: Term
-        * * Display Name: Term
+        * * Display Name: Term Name
         * * SQL Data Type: nvarchar(100)`),
 });
 
@@ -747,12 +795,12 @@ export const TermSchema = z.object({
         * * Default Value: newsequentialid()`),
     CommitteeID: z.string().describe(`
         * * Field Name: CommitteeID
-        * * Display Name: Committee ID
+        * * Display Name: Committee
         * * SQL Data Type: uniqueidentifier
         * * Related Entity/Foreign Key: Committees (vwCommittees.ID)`),
     Name: z.string().describe(`
         * * Field Name: Name
-        * * Display Name: Name
+        * * Display Name: Term Name
         * * SQL Data Type: nvarchar(100)
         * * Description: Display name for the term, e.g. 2025-2026`),
     StartDate: z.date().describe(`
@@ -788,7 +836,7 @@ export const TermSchema = z.object({
         * * Default Value: getutcdate()`),
     Committee: z.string().describe(`
         * * Field Name: Committee
-        * * Display Name: Committee
+        * * Display Name: Committee Name
         * * SQL Data Type: nvarchar(255)`),
 });
 
@@ -890,7 +938,7 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
 
     /**
     * * Field Name: CommitteeID
-    * * Display Name: Committee ID
+    * * Display Name: Committee
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Committees (vwCommittees.ID)
     */
@@ -903,7 +951,7 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
 
     /**
     * * Field Name: MeetingID
-    * * Display Name: Meeting ID
+    * * Display Name: Meeting
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)
     */
@@ -916,7 +964,7 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
 
     /**
     * * Field Name: AgendaItemID
-    * * Display Name: Agenda Item ID
+    * * Display Name: Agenda Item
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)
     */
@@ -955,7 +1003,7 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
 
     /**
     * * Field Name: AssignedToUserID
-    * * Display Name: Assigned To User ID
+    * * Display Name: Assigned To
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -968,7 +1016,7 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
 
     /**
     * * Field Name: AssignedByUserID
-    * * Display Name: Assigned By User ID
+    * * Display Name: Assigned By
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -1089,6 +1137,15 @@ export class ActionItemEntity extends BaseEntity<ActionItemEntityType> {
     }
 
     /**
+    * * Field Name: Meeting
+    * * Display Name: Meeting
+    * * SQL Data Type: nvarchar(255)
+    */
+    get Meeting(): string | null {
+        return this.Get('Meeting');
+    }
+
+    /**
     * * Field Name: AssignedToUser
     * * Display Name: Assigned To User
     * * SQL Data Type: nvarchar(100)
@@ -1153,7 +1210,7 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
 
     /**
     * * Field Name: MeetingID
-    * * Display Name: Meeting ID
+    * * Display Name: Meeting
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)
     */
@@ -1166,7 +1223,7 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
 
     /**
     * * Field Name: ParentAgendaItemID
-    * * Display Name: Parent Agenda Item ID
+    * * Display Name: Parent Agenda Item
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)
     */
@@ -1218,7 +1275,7 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
 
     /**
     * * Field Name: PresenterUserID
-    * * Display Name: Presenter User ID
+    * * Display Name: Presenter
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -1231,7 +1288,7 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
 
     /**
     * * Field Name: DurationMinutes
-    * * Display Name: Duration Minutes
+    * * Display Name: Duration (Minutes)
     * * SQL Data Type: int
     * * Description: Estimated duration in minutes
     */
@@ -1330,6 +1387,33 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
     get __mj_UpdatedAt(): Date {
         return this.Get('__mj_UpdatedAt');
     }
+
+    /**
+    * * Field Name: Meeting
+    * * Display Name: Meeting Name
+    * * SQL Data Type: nvarchar(255)
+    */
+    get Meeting(): string {
+        return this.Get('Meeting');
+    }
+
+    /**
+    * * Field Name: PresenterUser
+    * * Display Name: Presenter User
+    * * SQL Data Type: nvarchar(100)
+    */
+    get PresenterUser(): string | null {
+        return this.Get('PresenterUser');
+    }
+
+    /**
+    * * Field Name: RootParentAgendaItemID
+    * * Display Name: Root Parent Agenda Item
+    * * SQL Data Type: uniqueidentifier
+    */
+    get RootParentAgendaItemID(): string | null {
+        return this.Get('RootParentAgendaItemID');
+    }
 }
 
 
@@ -1338,6 +1422,7 @@ export class AgendaItemEntity extends BaseEntity<AgendaItemEntityType> {
  * * Schema: Committees
  * * Base Table: Artifact
  * * Base View: vwArtifacts
+ * * @description Links to external documents and files from various providers
  * * Primary Key: ID
  * @extends {BaseEntity}
  * @class
@@ -1377,7 +1462,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: CommitteeID
-    * * Display Name: Committee ID
+    * * Display Name: Committee
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Committees (vwCommittees.ID)
     */
@@ -1390,7 +1475,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: MeetingID
-    * * Display Name: Meeting ID
+    * * Display Name: Meeting
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)
     */
@@ -1403,7 +1488,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: AgendaItemID
-    * * Display Name: Agenda Item ID
+    * * Display Name: Agenda Item
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Agenda Items (vwAgendaItems.ID)
     */
@@ -1416,7 +1501,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: ActionItemID
-    * * Display Name: Action Item ID
+    * * Display Name: Action Item
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Action Items (vwActionItems.ID)
     */
@@ -1502,7 +1587,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: MimeType
-    * * Display Name: Mime Type
+    * * Display Name: MIME Type
     * * SQL Data Type: nvarchar(100)
     * * Description: MIME type of the file
     */
@@ -1528,7 +1613,7 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
 
     /**
     * * Field Name: UploadedByUserID
-    * * Display Name: Uploaded By User ID
+    * * Display Name: Uploaded By User
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -1583,6 +1668,42 @@ export class ArtifactEntity extends BaseEntity<ArtifactEntityType> {
     get __mj_UpdatedAt(): Date {
         return this.Get('__mj_UpdatedAt');
     }
+
+    /**
+    * * Field Name: Committee
+    * * Display Name: Committee
+    * * SQL Data Type: nvarchar(255)
+    */
+    get Committee(): string | null {
+        return this.Get('Committee');
+    }
+
+    /**
+    * * Field Name: Meeting
+    * * Display Name: Meeting
+    * * SQL Data Type: nvarchar(255)
+    */
+    get Meeting(): string | null {
+        return this.Get('Meeting');
+    }
+
+    /**
+    * * Field Name: ActionItem
+    * * Display Name: Action Item
+    * * SQL Data Type: nvarchar(255)
+    */
+    get ActionItem(): string | null {
+        return this.Get('ActionItem');
+    }
+
+    /**
+    * * Field Name: UploadedByUser
+    * * Display Name: Uploaded By User
+    * * SQL Data Type: nvarchar(100)
+    */
+    get UploadedByUser(): string | null {
+        return this.Get('UploadedByUser');
+    }
 }
 
 
@@ -1631,7 +1752,7 @@ export class AttendanceEntity extends BaseEntity<AttendanceEntityType> {
 
     /**
     * * Field Name: MeetingID
-    * * Display Name: Meeting ID
+    * * Display Name: Meeting
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Meetings (vwMeetings.ID)
     */
@@ -1644,7 +1765,7 @@ export class AttendanceEntity extends BaseEntity<AttendanceEntityType> {
 
     /**
     * * Field Name: UserID
-    * * Display Name: User ID
+    * * Display Name: User
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -1736,6 +1857,15 @@ export class AttendanceEntity extends BaseEntity<AttendanceEntityType> {
     }
 
     /**
+    * * Field Name: Meeting
+    * * Display Name: Meeting
+    * * SQL Data Type: nvarchar(255)
+    */
+    get Meeting(): string {
+        return this.Get('Meeting');
+    }
+
+    /**
     * * Field Name: User
     * * Display Name: User
     * * SQL Data Type: nvarchar(100)
@@ -1817,7 +1947,7 @@ export class CommitteeEntity extends BaseEntity<CommitteeEntityType> {
 
     /**
     * * Field Name: TypeID
-    * * Display Name: Type ID
+    * * Display Name: Type
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Types (vwTypes.ID)
     */
@@ -1830,7 +1960,7 @@ export class CommitteeEntity extends BaseEntity<CommitteeEntityType> {
 
     /**
     * * Field Name: ParentCommitteeID
-    * * Display Name: Parent Committee ID
+    * * Display Name: Parent Committee
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Committees (vwCommittees.ID)
     */
@@ -1843,7 +1973,7 @@ export class CommitteeEntity extends BaseEntity<CommitteeEntityType> {
 
     /**
     * * Field Name: OrganizationID
-    * * Display Name: Organization ID
+    * * Display Name: Organization
     * * SQL Data Type: uniqueidentifier
     */
     get OrganizationID(): string | null {
@@ -1901,7 +2031,7 @@ export class CommitteeEntity extends BaseEntity<CommitteeEntityType> {
 
     /**
     * * Field Name: IsPublic
-    * * Display Name: Is Public
+    * * Display Name: Public
     * * SQL Data Type: bit
     * * Default Value: 1
     * * Description: Whether the committee is visible to all users
@@ -1957,6 +2087,33 @@ export class CommitteeEntity extends BaseEntity<CommitteeEntityType> {
     */
     get __mj_UpdatedAt(): Date {
         return this.Get('__mj_UpdatedAt');
+    }
+
+    /**
+    * * Field Name: Type
+    * * Display Name: Type
+    * * SQL Data Type: nvarchar(100)
+    */
+    get Type(): string {
+        return this.Get('Type');
+    }
+
+    /**
+    * * Field Name: ParentCommittee
+    * * Display Name: Parent Committee Name
+    * * SQL Data Type: nvarchar(255)
+    */
+    get ParentCommittee(): string | null {
+        return this.Get('ParentCommittee');
+    }
+
+    /**
+    * * Field Name: RootParentCommitteeID
+    * * Display Name: Root Parent Committee
+    * * SQL Data Type: uniqueidentifier
+    */
+    get RootParentCommitteeID(): string | null {
+        return this.Get('RootParentCommitteeID');
     }
 }
 
@@ -2045,7 +2202,7 @@ export class MeetingEntity extends BaseEntity<MeetingEntityType> {
 
     /**
     * * Field Name: StartDateTime
-    * * Display Name: Start Date Time
+    * * Display Name: Start Date & Time
     * * SQL Data Type: datetimeoffset
     * * Description: Scheduled start date and time with timezone offset
     */
@@ -2058,7 +2215,7 @@ export class MeetingEntity extends BaseEntity<MeetingEntityType> {
 
     /**
     * * Field Name: EndDateTime
-    * * Display Name: End Date Time
+    * * Display Name: End Date & Time
     * * SQL Data Type: datetimeoffset
     * * Description: Scheduled end date and time with timezone offset
     */
@@ -2104,7 +2261,7 @@ export class MeetingEntity extends BaseEntity<MeetingEntityType> {
 
     /**
     * * Field Name: LocationText
-    * * Display Name: Location Text
+    * * Display Name: Location
     * * SQL Data Type: nvarchar(500)
     * * Description: Physical address or room name for in-person meetings
     */
@@ -2291,7 +2448,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: CommitteeID
-    * * Display Name: Committee ID
+    * * Display Name: Committee
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Committees (vwCommittees.ID)
     */
@@ -2304,7 +2461,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: UserID
-    * * Display Name: User ID
+    * * Display Name: User
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Users (vwUsers.ID)
     */
@@ -2317,7 +2474,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: RoleID
-    * * Display Name: Role ID
+    * * Display Name: Role
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Roles__Committees (vwRoles__Committees.ID)
     */
@@ -2330,7 +2487,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: TermID
-    * * Display Name: Term ID
+    * * Display Name: Term
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Terms (vwTerms.ID)
     */
@@ -2435,7 +2592,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: Committee
-    * * Display Name: Committee
+    * * Display Name: Committee Name
     * * SQL Data Type: nvarchar(255)
     */
     get Committee(): string {
@@ -2444,7 +2601,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: User
-    * * Display Name: User
+    * * Display Name: User Name
     * * SQL Data Type: nvarchar(100)
     */
     get User(): string {
@@ -2453,7 +2610,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: Role
-    * * Display Name: Role
+    * * Display Name: Role Name
     * * SQL Data Type: nvarchar(100)
     */
     get Role(): string {
@@ -2462,7 +2619,7 @@ export class MembershipEntity extends BaseEntity<MembershipEntityType> {
 
     /**
     * * Field Name: Term
-    * * Display Name: Term
+    * * Display Name: Term Name
     * * SQL Data Type: nvarchar(100)
     */
     get Term(): string | null {
@@ -2662,7 +2819,7 @@ export class TermEntity extends BaseEntity<TermEntityType> {
 
     /**
     * * Field Name: CommitteeID
-    * * Display Name: Committee ID
+    * * Display Name: Committee
     * * SQL Data Type: uniqueidentifier
     * * Related Entity/Foreign Key: Committees (vwCommittees.ID)
     */
@@ -2675,7 +2832,7 @@ export class TermEntity extends BaseEntity<TermEntityType> {
 
     /**
     * * Field Name: Name
-    * * Display Name: Name
+    * * Display Name: Term Name
     * * SQL Data Type: nvarchar(100)
     * * Description: Display name for the term, e.g. 2025-2026
     */
@@ -2753,7 +2910,7 @@ export class TermEntity extends BaseEntity<TermEntityType> {
 
     /**
     * * Field Name: Committee
-    * * Display Name: Committee
+    * * Display Name: Committee Name
     * * SQL Data Type: nvarchar(255)
     */
     get Committee(): string {

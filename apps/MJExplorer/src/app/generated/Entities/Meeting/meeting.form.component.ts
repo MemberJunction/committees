@@ -15,7 +15,10 @@ export class MeetingFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'details', sectionName: 'Details', isExpanded: true },
+            { sectionKey: 'meetingOverview', sectionName: 'Meeting Overview', isExpanded: true },
+            { sectionKey: 'timingLogistics', sectionName: 'Timing & Logistics', isExpanded: true },
+            { sectionKey: 'videoRecording', sectionName: 'Video & Recording', isExpanded: false },
+            { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'attendances', sectionName: 'Attendances', isExpanded: false },
             { sectionKey: 'agendaItems', sectionName: 'Agenda Items', isExpanded: false },
             { sectionKey: 'actionItems', sectionName: 'Action Items', isExpanded: false },

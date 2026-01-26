@@ -15,7 +15,11 @@ export class ActionItemFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'details', sectionName: 'Details', isExpanded: true },
+            { sectionKey: 'context', sectionName: 'Context', isExpanded: true },
+            { sectionKey: 'actionDetails', sectionName: 'Action Details', isExpanded: true },
+            { sectionKey: 'assignment', sectionName: 'Assignment', isExpanded: false },
+            { sectionKey: 'schedule', sectionName: 'Schedule', isExpanded: false },
+            { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'artifacts', sectionName: 'Artifacts', isExpanded: false }
         ]);
     }

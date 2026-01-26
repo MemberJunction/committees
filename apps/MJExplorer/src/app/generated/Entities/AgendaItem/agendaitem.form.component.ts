@@ -15,7 +15,10 @@ export class AgendaItemFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'details', sectionName: 'Details', isExpanded: true },
+            { sectionKey: 'meetingOrdering', sectionName: 'Meeting & Ordering', isExpanded: true },
+            { sectionKey: 'relationships', sectionName: 'Relationships', isExpanded: true },
+            { sectionKey: 'agendaItemDetails', sectionName: 'Agenda Item Details', isExpanded: false },
+            { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'actionItems', sectionName: 'Action Items', isExpanded: false },
             { sectionKey: 'agendaItems', sectionName: 'Agenda Items', isExpanded: false },
             { sectionKey: 'artifacts', sectionName: 'Artifacts', isExpanded: false }

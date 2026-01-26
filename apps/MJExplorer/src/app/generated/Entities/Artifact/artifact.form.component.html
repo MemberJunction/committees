@@ -3,11 +3,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Details Section -->
+    <!-- Related Entities Section -->
     <mj-collapsible-panel slot="field-panels"
-        sectionKey="details"
-        sectionName="Details"
-        icon="fa fa-align-left"
+        sectionKey="relatedEntities"
+        sectionName="Related Entities"
+        icon="fa fa-link"
         [form]="this"
         [formContext]="formContext">
         <mj-form-field 
@@ -53,6 +53,58 @@
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
+            FieldName="UploadedByUserID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+            LinkType="Record"
+            LinkComponentType="Search"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Committee"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Meeting"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="ActionItem"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="UploadedByUser"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Artifact Details Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="artifactDetails"
+        sectionName="Artifact Details"
+        icon="fa fa-file-alt"
+        [form]="this"
+        [formContext]="formContext">
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
             FieldName="Title"
             Type="textarea"
             [EditMode]="EditMode"
@@ -66,6 +118,24 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="ArtifactType"
+            Type="dropdownlist"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Storage Information Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="storageInformation"
+        sectionName="Storage Information"
+        icon="fa fa-cloud"
+        [form]="this"
+        [formContext]="formContext">
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
@@ -89,6 +159,7 @@
             Type="textarea"
             [EditMode]="EditMode"
             [formContext]="formContext"
+            LinkType="URL"
         ></mj-form-field>
         <mj-form-field 
             [record]="record"
@@ -106,24 +177,16 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="UploadedByUserID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-            LinkType="Record"
-            LinkComponentType="Search"
-        ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="ArtifactType"
-            Type="dropdownlist"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- System Metadata Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="systemMetadata"
+        sectionName="System Metadata"
+        icon="fa fa-cog"
+        [form]="this"
+        [formContext]="formContext">
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"

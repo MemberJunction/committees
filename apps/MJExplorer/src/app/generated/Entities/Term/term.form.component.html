@@ -3,11 +3,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Details Section -->
+    <!-- Term Overview Section -->
     <mj-collapsible-panel slot="field-panels"
-        sectionKey="details"
-        sectionName="Details"
-        icon="fa fa-align-left"
+        sectionKey="termOverview"
+        sectionName="Term Overview"
+        icon="fa fa-list"
         [form]="this"
         [formContext]="formContext">
         <mj-form-field 
@@ -31,6 +31,32 @@
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
+            FieldName="Status"
+            Type="dropdownlist"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Committee"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Term Timeline Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="termTimeline"
+        sectionName="Term Timeline"
+        icon="fa fa-calendar"
+        [form]="this"
+        [formContext]="formContext">
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
             FieldName="StartDate"
             Type="datepicker"
             [EditMode]="EditMode"
@@ -44,14 +70,16 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Status"
-            Type="dropdownlist"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- System Metadata Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="systemMetadata"
+        sectionName="System Metadata"
+        icon="fa fa-cog"
+        [form]="this"
+        [formContext]="formContext">
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
@@ -68,14 +96,6 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Committee"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
 
     </mj-collapsible-panel>
     <!-- ========================================
@@ -86,7 +106,7 @@
     <mj-collapsible-panel slot="after-panels"
         sectionKey="memberships"
         sectionName="Memberships"
-        icon="fa fa-table"
+        icon="fa fa-users"
         variant="related-entity"
         [form]="this"
         [formContext]="formContext"

@@ -88,6 +88,10 @@ export class CommitteesActionItem_ {
     @MaxLength(510)
     Committee: string;
         
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    Meeting?: string;
+        
     @Field() 
     @MaxLength(200)
     AssignedToUser: string;
@@ -350,6 +354,18 @@ export class CommitteesAgendaItem_ {
     @MaxLength(10)
     _mj__UpdatedAt: Date;
         
+    @Field() 
+    @MaxLength(510)
+    Meeting: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(200)
+    PresenterUser?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    RootParentAgendaItemID?: string;
+        
     @Field(() => [CommitteesActionItem_])
     ActionItems_AgendaItemIDArray: CommitteesActionItem_[]; // Link to ActionItems
     
@@ -572,7 +588,7 @@ export class CommitteesAgendaItemResolver extends ResolverBase {
 //****************************************************************************
 // ENTITY CLASS for Artifacts
 //****************************************************************************
-@ObjectType()
+@ObjectType({ description: `Links to external documents and files from various providers` })
 export class CommitteesArtifact_ {
     @Field() 
     @MaxLength(16)
@@ -635,6 +651,22 @@ export class CommitteesArtifact_ {
     @Field() 
     @MaxLength(10)
     _mj__UpdatedAt: Date;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    Committee?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    Meeting?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    ActionItem?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(200)
+    UploadedByUser?: string;
         
 }
 
@@ -867,6 +899,10 @@ export class CommitteesAttendance_ {
     _mj__UpdatedAt: Date;
         
     @Field() 
+    @MaxLength(510)
+    Meeting: string;
+        
+    @Field() 
     @MaxLength(200)
     User: string;
         
@@ -1074,6 +1110,18 @@ export class CommitteesCommittee_ {
     @Field() 
     @MaxLength(10)
     _mj__UpdatedAt: Date;
+        
+    @Field() 
+    @MaxLength(200)
+    Type: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    ParentCommittee?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    RootParentCommitteeID?: string;
         
     @Field(() => [CommitteesCommittee_])
     Committees_ParentCommitteeIDArray: CommitteesCommittee_[]; // Link to Committees
@@ -2445,6 +2493,17 @@ export class CommitteesTypeResolver extends ResolverBase {
         const sSQL = `SELECT * FROM [Committees].[vwTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Types', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @Query(() => [CommitteesType_])
+    async AllTypes(@Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Types', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [Committees].[vwTypes]` + this.getRowLevelSecurityWhereClause(provider, 'Types', userPayload, EntityPermissionType.Read, ' WHERE');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Types', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
     

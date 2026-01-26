@@ -3,11 +3,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Details Section -->
+    <!-- Context Section -->
     <mj-collapsible-panel slot="field-panels"
-        sectionKey="details"
-        sectionName="Details"
-        icon="fa fa-align-left"
+        sectionKey="context"
+        sectionName="Context"
+        icon="fa fa-sitemap"
         [form]="this"
         [formContext]="formContext">
         <mj-form-field 
@@ -43,6 +43,32 @@
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
+            FieldName="Committee"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Meeting"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Action Details Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="actionDetails"
+        sectionName="Action Details"
+        icon="fa fa-clipboard-list"
+        [form]="this"
+        [formContext]="formContext">
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
             FieldName="Title"
             Type="textarea"
             [EditMode]="EditMode"
@@ -56,6 +82,32 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Priority"
+            Type="dropdownlist"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="Status"
+            Type="dropdownlist"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Assignment Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="assignment"
+        sectionName="Assignment"
+        icon="fa fa-user"
+        [form]="this"
+        [formContext]="formContext">
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
@@ -79,24 +131,34 @@
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
+            FieldName="AssignedToUser"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
+            FieldName="AssignedByUser"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [formContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Schedule Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="schedule"
+        sectionName="Schedule"
+        icon="fa fa-calendar"
+        [form]="this"
+        [formContext]="formContext">
+        <mj-form-field 
+            [record]="record"
+            [ShowLabel]="true"
             FieldName="DueDate"
             Type="datepicker"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Priority"
-            Type="dropdownlist"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Status"
-            Type="dropdownlist"
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
@@ -116,6 +178,16 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- System Metadata Section -->
+    <mj-collapsible-panel slot="field-panels"
+        sectionKey="systemMetadata"
+        sectionName="System Metadata"
+        icon="fa fa-cog"
+        [form]="this"
+        [formContext]="formContext">
         <mj-form-field 
             [record]="record"
             [ShowLabel]="true"
@@ -132,30 +204,6 @@
             [EditMode]="EditMode"
             [formContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Committee"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="AssignedToUser"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="AssignedByUser"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-        ></mj-form-field>
 
     </mj-collapsible-panel>
     <!-- ========================================
@@ -166,7 +214,7 @@
     <mj-collapsible-panel slot="after-panels"
         sectionKey="artifacts"
         sectionName="Artifacts"
-        icon="fa fa-table"
+        icon="fa fa-file"
         variant="related-entity"
         [form]="this"
         [formContext]="formContext"
