@@ -9,7 +9,7 @@
     "start": "tsc --watch"
   },
   "dependencies": {
-    "mj_generatedentities": "workspace:*",
+    "mj_generatedentities": "1.0.0",
     "@memberjunction/core": "3.2.0",
     "@memberjunction/global": "3.2.0",
     "@memberjunction/server": "3.2.0"
