@@ -4,6 +4,12 @@ import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata, RunView } 
 
 @RegisterClass(BaseEntity, 'Committees', 1)
 export class CommitteeEntityExtended extends CommitteeEntity {
+    private static readonly STATUS_TRANSITIONS: Record<string, string[]> = {
+        'Pending': ['Active', 'Dissolved'],      // Approved or Rejected
+        'Active': ['Inactive', 'Dissolved'],     // Suspended or Closed
+        'Inactive': ['Active'],                  // Reactivated
+        'Dissolved': []                          // Terminal state
+    };
     /**
      * Synchronous validation for basic field checks
      */
@@ -43,6 +49,21 @@ export class CommitteeEntityExtended extends CommitteeEntity {
                 'Dissolution date is required when status is Dissolved',
                 'DissolutionDate'
             ));
+        }
+
+        if (this.IsSaved && this.Dirty) {
+            const oldStatus = this.GetFieldByName('Status')?.OldValue;
+            if (oldStatus && oldStatus !== this.Status) {
+                const validTransitions = CommitteeEntityExtended.STATUS_TRANSITIONS[oldStatus] || [];
+                if (!validTransitions.includes(this.Status)) {
+                    result.Success = false;
+                    result.Errors.push(new ValidationErrorInfo(
+                        'InvalidTransition',
+                        `Cannot transition from ${oldStatus} to ${this.Status}`,
+                        'Status'
+                    ));
+                }
+            }
         }
 
         return result;
