@@ -2,7 +2,7 @@ import { AttendanceEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Attendances', 1)
+@RegisterClass(BaseEntity, 'Attendances')
 export class AttendanceEntityExtended extends AttendanceEntity {
     /**
      * Synchronous validation for basic field checks

@@ -2,7 +2,7 @@ import { Role__CommitteesEntity  as RoleEntity} from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Roles', 1)
+@RegisterClass(BaseEntity, 'Roles')
 export class RoleEntityExtended extends RoleEntity {
     /**
      * Set defaults for new roles

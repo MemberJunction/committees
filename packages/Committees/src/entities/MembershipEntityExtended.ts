@@ -2,7 +2,7 @@ import { MembershipEntity, TermEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata, RunView } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Memberships', 1)
+@RegisterClass(BaseEntity, 'Memberships')
 export class MembershipEntityExtended extends MembershipEntity {
     /**
      * Synchronous validation for basic field checks

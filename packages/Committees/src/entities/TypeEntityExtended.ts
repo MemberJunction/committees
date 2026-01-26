@@ -2,7 +2,7 @@ import { TypeEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Types', 1)
+@RegisterClass(BaseEntity, 'Types')
 export class TypeEntityExtended extends TypeEntity {
     /**
      * Check if this type has a default term duration

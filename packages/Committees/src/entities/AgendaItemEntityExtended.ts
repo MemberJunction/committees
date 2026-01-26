@@ -2,7 +2,7 @@ import { AgendaItemEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Agenda Items', 1)
+@RegisterClass(BaseEntity, 'Agenda Items')
 export class AgendaItemEntityExtended extends AgendaItemEntity {
     /**
      * Synchronous validation for basic field checks

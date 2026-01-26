@@ -2,7 +2,7 @@ import { ArtifactEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Artifacts', 1)
+@RegisterClass(BaseEntity, 'Artifacts')
 export class ArtifactEntityExtended extends ArtifactEntity {
     /**
      * Synchronous validation for basic field checks

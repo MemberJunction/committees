@@ -2,7 +2,7 @@ import { CommitteeEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata, RunView } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Committees', 1)
+@RegisterClass(BaseEntity, 'Committees')
 export class CommitteeEntityExtended extends CommitteeEntity {
     private static readonly STATUS_TRANSITIONS: Record<string, string[]> = {
         'Pending': ['Active', 'Dissolved'],      // Approved or Rejected

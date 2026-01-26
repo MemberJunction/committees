@@ -2,7 +2,7 @@ import { TermEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Terms', 1)
+@RegisterClass(BaseEntity, 'Terms')
 export class TermEntityExtended extends TermEntity {
     /**
      * Intercept field changes to trigger side effects

@@ -2,7 +2,7 @@ import { ActionItemEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata, RunView } from '@memberjunction/core';
 
-@RegisterClass(BaseEntity, 'Action Items', 1)
+@RegisterClass(BaseEntity, 'Action Items')
 export class ActionItemEntityExtended extends ActionItemEntity {
     // Valid status transitions
     private static readonly STATUS_TRANSITIONS: Record<string, string[]> = {
