@@ -1,4 +1,4 @@
-import { ActionItemEntity, MembershipEntity } from 'mj_generatedentities';
+import { ActionItemEntity } from 'mj_generatedentities';
 import { RegisterClass } from '@memberjunction/global';
 import { BaseEntity, ValidationResult, ValidationErrorInfo, Metadata, RunView } from '@memberjunction/core';
 
@@ -20,9 +20,9 @@ export class ActionItemEntityExtended extends ActionItemEntity {
         const result = super.Validate();
 
         // Required fields
-        if (!this.MeetingID) {
+        if (!this.CommitteeID) {
             result.Success = false;
-            result.Errors.push(new ValidationErrorInfo('Required', 'Meeting is required', 'MeetingID'));
+            result.Errors.push(new ValidationErrorInfo('Required', 'Committee is required', 'CommitteeID'));
         }
         if (!this.Title || this.Title.trim().length === 0) {
             result.Success = false;
