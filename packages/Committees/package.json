@@ -1,0 +1,20 @@
+{
+  "name": "@committees/core",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc --watch"
+  },
+  "dependencies": {
+    "mj_generatedentities": "workspace:*",
+    "@memberjunction/core": "3.2.0",
+    "@memberjunction/global": "3.2.0",
+    "@memberjunction/server": "3.2.0"
+  },
+  "devDependencies": {
+    "typescript": "5.4.5"
+  }
+}
