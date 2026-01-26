@@ -1,13 +1,25 @@
 {
-  "name": "@committees/core",
+  "name": "@memberjunction/committees-core",
   "version": "1.0.0",
-  "private": true,
+  "description": "Core committees functionality for MemberJunction",
+  "private": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "tsc --watch"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueCypress/committees/"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
   "dependencies": {
     "mj_generatedentities": "1.0.0",
     "@memberjunction/core": "3.2.0",

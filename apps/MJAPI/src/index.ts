@@ -9,11 +9,13 @@ import { resolve } from 'node:path';
 // Import generated packages to trigger class registration
 import 'mj_generatedentities';
 import 'mj_generatedactions';
-import '@committees/core';
 
 // Optional: Import communication providers if needed
 // import '@memberjunction/communication-sendgrid';
 // import '@memberjunction/communication-teams';
+
+// Import the Committees core package
+import '@memberjunction/committees-core';
 
 // Optional: Import custom auth/user creation logic
 // See: /docs/examples/custom-user-creation/README.md
