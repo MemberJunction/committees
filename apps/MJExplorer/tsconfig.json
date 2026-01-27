@@ -22,7 +22,8 @@
     "lib": ["ES2022", "dom"],
     "paths": {
       "fs": ["./src/fs.ts"],
-      "@memberjunction/ng-bootstrap": ["../Angular/Bootstrap/dist"]
+      "@memberjunction/ng-bootstrap": ["../Angular/Bootstrap/dist"],
+      "@memberjunction/ng-committees": ["../../packages/Angular/ng-committees/dist"]
     }
   },
   "angularCompilerOptions": {

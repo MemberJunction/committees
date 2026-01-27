@@ -5,7 +5,8 @@
   "description": "MemberJunction distribution monorepo - includes MJAPI, MJExplorer, and code generation tools",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "packages/Angular/*"
   ],
   "scripts": {
     "postinstall": "echo 'MemberJunction installation complete. Please configure your environment using install.config.json or mj.config.cjs before proceeding.'",

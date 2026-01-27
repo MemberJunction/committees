@@ -8,6 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
+import { NgCommitteesModule, LoadNgCommitteesModule } from '@memberjunction/ng-committees';
+
+
 //***********************************************************
 // MJ - Consolidated Module Bundles
 //***********************************************************
@@ -41,6 +44,7 @@ import { NavigationItemDemoComponent } from './demo/navigation-item.component';
 import { HelloDashboardComponent } from './demo/hello-dashboard/hello-dashboard.component';
 
 LoadGeneratedForms(); // prevent tree shaking and component loss through this call
+LoadNgCommitteesModule(); // prevent tree shaking and component loss through this call
 
 /**
  * Set your default interaction type for MSALGuard here. If you have any
@@ -84,7 +88,10 @@ export function initializeAuth(authService: MJAuthBase): () => Promise<void> {
     MJExplorerAppModule.forRoot(environment),
 
     // App-specific modules
-    GeneratedFormsModule
+    GeneratedFormsModule,
+
+    // MJ Committees Module
+    NgCommitteesModule
   ],
   providers: [
     SharedService,

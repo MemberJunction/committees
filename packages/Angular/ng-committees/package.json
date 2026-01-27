@@ -1,0 +1,28 @@
+{
+  "name": "@memberjunction/ng-committees",
+  "version": "1.0.0",
+  "description": "MemberJunction: Angular Committees Module",
+  "main": "./dist/public-api.js",
+  "typings": "./dist/public-api.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "ngc"
+  },
+  "peerDependencies": {
+    "@angular/common": "18.2.14",
+    "@angular/core": "18.2.14",
+    "@angular/forms": "18.2.14"
+  },
+  "dependencies": {
+    "@memberjunction/core": "3.2.0",
+    "@memberjunction/global": "3.2.0",
+    "@memberjunction/ng-base-forms": "3.2.0",
+    "@memberjunction/ng-form-toolbar": "3.2.0",
+    "@memberjunction/committees-core": "1.0.0",
+    "mj_generatedentities": "1.0.0"
+  },
+  "devDependencies": {
+    "@angular/compiler": "18.2.14",
+    "@angular/compiler-cli": "18.2.14" 
+}
+}
