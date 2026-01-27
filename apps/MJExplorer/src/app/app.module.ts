@@ -8,9 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-import { NgCommitteesModule, LoadNgCommitteesModule } from '@memberjunction/ng-committees';
-
-
 //***********************************************************
 // MJ - Consolidated Module Bundles
 //***********************************************************
@@ -42,6 +39,8 @@ import { GeneratedFormsModule, LoadGeneratedForms } from './generated/generated-
 import { environment } from 'src/environments/environment';
 import { NavigationItemDemoComponent } from './demo/navigation-item.component';
 import { HelloDashboardComponent } from './demo/hello-dashboard/hello-dashboard.component';
+
+import { NgCommitteesModule, LoadNgCommitteesModule } from '@memberjunction/ng-committees';
 
 LoadGeneratedForms(); // prevent tree shaking and component loss through this call
 LoadNgCommitteesModule(); // prevent tree shaking and component loss through this call
