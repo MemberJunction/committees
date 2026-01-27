@@ -1,0 +1,73 @@
+<mj-record-form-container [record]="record" [formComponent]="this">
+
+    <!-- Assignment -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="assignment"
+        sectionName="Assignment"
+        icon="fa fa-user-plus"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CommitteeID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="UserID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="RoleID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="TermID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+    <!-- Period & Status -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="period"
+        sectionName="Period & Status"
+        icon="fa fa-calendar-alt"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="StartDate"
+            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndDate"
+            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
+            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndReason"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+    <!-- Notes -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="notes"
+        sectionName="Notes"
+        icon="fa fa-sticky-note"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Notes"
+            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+</mj-record-form-container>

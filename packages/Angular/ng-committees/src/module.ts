@@ -10,11 +10,29 @@ import { ContainerDirectivesModule } from '@memberjunction/ng-container-directiv
 
 // Import all our form components
 import { CommitteeFormComponent } from './lib/forms/committee/committee-form.component';
+import { TypeFormComponent } from './lib/forms/type/type-form.component';
+import { ActionItemFormComponent } from './lib/forms/action-item/action-item-form.component';
+import { AgendaItemFormComponent } from './lib/forms/agenda-item/agenda-item-form.component';
+import { ArtifactFormComponent } from './lib/forms/artifact/artifact-form.component';
+import { AttendanceFormComponent } from './lib/forms/attendance/attendance-form.component';
+import { MeetingFormComponent } from './lib/forms/meeting/meeting-form.component';
+import { MembershipFormComponent } from './lib/forms/membership/membership-form.component';
+import { RoleFormComponent } from './lib/forms/role/role-form.component';
+import { TermFormComponent } from './lib/forms/term/term-form.component';
 
 @NgModule({
     declarations: [
         // List ALL components here
-        CommitteeFormComponent
+        CommitteeFormComponent,
+        TypeFormComponent,
+        ActionItemFormComponent,
+        AgendaItemFormComponent,
+        ArtifactFormComponent,
+        AttendanceFormComponent,
+        MeetingFormComponent,
+        MembershipFormComponent,
+        RoleFormComponent,
+        TermFormComponent
     ],
 imports: [
         // Angular basics

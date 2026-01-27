@@ -1,0 +1,69 @@
+<mj-record-form-container [record]="record" [formComponent]="this">
+
+    <!-- Role Details -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="roleDetails"
+        sectionName="Role Details"
+        icon="fa fa-user-tag"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Name"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
+            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Sequence"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+    <!-- Permissions & Settings -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="permissions"
+        sectionName="Permissions & Settings"
+        icon="fa fa-cog"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IsOfficer"
+            Type="checkbox" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IsVotingRole"
+            Type="checkbox" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="DefaultPermissionsJSON"
+            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+    <!-- Related: Memberships -->
+    <mj-collapsible-panel
+        slot="after-panels"
+        sectionKey="memberships"
+        sectionName="Memberships"
+        icon="fa fa-users"
+        variant="related-entity"
+        [form]="this"
+        [formContext]="formContext"
+        [badgeCount]="GetSectionRowCount('memberships')"
+        [defaultExpanded]="false">
+        <div *ngIf="record.IsSaved">
+            <mj-explorer-entity-data-grid
+                [Params]="BuildRelationshipViewParamsByEntityName('Memberships','RoleID')"
+                [NewRecordValues]="NewRecordValues('Memberships')"
+                [AllowLoad]="IsSectionExpanded('memberships')"
+                [ShowToolbar]="false"
+                (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
+            </mj-explorer-entity-data-grid>
+        </div>
+    </mj-collapsible-panel>
+
+</mj-record-form-container>

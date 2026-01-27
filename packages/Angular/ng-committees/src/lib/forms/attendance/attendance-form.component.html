@@ -1,0 +1,49 @@
+<mj-record-form-container [record]="record" [formComponent]="this">
+
+    <!-- Attendance Details -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="attendanceDetails"
+        sectionName="Attendance Details"
+        icon="fa fa-user-check"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="MeetingID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="UserID"
+            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
+            LinkType="Record" LinkComponentType="Search">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="AttendanceStatus"
+            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Notes"
+            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+    <!-- Timing -->
+    <mj-collapsible-panel
+        slot="field-panels"
+        sectionKey="timing"
+        sectionName="Timing"
+        icon="fa fa-clock"
+        [form]="this"
+        [formContext]="formContext">
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="JoinedAt"
+            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+
+        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="LeftAt"
+            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
+        </mj-form-field>
+    </mj-collapsible-panel>
+
+</mj-record-form-container>
