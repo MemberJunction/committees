@@ -1,269 +1,525 @@
-<!--
-  mj-record-form-container: Wrapper that provides the form toolbar
-  (Save, Cancel, Delete buttons) and handles form submission
--->
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- ==================== FIELD PANELS ==================== -->
-    <!-- slot="field-panels" puts this section in the main form area -->
+            <!-- ================================================================
+                 STUNNING HERO HEADER
+                 ================================================================ -->
 
-    <!-- Basic Information Section -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="basicInformation"
-        sectionName="Basic Information"
-        icon="fa fa-info-circle"
-        [form]="this"
-        [formContext]="formContext">
+            <div class="committee-hero">
+            <div class="hero-background">
+                <div class="gradient-orb orb-1"></div>
+                <div class="gradient-orb orb-2"></div>
+            </div>
 
-        <!--
-          mj-form-field: Smart field component that renders the right input type
-          based on the field's data type (text, dropdown, date, etc.)
-        -->
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Name"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
+            <div class="hero-content">
+                <div class="committee-icon-wrapper">
+                    <i class="fas fa-users-cog"></i>
+                </div>
 
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Description"
-            Type="textarea"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
+                <div class="committee-details">
+                    <div class="badge-row">
+                        <span class="status-badge" [class]="'status-' + record.Status?.toLowerCase()">
+                            <span class="pulse-dot"></span>
+                            {{ record.Status || 'Pending' }}
+                        </span>
+                        <span class="visibility-badge">
+                            <i [class]="record.IsPublic ? 'fas fa-globe' : 'fas fa-lock'"></i>
+                            {{ record.IsPublic ? 'Public' : 'Private' }}
+                        </span>
+                        @if (computedMetrics.hierarchyDepth > 0) {
+                            <span class="level-badge">
+                                <i class="fas fa-layer-group"></i>
+                                Level {{ computedMetrics.hierarchyDepth }}
+                            </span>
+                        }
+                    </div>
 
-        <!--
-          LinkType="Record" makes this a lookup field that links to another entity
-          LinkComponentType="Search" shows a searchable dropdown
-        -->
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="TypeID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-            LinkType="Record"
-            LinkComponentType="Dropdown">
-        </mj-form-field>
+                    <h1 class="committee-name">
+                        {{ record.Name || 'New Committee' }}
+                    </h1>
 
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="MissionStatement"
-            Type="textarea"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    @if (record.Description) {
+                        <p class="committee-description">{{ record.Description }}</p>
+                    }
 
-    <!-- Hierarchy & Organization Section -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="hierarchyOrganization"
-        sectionName="Hierarchy & Organization"
-        icon="fa fa-sitemap"
-        [form]="this"
-        [formContext]="formContext">
+                    @if (record.IsSaved) {
+                        <div class="quick-stats">
+                            <div class="stat">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>{{ computedMetrics.daysSinceFormation }} days</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-users"></i>
+                                <span>{{ computedMetrics.activeMembers }}/{{ computedMetrics.totalMembers }} members</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>{{ computedMetrics.upcomingMeetings }} upcoming</span>
+                            </div>
+                        </div>
+                    }
+                </div>
 
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="ParentCommitteeID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext"
-            LinkType="Record"
-            LinkComponentType="Dropdown">
-        </mj-form-field>
-
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="IsPublic"
-            Type="checkbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="CharterDocumentURL"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
-
-    <!-- Lifecycle Section -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="lifecycle"
-        sectionName="Lifecycle"
-        icon="fa fa-clock"
-        [form]="this"
-        [formContext]="formContext">
-
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="Status"
-            Type="dropdownlist"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="FormationDate"
-            Type="datepicker"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-
-        <mj-form-field
-            [record]="record"
-            [ShowLabel]="true"
-            FieldName="DissolutionDate"
-            Type="datepicker"
-            [EditMode]="EditMode"
-            [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
-
-    <!-- ==================== RELATED ENTITY PANELS ==================== -->
-    <!-- slot="after-panels" puts these sections after the main form fields -->
-
-    <!-- Memberships Grid -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="memberships"
-        sectionName="Memberships"
-        icon="fa fa-users"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('memberships')"
-        [defaultExpanded]="false">
-
-        <!-- Only show grid if the record has been saved (has an ID) -->
-        <div *ngIf="record.IsSaved">
-            <!--
-              mj-explorer-entity-data-grid: Shows related records in an editable grid
-
-              BuildRelationshipViewParamsByEntityName: Helper that creates the filter
-              to show only Memberships where CommitteeID matches this committee
-
-              NewRecordValues: When user creates new record in grid, auto-fill CommitteeID
-            -->
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Memberships','CommitteeID')"
-                [NewRecordValues]="NewRecordValues('Memberships')"
-                [AllowLoad]="IsSectionExpanded('memberships')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
+                <div class="hero-actions">
+                    @if (EditMode) {
+                        <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                            <i class="fas fa-save"></i>
+                            <span>Save</span>
+                        </button>
+                        <button class="btn-hero btn-cancel" (click)="router.navigate(['/app/committees'])">
+                            <i class="fas fa-times"></i>
+                            <span>Cancel</span>
+                        </button>
+                    } @else {
+                        <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit</span>
+                        </button>
+                    }
+                </div>
+            </div>
         </div>
-    </mj-collapsible-panel>
 
-    <!-- Meetings Grid -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="meetings"
-        sectionName="Meetings"
-        icon="fa fa-calendar-alt"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('meetings')"
-        [defaultExpanded]="false">
+        <!-- ========================================================================
+            MAIN FORM CONTENT - CARD GRID
+            ======================================================================== -->
 
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Meetings','CommitteeID')"
-                [NewRecordValues]="NewRecordValues('Meetings')"
-                [AllowLoad]="IsSectionExpanded('meetings')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('meetings', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
+        <div class="form-content">
+            <div class="cards-grid">
+
+                <!-- Basic Information Card -->
+                <div class="info-card" [class.edit-mode]="EditMode">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="card-title-section">
+                            <h3 class="card-title">Basic Information</h3>
+                            <p class="card-subtitle">Essential committee details</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i>
+                                Committee Name
+                                <span class="required">*</span>
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="Name"
+                                Type="textbox"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                            @if (validationErrors.Name) {
+                                <div class="field-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ validationErrors.Name }}
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-cube"></i>
+                                Type
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="TypeID"
+                                Type="textbox"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext"
+                                LinkType="Record"
+                                LinkComponentType="Search">
+                            </mj-form-field>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Description
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="Description"
+                                Type="textarea"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-bullseye"></i>
+                                Mission Statement
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="MissionStatement"
+                                Type="textarea"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Organization Card -->
+                <div class="info-card" [class.edit-mode]="EditMode">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <div class="card-title-section">
+                            <h3 class="card-title">Organization</h3>
+                            <p class="card-subtitle">Hierarchy and structure</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-level-up-alt"></i>
+                                Parent Committee
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="ParentCommitteeID"
+                                Type="textbox"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext"
+                                LinkType="Record"
+                                LinkComponentType="Search">
+                            </mj-form-field>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-eye"></i>
+                                Visibility
+                            </label>
+                            <div class="checkbox-group">
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="IsPublic"
+                                    Type="checkbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                <span class="checkbox-label">Make this committee public</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-file-contract"></i>
+                                Charter Document URL
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="CharterDocumentURL"
+                                Type="textbox"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lifecycle Card -->
+                <div class="info-card" [class.edit-mode]="EditMode">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-title-section">
+                            <h3 class="card-title">Lifecycle</h3>
+                            <p class="card-subtitle">Status and dates</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        @if (showStatusTransitionInfo) {
+                            <div class="info-banner">
+                                <i class="fas fa-info-circle"></i>
+                                <p>{{ statusTransitionMessage }}</p>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-traffic-light"></i>
+                                Status
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="Status"
+                                Type="dropdownlist"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-play-circle"></i>
+                                    Formation Date
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="FormationDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-stop-circle"></i>
+                                    Dissolution Date
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="DissolutionDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+
+                        @if (validationErrors.DissolutionDate) {
+                            <div class="field-error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ validationErrors.DissolutionDate }}
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Metrics Card -->
+                @if (record.IsSaved) {
+                    <div class="info-card metrics-card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Metrics</h3>
+                                <p class="card-subtitle">Committee statistics</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if (isLoadingMetrics) {
+                                <div class="metrics-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading metrics...</span>
+                                </div>
+                            } @else {
+                                <div class="metrics-grid">
+                                    <div class="metric-box">
+                                        <div class="metric-icon members">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="metric-content">
+                                            <div class="metric-value">{{ computedMetrics.activeMembers }}</div>
+                                            <div class="metric-label">Active Members</div>
+                                            <div class="metric-sublabel">of {{ computedMetrics.totalMembers }} total</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-box">
+                                        <div class="metric-icon meetings">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div class="metric-content">
+                                            <div class="metric-value">{{ computedMetrics.upcomingMeetings }}</div>
+                                            <div class="metric-label">Upcoming Meetings</div>
+                                            <div class="metric-sublabel">of {{ computedMetrics.totalMeetings }} total</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-box">
+                                        <div class="metric-icon actions">
+                                            <i class="fas fa-tasks"></i>
+                                        </div>
+                                        <div class="metric-content">
+                                            <div class="metric-value">{{ computedMetrics.pendingActionItems }}</div>
+                                            <div class="metric-label">Pending Actions</div>
+                                            <div class="metric-sublabel">of {{ computedMetrics.totalActionItems }} total</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- ====================================================================
+                RELATED ENTITIES - EXPANDABLE SECTIONS
+                ==================================================================== -->
+
+            @if (record.IsSaved) {
+                <div class="related-sections">
+
+                    <!-- Memberships -->
+                    <div class="expandable-section" [class.expanded]="expandedSections.memberships">
+                        <div class="section-header" (click)="toggleSection('memberships')">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="section-title-area">
+                                <h3 class="section-title">Memberships</h3>
+                                <p class="section-subtitle">Committee members and roles</p>
+                            </div>
+                            <div class="section-badge">{{ GetSectionRowCount('memberships') }}</div>
+                            <i class="fas fa-chevron-right section-toggle"></i>
+                        </div>
+
+                        @if (expandedSections.memberships) {
+                            <div class="section-body">
+                                <mj-explorer-entity-data-grid
+                                    [Params]="BuildRelationshipViewParamsByEntityName('Memberships','CommitteeID')"
+                                    [NewRecordValues]="NewRecordValues('Memberships')"
+                                    [AllowLoad]="true"
+                                    [ShowToolbar]="true"
+                                    (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
+                                </mj-explorer-entity-data-grid>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Meetings -->
+                    <div class="expandable-section" [class.expanded]="expandedSections.meetings">
+                        <div class="section-header" (click)="toggleSection('meetings')">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="section-title-area">
+                                <h3 class="section-title">Meetings</h3>
+                                <p class="section-subtitle">Scheduled committee meetings</p>
+                            </div>
+                            <div class="section-badge">{{ GetSectionRowCount('meetings') }}</div>
+                            <i class="fas fa-chevron-right section-toggle"></i>
+                        </div>
+
+                        @if (expandedSections.meetings) {
+                            <div class="section-body">
+                                <mj-explorer-entity-data-grid
+                                    [Params]="BuildRelationshipViewParamsByEntityName('Meetings','CommitteeID')"
+                                    [NewRecordValues]="NewRecordValues('Meetings')"
+                                    [AllowLoad]="true"
+                                    [ShowToolbar]="true"
+                                    (AfterDataLoad)="SetSectionRowCount('meetings', $event.totalRowCount)">
+                                </mj-explorer-entity-data-grid>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="expandable-section" [class.expanded]="expandedSections.terms">
+                        <div class="section-header" (click)="toggleSection('terms')">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="section-title-area">
+                                <h3 class="section-title">Terms</h3>
+                                <p class="section-subtitle">Committee term periods</p>
+                            </div>
+                            <div class="section-badge">{{ GetSectionRowCount('terms') }}</div>
+                            <i class="fas fa-chevron-right section-toggle"></i>
+                        </div>
+
+                        @if (expandedSections.terms) {
+                            <div class="section-body">
+                                <mj-explorer-entity-data-grid
+                                    [Params]="BuildRelationshipViewParamsByEntityName('Terms','CommitteeID')"
+                                    [NewRecordValues]="NewRecordValues('Terms')"
+                                    [AllowLoad]="true"
+                                    [ShowToolbar]="true"
+                                    (AfterDataLoad)="SetSectionRowCount('terms', $event.totalRowCount)">
+                                </mj-explorer-entity-data-grid>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Action Items -->
+                    <div class="expandable-section" [class.expanded]="expandedSections.actionItems">
+                        <div class="section-header" (click)="toggleSection('actionItems')">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="section-title-area">
+                                <h3 class="section-title">Action Items</h3>
+                                <p class="section-subtitle">Committee action tracking</p>
+                            </div>
+                            <div class="section-badge">{{ GetSectionRowCount('actionItems') }}</div>
+                            <i class="fas fa-chevron-right section-toggle"></i>
+                        </div>
+
+                        @if (expandedSections.actionItems) {
+                            <div class="section-body">
+                                <mj-explorer-entity-data-grid
+                                    [Params]="BuildRelationshipViewParamsByEntityName('Action Items','CommitteeID')"
+                                    [NewRecordValues]="NewRecordValues('Action Items')"
+                                    [AllowLoad]="true"
+                                    [ShowToolbar]="true"
+                                    (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
+                                </mj-explorer-entity-data-grid>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Documents -->
+                    <div class="expandable-section" [class.expanded]="expandedSections.artifacts">
+                        <div class="section-header" (click)="toggleSection('artifacts')">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="section-title-area">
+                                <h3 class="section-title">Documents</h3>
+                                <p class="section-subtitle">Committee artifacts and files</p>
+                            </div>
+                            <div class="section-badge">{{ GetSectionRowCount('artifacts') }}</div>
+                            <i class="fas fa-chevron-right section-toggle"></i>
+                        </div>
+
+                        @if (expandedSections.artifacts) {
+                            <div class="section-body">
+                                <mj-explorer-entity-data-grid
+                                    [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','CommitteeID')"
+                                    [NewRecordValues]="NewRecordValues('Artifacts')"
+                                    [AllowLoad]="true"
+                                    [ShowToolbar]="true"
+                                    (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
+                                </mj-explorer-entity-data-grid>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            }
         </div>
-    </mj-collapsible-panel>
 
-    <!-- Terms Grid -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="terms"
-        sectionName="Terms"
-        icon="fa fa-calendar-check"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('terms')"
-        [defaultExpanded]="false">
-
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Terms','CommitteeID')"
-                [NewRecordValues]="NewRecordValues('Terms')"
-                [AllowLoad]="IsSectionExpanded('terms')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('terms', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
-
-    <!-- Action Items Grid -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="actionItems"
-        sectionName="Action Items"
-        icon="fa fa-tasks"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('actionItems')"
-        [defaultExpanded]="false">
-
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Action Items','CommitteeID')"
-                [NewRecordValues]="NewRecordValues('Action Items')"
-                [AllowLoad]="IsSectionExpanded('actionItems')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
-
-    <!-- Documents/Artifacts Grid -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="artifacts"
-        sectionName="Documents"
-        icon="fa fa-file-alt"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('artifacts')"
-        [defaultExpanded]="false">
-
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','CommitteeID')"
-                [NewRecordValues]="NewRecordValues('Artifacts')"
-                [AllowLoad]="IsSectionExpanded('artifacts')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
-
-</mj-record-form-container>
+        </form>
+    }
+</div>
