@@ -111,6 +111,8 @@
                             <mj-form-field
                                 (blur)="markFieldAsTouched('Name')"
                                 (focusout)="markFieldAsTouched('Name')"
+                                (input)="onFieldInput('Name')"
+                                (keyup)="onFieldInput('Name')"
                                 [record]="record"
                                 [ShowLabel]="false"
                                 FieldName="Name"
@@ -228,14 +230,33 @@
                                 <i class="fas fa-file-contract"></i>
                                 Charter Document URL
                             </label>
-                            <mj-form-field
-                                [record]="record"
-                                [ShowLabel]="false"
-                                FieldName="CharterDocumentURL"
-                                Type="textbox"
-                                [EditMode]="EditMode"
-                                [formContext]="formContext">
-                            </mj-form-field>
+                            @if (EditMode) {
+                                <input
+                                    type="url"
+                                    class="charter-url-input"
+                                    [(ngModel)]="record.CharterDocumentURL"
+                                    placeholder="https://"
+                                    (blur)="onCharterURLBlur()"
+                                    (focus)="onCharterURLFocus()"
+                                    name="CharterDocumentURL">
+                            } @else {
+                                <div class="charter-url-display">
+                                    @if (record.CharterDocumentURL && record.CharterDocumentURL.trim() !== '') {
+                                        <a [href]="record.CharterDocumentURL" target="_blank" rel="noopener noreferrer">
+                                            {{ record.CharterDocumentURL }}
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    } @else {
+                                        <span class="empty-value">No URL provided</span>
+                                    }
+                                </div>
+                            }
+                            @if (shouldShowFieldError('CharterDocumentURL')) {
+                                <div class="field-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ validationErrors.CharterDocumentURL }}
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

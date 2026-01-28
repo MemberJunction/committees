@@ -800,10 +800,73 @@
   }
 }
 
-.field-error {
+/* Charter URL Custom Input - Match Kendo component styling */
+.charter-url-input {
+  width: 100% !important;
+  padding: var(--space-3) var(--space-4) !important;
+  border: 2px solid var(--gray-800) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: var(--text-base) !important;
+  transition: all var(--transition-fast) !important;
+  font-family: inherit !important;
+  color: var(--gray-900) !important;
+  background: white !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+
+  &::placeholder {
+    color: var(--gray-400) !important;
+    opacity: 1 !important;
+    font-style: italic !important;
+  }
+
+  &:focus {
+    border-color: var(--primary-500) !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none !important;
+  }
+
+  &:hover:not(:focus) {
+    border-color: var(--gray-900) !important;
+  }
+}
+
+.charter-url-display {
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  min-height: 44px;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+
+  a {
+    color: var(--primary-500);
+    text-decoration: none;
+    font-weight: var(--font-medium);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: all var(--transition-base);
+
+    &:hover {
+      color: var(--primary-600);
+      text-decoration: underline;
+    }
+
+    i {
+      font-size: var(--text-xs);
+      opacity: 0.7;
+    }
+  }
+
+  .empty-value {
+    color: var(--gray-400);
+    font-style: italic;
+    font-size: var(--text-sm);
+  }
+}
+
+.field-error {
   margin-top: var(--space-2);
   padding: var(--space-2) var(--space-3);
   background: rgba(239, 68, 68, 0.1);
@@ -812,10 +875,12 @@
   font-size: var(--text-sm);
   color: var(--error-600);
   animation: slideInRight var(--transition-base);
+  line-height: 1.5;
 
   i {
-    font-size: var(--text-xs);
-    flex-shrink: 0;
+    font-size: var(--text-sm);
+    margin-right: var(--space-2);
+    vertical-align: middle;
   }
 }
 
@@ -1119,6 +1184,30 @@
       border-color: var(--primary-500) !important;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
       outline: none !important;
+    }
+
+    &::placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1 !important;
+      font-style: italic !important;
+    }
+
+    &::-webkit-input-placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1 !important;
+      font-style: italic !important;
+    }
+
+    &::-moz-placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1 !important;
+      font-style: italic !important;
+    }
+
+    &:-ms-input-placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1 !important;
+      font-style: italic !important;
     }
   }
 

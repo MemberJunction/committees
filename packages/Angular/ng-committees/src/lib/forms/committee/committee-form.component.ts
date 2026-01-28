@@ -280,6 +280,16 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
             });
         }
 
+        // Validate Charter Document URL
+        if (this.record.CharterDocumentURL && this.record.CharterDocumentURL.trim() !== '') {
+            const trimmedUrl = this.record.CharterDocumentURL.trim();
+            // Check if URL starts with http:// or https:// and has content after the protocol
+            const urlPattern = /^https?:\/\/.{3,}/i;
+            if (!urlPattern.test(trimmedUrl)) {
+                this.validationErrors['CharterDocumentURL'] = 'Please enter a valid URL (e.g., https://example.com)';
+            }
+        }
+
         this.checkStatusTransitions();
     }
 
@@ -318,7 +328,7 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
     }
 
     private setupFieldListeners(): void {
-        const fieldsToWatch = ['Name', 'Status', 'FormationDate', 'DissolutionDate', 'ParentCommitteeID'];
+        const fieldsToWatch = ['Name', 'Status', 'FormationDate', 'DissolutionDate', 'ParentCommitteeID', 'CharterDocumentURL'];
 
         fieldsToWatch.forEach(fieldName => {
             const field = this.record.GetFieldByName(fieldName);
@@ -326,6 +336,20 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
                 this.validationSubject$.next();
             }
         });
+    }
+
+    public onCharterURLFocus(): void {
+        // Method for focus event - can be used for future enhancements
+    }
+
+    public onCharterURLBlur(): void {
+        this.markFieldAsTouched('CharterDocumentURL');
+    }
+
+    public onFieldInput(fieldName: string): void {
+        // Trigger validation immediately when user types
+        // Don't mark as touched here - only on blur
+        this.validationSubject$.next();
     }
 
     @HostListener('document:keydown', ['$event'])
