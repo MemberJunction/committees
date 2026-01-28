@@ -58,6 +58,7 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
 
     // Validation feedback
     public validationErrors: ValidationErrors = {};
+    public touchedFields: Set<string> = new Set();
 
     // Status transition info
     public showStatusTransitionInfo: boolean = false;
@@ -137,6 +138,17 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
     // NEW: Toggle expandable sections
     public toggleSection(sectionKey: string): void {
         this.expandedSections[sectionKey] = !this.expandedSections[sectionKey];
+    }
+
+    // Track when a field is touched (blurred)
+    public markFieldAsTouched(fieldName: string): void {
+        this.touchedFields.add(fieldName);
+        this.validationSubject$.next();
+    }
+
+    // Check if field should show error (touched and has error)
+    public shouldShowFieldError(fieldName: string): boolean {
+        return this.touchedFields.has(fieldName) && !!this.validationErrors[fieldName];
     }
 
     private async loadComputedMetrics(): Promise<void> {

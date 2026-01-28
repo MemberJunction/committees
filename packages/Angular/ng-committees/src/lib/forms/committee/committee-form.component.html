@@ -108,15 +108,17 @@
                                 Committee Name
                                 <span class="required">*</span>
                             </label>
-                            <mj-form-field
-                                [record]="record"
-                                [ShowLabel]="false"
-                                FieldName="Name"
-                                Type="textbox"
-                                [EditMode]="EditMode"
-                                [formContext]="formContext">
-                            </mj-form-field>
-                            @if (validationErrors.Name) {
+                            <div (blur)="markFieldAsTouched('Name')" (focusout)="markFieldAsTouched('Name')">
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Name"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                            @if (shouldShowFieldError('Name')) {
                                 <div class="field-error">
                                     <i class="fas fa-exclamation-circle"></i>
                                     {{ validationErrors.Name }}
@@ -273,36 +275,34 @@
                             </mj-form-field>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-play-circle"></i>
-                                    Formation Date
-                                </label>
-                                <mj-form-field
-                                    [record]="record"
-                                    [ShowLabel]="false"
-                                    FieldName="FormationDate"
-                                    Type="datepicker"
-                                    [EditMode]="EditMode"
-                                    [formContext]="formContext">
-                                </mj-form-field>
-                            </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-play-circle"></i>
+                                Formation Date
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="FormationDate"
+                                Type="datepicker"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-stop-circle"></i>
-                                    Dissolution Date
-                                </label>
-                                <mj-form-field
-                                    [record]="record"
-                                    [ShowLabel]="false"
-                                    FieldName="DissolutionDate"
-                                    Type="datepicker"
-                                    [EditMode]="EditMode"
-                                    [formContext]="formContext">
-                                </mj-form-field>
-                            </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-stop-circle"></i>
+                                Dissolution Date
+                            </label>
+                            <mj-form-field
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="DissolutionDate"
+                                Type="datepicker"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
                         </div>
 
                         @if (validationErrors.DissolutionDate) {
