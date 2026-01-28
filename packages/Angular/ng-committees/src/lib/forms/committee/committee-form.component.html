@@ -108,16 +108,16 @@
                                 Committee Name
                                 <span class="required">*</span>
                             </label>
-                            <div (blur)="markFieldAsTouched('Name')" (focusout)="markFieldAsTouched('Name')">
-                                <mj-form-field
-                                    [record]="record"
-                                    [ShowLabel]="false"
-                                    FieldName="Name"
-                                    Type="textbox"
-                                    [EditMode]="EditMode"
-                                    [formContext]="formContext">
-                                </mj-form-field>
-                            </div>
+                            <mj-form-field
+                                (blur)="markFieldAsTouched('Name')"
+                                (focusout)="markFieldAsTouched('Name')"
+                                [record]="record"
+                                [ShowLabel]="false"
+                                FieldName="Name"
+                                Type="textbox"
+                                [EditMode]="EditMode"
+                                [formContext]="formContext">
+                            </mj-form-field>
                             @if (shouldShowFieldError('Name')) {
                                 <div class="field-error">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -137,9 +137,7 @@
                                 FieldName="TypeID"
                                 Type="textbox"
                                 [EditMode]="EditMode"
-                                [formContext]="formContext"
-                                LinkType="Record"
-                                LinkComponentType="Search">
+                                [formContext]="formContext">
                             </mj-form-field>
                         </div>
 
@@ -193,16 +191,18 @@
                                 <i class="fas fa-level-up-alt"></i>
                                 Parent Committee
                             </label>
-                            <mj-form-field
-                                [record]="record"
-                                [ShowLabel]="false"
-                                FieldName="ParentCommitteeID"
-                                Type="textbox"
-                                [EditMode]="EditMode"
-                                [formContext]="formContext"
-                                LinkType="Record"
-                                LinkComponentType="Search">
-                            </mj-form-field>
+                            <div class="field-with-actions">
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="ParentCommitteeID"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext"
+                                    LinkType="Record"
+                                    LinkComponentType="Search">
+                                </mj-form-field>
+                            </div>
                         </div>
 
                         <div class="form-group">
