@@ -356,10 +356,10 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         this.markFieldAsTouched('CharterDocumentURL');
     }
 
-    public onFieldInput(fieldName: string): void {
-        // Mark field as touched when user interacts with it
-        this.touchedFields.add(fieldName);
-        // Trigger validation
+    public onFieldInput(_fieldName: string): void {
+        // Only trigger validation - don't mark as touched
+        // Field will be marked as touched on blur (focusout) via markFieldAsTouched()
+        // This ensures errors only show after the user leaves the field
         this.validationSubject$.next();
     }
 
@@ -414,6 +414,23 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         }
     }
 
+    public handleCancel(): void {
+        // For unsaved (new) records, reset to fresh defaults
+        // Revert() doesn't work well for new records since there's no original state
+        if (!this.record.IsSaved) {
+            this.record.NewRecord();
+        } else if (this.record.Dirty) {
+            this.record.Revert();
+        }
+
+        // Clear validation state
+        this.validationErrors = {};
+        this.touchedFields.clear();
+
+        // Navigate back to the committees list
+        this.router.navigate(['/app/committees']);
+    }
+
     private showSuccessNotification(message: string): void {
         this.sharedService.CreateSimpleNotification(message, 'success', 3000);
     }
@@ -436,6 +453,20 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
 
     override async SaveRecord(StopEditModeAfterSave: boolean): Promise<boolean> {
         this.isSaving = true;
+
+        // Mark required fields as touched so validation errors will show
+        this.touchedFields.add('Name');
+        this.touchedFields.add('TypeID');
+
+        // Run validation to show any errors
+        this.performValidation();
+
+        // Check if there are validation errors before attempting save
+        if (Object.keys(this.validationErrors).length > 0) {
+            this.showErrorNotification('Please fix the errors before saving.');
+            this.isSaving = false;
+            return false;
+        }
 
         try {
             const result = await super.SaveRecord(StopEditModeAfterSave);

@@ -178,7 +178,7 @@ export class CommitteeEntityExtended extends CommitteeEntity {
     NewRecord(): boolean {
         const result = super.NewRecord();
 
-        this.Status = 'Pending';
+        this.Status = 'Active';
         this.IsPublic = true;
 
         return result;

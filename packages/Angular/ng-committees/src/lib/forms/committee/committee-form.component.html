@@ -68,7 +68,7 @@
                             <i class="fas fa-save"></i>
                             <span>Save</span>
                         </button>
-                        <button class="btn-hero btn-cancel" (click)="router.navigate(['/app/committees'])">
+                        <button class="btn-hero btn-cancel" (click)="handleCancel()">
                             <i class="fas fa-times"></i>
                             <span>Cancel</span>
                         </button>
@@ -217,17 +217,16 @@
                                 <i class="fas fa-eye"></i>
                                 Visibility
                             </label>
-                            <div class="checkbox-group">
-                                <mj-form-field
-                                    [record]="record"
-                                    [ShowLabel]="false"
-                                    FieldName="IsPublic"
-                                    Type="checkbox"
-                                    [EditMode]="EditMode"
-                                    [formContext]="formContext">
-                                </mj-form-field>
+                            <label class="checkbox-wrapper">
+                                <input
+                                    type="checkbox"
+                                    [(ngModel)]="record.IsPublic"
+                                    [disabled]="!EditMode"
+                                    name="IsPublic"
+                                    class="checkbox-input">
+                                <span class="checkbox-custom"></span>
                                 <span class="checkbox-label">Make this committee public</span>
-                            </div>
+                            </label>
                         </div>
 
                         <div class="form-group">
