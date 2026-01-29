@@ -9,3 +9,11 @@ export * from './entities/ActionItemEntityExtended';
 export * from './entities/AgendaItemEntityExtended';
 export * from './entities/AttendanceEntityExtended';
 export * from './entities/ArtifactEntityExtended';
+
+/**
+ * Call this function to ensure extended entity classes are loaded.
+ * This prevents tree-shaking from removing the @RegisterClass decorators.
+ */
+export function LoadExtendedEntities() {
+  // Empty - importing this module triggers @RegisterClass decorators
+}

@@ -146,9 +146,14 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         this.validationSubject$.next();
     }
 
-    // Check if field should show error (touched and has error)
+    // Check if field should show error
+    // Only show error after user has interacted with the field (touched it)
     public shouldShowFieldError(fieldName: string): boolean {
-        return this.touchedFields.has(fieldName) && !!this.validationErrors[fieldName];
+        const hasError = !!this.validationErrors[fieldName];
+        const isTouched = this.touchedFields.has(fieldName);
+
+        // Show error only if field has error AND has been touched
+        return hasError && isTouched;
     }
 
     private async loadComputedMetrics(): Promise<void> {
@@ -347,8 +352,9 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
     }
 
     public onFieldInput(fieldName: string): void {
-        // Trigger validation immediately when user types
-        // Don't mark as touched here - only on blur
+        // Mark field as touched when user interacts with it
+        this.touchedFields.add(fieldName);
+        // Trigger validation
         this.validationSubject$.next();
     }
 

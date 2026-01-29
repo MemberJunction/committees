@@ -14,15 +14,15 @@ export class CommitteeEntityExtended extends CommitteeEntity {
      * Synchronous validation for basic field checks
      */
     Validate(): ValidationResult {
-        const result = super.Validate();
+        const result = new ValidationResult();
 
         // Committee name is required
         if (!this.Name || this.Name.trim().length === 0) {
             result.Success = false;
             result.Errors.push(new ValidationErrorInfo(
-                'Required',
-                'Committee name is required',
-                'Name'
+                'Name',                        // Source (field name) - first
+                'Committee name is required',  // Message - second
+                'Required'                     // Type - third
             ));
         }
 
@@ -34,9 +34,9 @@ export class CommitteeEntityExtended extends CommitteeEntity {
             if (dissolution <= formation) {
                 result.Success = false;
                 result.Errors.push(new ValidationErrorInfo(
-                    'DateRange',
-                    'Dissolution date must be after formation date',
-                    'DissolutionDate'
+                    'DissolutionDate',                           // Source (field name)
+                    'Dissolution date must be after formation date',  // Message
+                    'DateRange'                                  // Type
                 ));
             }
         }
@@ -45,9 +45,9 @@ export class CommitteeEntityExtended extends CommitteeEntity {
         if (this.Status === 'Dissolved' && !this.DissolutionDate) {
             result.Success = false;
             result.Errors.push(new ValidationErrorInfo(
-                'Required',
-                'Dissolution date is required when status is Dissolved',
-                'DissolutionDate'
+                'DissolutionDate',                                    // Source (field name)
+                'Dissolution date is required when status is Dissolved',  // Message
+                'Required'                                            // Type
             ));
         }
 
@@ -58,9 +58,9 @@ export class CommitteeEntityExtended extends CommitteeEntity {
                 if (!validTransitions.includes(this.Status)) {
                     result.Success = false;
                     result.Errors.push(new ValidationErrorInfo(
-                        'InvalidTransition',
-                        `Cannot transition from ${oldStatus} to ${this.Status}`,
-                        'Status'
+                        'Status',                                              // Source (field name)
+                        `Cannot transition from ${oldStatus} to ${this.Status}`,  // Message
+                        'InvalidTransition'                                    // Type
                     ));
                 }
             }
@@ -80,9 +80,9 @@ export class CommitteeEntityExtended extends CommitteeEntity {
             if (await this.WouldCreateCircularReference(this.ParentCommitteeID)) {
                 result.Success = false;
                 result.Errors.push(new ValidationErrorInfo(
-                    'CircularReference',
-                    'Cannot set parent committee - would create circular reference',
-                    'ParentCommitteeID'
+                    'ParentCommitteeID',                                       // Source (field name)
+                    'Cannot set parent committee - would create circular reference',  // Message
+                    'CircularReference'                                        // Type
                 ));
             }
         }
@@ -93,9 +93,9 @@ export class CommitteeEntityExtended extends CommitteeEntity {
             if (hasActiveChildren) {
                 result.Success = false;
                 result.Errors.push(new ValidationErrorInfo(
-                    'ActiveChildren',
-                    'Cannot dissolve committee with active child committees',
-                    'Status'
+                    'Status',                                              // Source (field name)
+                    'Cannot dissolve committee with active child committees',  // Message
+                    'ActiveChildren'                                       // Type
                 ));
             }
         }

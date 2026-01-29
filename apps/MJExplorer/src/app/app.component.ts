@@ -7,8 +7,10 @@
 
 import { Component } from '@angular/core';
 import { LoadGeneratedEntities } from 'mj_generatedentities';
+import { LoadExtendedEntities } from '@memberjunction/committees-core';
 
 LoadGeneratedEntities(); // forces the generated entities library to load up, sometimes tree shaking in the build process can break this, so this is a workaround that ensures it always happens
+LoadExtendedEntities(); // forces the extended entities library to load up, sometimes tree shaking in the build process can break this, so this is a workaround that ensures it always happens
 
 @Component({
   selector: 'app-root',
