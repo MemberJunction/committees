@@ -833,6 +833,172 @@
   }
 }
 
+/* ============================================================================
+ * TYPE DROPDOWN - Custom styled dropdown for committee type selection
+ * ============================================================================ */
+
+.type-dropdown-wrapper {
+  width: 100%;
+}
+
+.type-dropdown {
+  width: 100% !important;
+
+  // Style the Kendo dropdown to match our design system
+  ::ng-deep {
+    .k-dropdown-wrap,
+    .k-picker {
+      border: 2px solid var(--gray-300) !important;
+      border-radius: var(--radius-md) !important;
+      background: white !important;
+      min-height: 44px !important;
+      transition: all var(--transition-fast) !important;
+
+      &:hover {
+        border-color: var(--gray-400) !important;
+      }
+
+      &.k-focus,
+      &:focus-within {
+        border-color: var(--primary-500) !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+      }
+    }
+
+    .k-input-inner,
+    .k-input-value-text {
+      font-size: var(--text-base) !important;
+      color: var(--gray-900) !important;
+      padding: var(--space-2) var(--space-3) !important;
+    }
+
+    // Placeholder styling
+    .k-input-inner::placeholder {
+      color: var(--gray-400) !important;
+      font-style: italic !important;
+    }
+
+    // Dropdown button styling
+    .k-button,
+    .k-select {
+      background: transparent !important;
+      border: none !important;
+      color: var(--gray-500) !important;
+      transition: color var(--transition-fast) !important;
+
+      &:hover {
+        color: var(--primary-500) !important;
+        background: var(--gray-50) !important;
+      }
+    }
+
+    // Dropdown popup styling
+    .k-popup {
+      border: 2px solid var(--gray-200) !important;
+      border-radius: var(--radius-md) !important;
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2) !important;
+      overflow: hidden !important;
+    }
+
+    .k-list-item {
+      padding: var(--space-3) var(--space-4) !important;
+      font-size: var(--text-base) !important;
+      color: var(--gray-700) !important;
+      transition: all var(--transition-fast) !important;
+
+      &:hover {
+        background: var(--gray-50) !important;
+        color: var(--gray-900) !important;
+      }
+
+      &.k-selected {
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
+        color: white !important;
+        font-weight: var(--font-medium) !important;
+      }
+
+      &.k-focus {
+        background: var(--gray-100) !important;
+
+        &.k-selected {
+          background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
+        }
+      }
+    }
+  }
+}
+
+.type-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+  min-height: 44px;
+
+  i {
+    color: var(--primary-500);
+  }
+}
+
+.type-display {
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+
+  .type-value {
+    font-size: var(--text-base);
+    color: var(--gray-900);
+    font-weight: var(--font-medium);
+  }
+
+  .type-empty {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    font-style: italic;
+  }
+}
+
+/* ============================================================================
+ * PARENT COMMITTEE DROPDOWN - Styled dropdown for parent committee selection
+ * ============================================================================ */
+
+.parent-dropdown-wrapper {
+  width: 100%;
+}
+
+// Reuse the same styling as type-dropdown
+.parent-dropdown {
+  @extend .type-dropdown;
+}
+
+.parent-loading {
+  @extend .type-loading;
+}
+
+.parent-display {
+  @extend .type-display;
+
+  .parent-value {
+    font-size: var(--text-base);
+    color: var(--gray-900);
+    font-weight: var(--font-medium);
+  }
+
+  .parent-empty {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    font-style: italic;
+  }
+}
+
 /* Charter URL Custom Input - Match Kendo component styling */
 .charter-url-input {
   width: 100% !important;

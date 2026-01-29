@@ -132,14 +132,37 @@
                                 Type
                                 <span class="required">*</span>
                             </label>
-                            <mj-form-field
-                                [record]="record"
-                                [ShowLabel]="false"
-                                FieldName="TypeID"
-                                Type="textbox"
-                                [EditMode]="EditMode"
-                                [formContext]="formContext">
-                            </mj-form-field>
+                            <!-- Custom dropdown for TypeID - binds directly to record.TypeID -->
+                            @if (EditMode) {
+                                <div class="type-dropdown-wrapper">
+                                    @if (isLoadingTypes) {
+                                        <div class="type-loading">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Loading types...</span>
+                                        </div>
+                                    } @else {
+                                        <kendo-dropdownlist
+                                            [data]="committeeTypes"
+                                            textField="Name"
+                                            valueField="ID"
+                                            [(ngModel)]="record.TypeID"
+                                            [valuePrimitive]="true"
+                                            [defaultItem]="{ ID: null, Name: 'Select a type...' }"
+                                            name="TypeID"
+                                            class="type-dropdown">
+                                        </kendo-dropdownlist>
+                                    }
+                                </div>
+                            } @else {
+                                <!-- Read-only display -->
+                                <div class="type-display">
+                                    @if (record.TypeID) {
+                                        <span class="type-value">{{ record.Type }}</span>
+                                    } @else {
+                                        <span class="type-empty">No type selected</span>
+                                    }
+                                </div>
+                            }
                             @if (typeIDError) {
                                 <div class="field-error">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -198,18 +221,37 @@
                                 <i class="fas fa-level-up-alt"></i>
                                 Parent Committee
                             </label>
-                            <div class="field-with-actions">
-                                <mj-form-field
-                                    [record]="record"
-                                    [ShowLabel]="false"
-                                    FieldName="ParentCommitteeID"
-                                    Type="textbox"
-                                    [EditMode]="EditMode"
-                                    [formContext]="formContext"
-                                    LinkType="Record"
-                                    LinkComponentType="Search">
-                                </mj-form-field>
-                            </div>
+                            <!-- Custom dropdown for Parent Committee - binds directly to record.ParentCommitteeID -->
+                            @if (EditMode) {
+                                <div class="parent-dropdown-wrapper">
+                                    @if (isLoadingParentCommittees) {
+                                        <div class="parent-loading">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Loading committees...</span>
+                                        </div>
+                                    } @else {
+                                        <kendo-dropdownlist
+                                            [data]="parentCommittees"
+                                            textField="Name"
+                                            valueField="ID"
+                                            [(ngModel)]="record.ParentCommitteeID"
+                                            [valuePrimitive]="true"
+                                            [defaultItem]="{ ID: null, Name: 'None (Top-level committee)' }"
+                                            name="ParentCommitteeID"
+                                            class="parent-dropdown">
+                                        </kendo-dropdownlist>
+                                    }
+                                </div>
+                            } @else {
+                                <!-- Read-only display -->
+                                <div class="parent-display">
+                                    @if (record.ParentCommitteeID) {
+                                        <span class="parent-value">{{ record.ParentCommittee }}</span>
+                                    } @else {
+                                        <span class="parent-empty">None (Top-level committee)</span>
+                                    }
+                                </div>
+                            }
                         </div>
 
                         <div class="form-group">
@@ -311,7 +353,8 @@
                                 FieldName="FormationDate"
                                 Type="datepicker"
                                 [EditMode]="EditMode"
-                                [formContext]="formContext">
+                                [formContext]="formContext"
+                                (ValueChange)="onDateChange()">
                             </mj-form-field>
                         </div>
 
@@ -326,7 +369,8 @@
                                 FieldName="DissolutionDate"
                                 Type="datepicker"
                                 [EditMode]="EditMode"
-                                [formContext]="formContext">
+                                [formContext]="formContext"
+                                (ValueChange)="onDateChange()">
                             </mj-form-field>
                         </div>
 

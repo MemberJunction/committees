@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormToolbarModule } from '@memberjunction/ng-form-toolbar';
 
+// Kendo UI imports
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+
 // MemberJunction imports - these provide the form infrastructure
 import { BaseFormsModule } from '@memberjunction/ng-base-forms';
 import { EntityViewerModule } from '@memberjunction/ng-entity-viewer';
@@ -38,6 +41,8 @@ imports: [
         // Angular basics
         CommonModule,
         FormsModule,
+        // Kendo UI modules
+        DropDownsModule,
         // MemberJunction modules we use in templates
         BaseFormsModule,
         EntityViewerModule,

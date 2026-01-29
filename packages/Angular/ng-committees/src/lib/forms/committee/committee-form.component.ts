@@ -64,6 +64,16 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
     public showStatusTransitionInfo: boolean = false;
     public statusTransitionMessage: string = '';
 
+    // Committee Types dropdown data
+    // These are loaded once and used for the TypeID dropdown
+    public committeeTypes: { ID: string; Name: string }[] = [];
+    public isLoadingTypes: boolean = false;
+
+    // Parent Committees dropdown data
+    // Excludes the current committee to prevent self-reference
+    public parentCommittees: { ID: string; Name: string }[] = [];
+    public isLoadingParentCommittees: boolean = false;
+
     // NEW: Expandable sections for card-based layout
     public expandedSections: { [key: string]: boolean } = {
         memberships: false,
@@ -113,6 +123,10 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
 
             this.setupValidationFeedback();
             this.setupFieldListeners();
+
+            // Load dropdown data (needed for all records)
+            await this.loadCommitteeTypes();
+            await this.loadParentCommittees();
 
             if (this.record.IsSaved) {
                 await this.loadComputedMetrics();
@@ -261,10 +275,80 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         }
     }
 
+    /**
+     * Load all committee types for the TypeID dropdown.
+     * This fetches data directly and binds to the dropdown,
+     * avoiding the caching issue with mj-link-field.
+     */
+    private async loadCommitteeTypes(): Promise<void> {
+        this.isLoadingTypes = true;
+
+        try {
+            const rv = new RunView();
+            const result = await rv.RunView({
+                EntityName: 'Types',
+                ExtraFilter: '',
+                OrderBy: 'Name',
+                ResultType: 'simple'
+            });
+
+            if (result && result.Success) {
+                // Map to simple objects with just ID and Name
+                this.committeeTypes = result.Results.map((r: any) => ({
+                    ID: r.ID,
+                    Name: r.Name
+                }));
+            }
+        } catch (error) {
+            console.error('Error loading committee types:', error);
+            this.showErrorNotification('Failed to load committee types');
+        } finally {
+            this.isLoadingTypes = false;
+        }
+    }
+
+    /**
+     * Load all committees for the Parent Committee dropdown.
+     * Excludes the current committee (if saved) to prevent self-reference.
+     */
+    private async loadParentCommittees(): Promise<void> {
+        this.isLoadingParentCommittees = true;
+
+        try {
+            const rv = new RunView();
+
+            // Build filter to exclude current committee if it's saved
+            let filter = '';
+            if (this.record.IsSaved && this.record.ID) {
+                filter = `ID <> '${this.record.ID}'`;
+            }
+
+            const result = await rv.RunView({
+                EntityName: 'Committees',
+                ExtraFilter: filter,
+                OrderBy: 'Name',
+                ResultType: 'simple'
+            });
+
+            if (result && result.Success) {
+                // Map to simple objects with just ID and Name
+                this.parentCommittees = result.Results.map((r: any) => ({
+                    ID: r.ID,
+                    Name: r.Name
+                }));
+            }
+        } catch (error) {
+            console.error('Error loading parent committees:', error);
+            this.showErrorNotification('Failed to load parent committees');
+        } finally {
+            this.isLoadingParentCommittees = false;
+        }
+    }
+
     private setupValidationFeedback(): void {
         this.validationSubject$
             .pipe(
-                debounceTime(500),
+                debounceTime(200),  // Reduced from 500ms for more responsive feedback
                 takeUntil(this.destroy$)
             )
             .subscribe(() => {
@@ -367,6 +451,14 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         if (!this.touchedFields.has('TypeID')) return null;
         if (!this.record.TypeID) return 'Type is required';
         return null;
+    }
+
+    /**
+     * Handle date field changes - triggers immediate validation
+     * bypassing the debounce delay for instant feedback on date comparisons
+     */
+    public onDateChange(): void {
+        this.performValidation();
     }
 
     @HostListener('document:keydown', ['$event'])
