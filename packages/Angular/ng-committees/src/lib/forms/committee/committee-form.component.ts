@@ -285,6 +285,11 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
             });
         }
 
+        // Validate TypeID (required field)
+        if (!this.record.TypeID) {
+            this.validationErrors['TypeID'] = 'Type is required';
+        }
+
         // Validate Charter Document URL
         if (this.record.CharterDocumentURL && this.record.CharterDocumentURL.trim() !== '') {
             const trimmedUrl = this.record.CharterDocumentURL.trim();
@@ -356,6 +361,12 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         this.touchedFields.add(fieldName);
         // Trigger validation
         this.validationSubject$.next();
+    }
+
+    public get typeIDError(): string | null {
+        if (!this.touchedFields.has('TypeID')) return null;
+        if (!this.record.TypeID) return 'Type is required';
+        return null;
     }
 
     @HostListener('document:keydown', ['$event'])
