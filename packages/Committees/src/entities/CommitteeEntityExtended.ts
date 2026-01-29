@@ -66,6 +66,11 @@ export class CommitteeEntityExtended extends CommitteeEntity {
             }
         }
 
+        // Set Success to true only if no validation errors were found
+        if (result.Errors.length === 0) {
+            result.Success = true;
+        }
+
         return result;
     }
 
