@@ -1,192 +1,630 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Basic Information -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="basicInformation"
-        sectionName="Basic Information"
-        icon="fa fa-info-circle"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Title"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="meeting-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CommitteeID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="meeting-icon-wrapper">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <div class="meeting-details">
+                        <div class="badge-row">
+                            @if (record.Status) {
+                                <span class="status-badge" [ngClass]="statusColorClass">
+                                    <i [class]="statusIcon"></i>
+                                    {{ record.Status }}
+                                </span>
+                            }
+                            @if (record.LocationType) {
+                                <span class="location-badge">
+                                    <i [class]="locationTypeIcon"></i>
+                                    {{ record.LocationType }}
+                                </span>
+                            }
+                            @if (durationDisplay) {
+                                <span class="duration-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ durationDisplay }}
+                                </span>
+                            }
+                        </div>
 
-    <!-- Schedule & Location -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="schedule"
-        sectionName="Schedule & Location"
-        icon="fa fa-calendar"
-        [form]="this"
-        [formContext]="formContext">
+                        <h1 class="meeting-title">
+                            {{ record.Title || 'New Meeting' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="StartDateTime"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        @if (record.StartDateTime) {
+                            <div class="quick-stats">
+                                <div class="stat">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span>{{ formatDate(record.StartDateTime) }}</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ formatTime(record.StartDateTime) }} - {{ formatTime(record.EndDateTime) }}</span>
+                                </div>
+                                @if (record.TimeZone) {
+                                    <div class="stat">
+                                        <i class="fas fa-globe"></i>
+                                        <span>{{ record.TimeZone }}</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndDateTime"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="TimeZone"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="LocationType"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="form-content">
+                <div class="cards-grid">
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="LocationText"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <!-- Basic Information Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Basic Information</h3>
+                                <p class="card-subtitle">Meeting title and committee</p>
+                            </div>
+                        </div>
 
-    <!-- Video Conference -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="videoConference"
-        sectionName="Video Conference"
-        icon="fa fa-video"
-        [form]="this"
-        [formContext]="formContext">
+                        <div class="card-body">
+                            <!-- Title -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Title')">
+                                <label class="form-label">
+                                    <i class="fas fa-heading"></i>
+                                    Title
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Title')"
+                                    (keyup)="onFieldInput('Title')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Title"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Title')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['Title'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="VideoProvider"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Committee -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('CommitteeID')">
+                                <label class="form-label">
+                                    <i class="fas fa-users"></i>
+                                    Committee
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="committees"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.CommitteeID"
+                                        [loading]="isLoadingCommittees"
+                                        [filterable]="true"
+                                        (filterChange)="onFieldInput('CommitteeID')"
+                                        (valueChange)="onFieldInput('CommitteeID')"
+                                        name="CommitteeID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a committee...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-users"></i>
+                                        {{ getCommitteeName() || 'Not selected' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('CommitteeID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['CommitteeID'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="VideoMeetingID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Description"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="VideoJoinURL"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <!-- Schedule & Location Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Schedule & Location</h3>
+                                <p class="card-subtitle">When and where</p>
+                            </div>
+                        </div>
 
-    <!-- Status & Recording -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="status"
-        sectionName="Status & Recording"
-        icon="fa fa-flag"
-        [form]="this"
-        [formContext]="formContext">
+                        <div class="card-body">
+                            <!-- Start Date/Time -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('StartDateTime')">
+                                <label class="form-label">
+                                    <i class="fas fa-play"></i>
+                                    Start Date/Time
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datetimepicker
+                                        [(ngModel)]="record.StartDateTime"
+                                        (valueChange)="onDateChange()"
+                                        name="StartDateTime"
+                                        class="form-datetime"
+                                        [format]="'MM/dd/yyyy HH:mm'"
+                                        [placeholder]="'Select start date/time...'">
+                                    </kendo-datetimepicker>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-play"></i>
+                                        {{ formatDateTime(record.StartDateTime) || 'Not set' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('StartDateTime')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['StartDateTime'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- End Date/Time -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('EndDateTime')">
+                                <label class="form-label">
+                                    <i class="fas fa-stop"></i>
+                                    End Date/Time
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datetimepicker
+                                        [(ngModel)]="record.EndDateTime"
+                                        (valueChange)="onDateChange()"
+                                        name="EndDateTime"
+                                        class="form-datetime"
+                                        [format]="'MM/dd/yyyy HH:mm'"
+                                        [placeholder]="'Select end date/time...'">
+                                    </kendo-datetimepicker>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-stop"></i>
+                                        {{ formatDateTime(record.EndDateTime) || 'Not set' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('EndDateTime')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['EndDateTime'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="VideoRecordingURL"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Timezone -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-globe"></i>
+                                    Timezone
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="timezones"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.TimeZone"
+                                        name="TimeZone"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-globe"></i>
+                                        {{ record.TimeZone || 'Not specified' }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="TranscriptURL"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Location Type -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Location Type
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="locationTypes"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.LocationType"
+                                        (valueChange)="onLocationTypeChange()"
+                                        name="LocationType"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value location-value">
+                                        <i [class]="locationTypeIcon"></i>
+                                        {{ record.LocationType || 'Not specified' }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CalendarEventID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                            <!-- Location Text -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-location-arrow"></i>
+                                    Location Details
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="LocationText"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Related: Agenda Items -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="agendaItems"
-        sectionName="Agenda Items"
-        icon="fa fa-list-ol"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('agendaItems')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Agenda Items','MeetingID')"
-                [NewRecordValues]="NewRecordValues('Agenda Items')"
-                [AllowLoad]="IsSectionExpanded('agendaItems')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('agendaItems', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                    <!-- Video Conference Card -->
+                    @if (showVideoConference || EditMode) {
+                        <div class="info-card" [class.edit-mode]="EditMode">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="card-title-section">
+                                    <h3 class="card-title">Video Conference</h3>
+                                    <p class="card-subtitle">Virtual meeting settings</p>
+                                </div>
+                            </div>
 
-    <!-- Related: Attendance -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="attendance"
-        sectionName="Attendance"
-        icon="fa fa-user-check"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('attendance')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Attendances','MeetingID')"
-                [NewRecordValues]="NewRecordValues('Attendances')"
-                [AllowLoad]="IsSectionExpanded('attendance')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('attendance', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                            <div class="card-body">
+                                <!-- Video Provider -->
+                                <div class="form-group" (focusout)="markFieldAsTouched('VideoProvider')">
+                                    <label class="form-label">
+                                        <i class="fas fa-tv"></i>
+                                        Video Provider
+                                        @if (showVideoConference) {
+                                            <span class="required">*</span>
+                                        } @else {
+                                            <span class="optional">(optional)</span>
+                                        }
+                                    </label>
+                                    @if (EditMode) {
+                                        <kendo-dropdownlist
+                                            [data]="videoProviders"
+                                            textField="Name"
+                                            valueField="Value"
+                                            [valuePrimitive]="true"
+                                            [(ngModel)]="record.VideoProvider"
+                                            (valueChange)="onFieldInput('VideoProvider')"
+                                            name="VideoProvider"
+                                            class="form-dropdown"
+                                            [defaultItem]="{ Value: null, Name: 'Select provider...' }">
+                                        </kendo-dropdownlist>
+                                    } @else {
+                                        <div class="readonly-value">
+                                            <i class="fas fa-tv"></i>
+                                            {{ record.VideoProvider || 'Not selected' }}
+                                        </div>
+                                    }
+                                    @if (shouldShowFieldError('VideoProvider')) {
+                                        <div class="field-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ validationErrors['VideoProvider'] }}
+                                        </div>
+                                    }
+                                </div>
 
-    <!-- Related: Action Items -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="actionItems"
-        sectionName="Action Items"
-        icon="fa fa-tasks"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('actionItems')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Action Items','MeetingID')"
-                [NewRecordValues]="NewRecordValues('Action Items')"
-                [AllowLoad]="IsSectionExpanded('actionItems')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                                <!-- Video Meeting ID -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-id-badge"></i>
+                                        Meeting ID
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <mj-form-field
+                                        [record]="record"
+                                        [ShowLabel]="false"
+                                        FieldName="VideoMeetingID"
+                                        Type="textbox"
+                                        [EditMode]="EditMode"
+                                        [formContext]="formContext">
+                                    </mj-form-field>
+                                </div>
 
-    <!-- Related: Artifacts -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="artifacts"
-        sectionName="Documents"
-        icon="fa fa-file-alt"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('artifacts')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','MeetingID')"
-                [NewRecordValues]="NewRecordValues('Artifacts')"
-                [AllowLoad]="IsSectionExpanded('artifacts')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                                <!-- Video Join URL -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-link"></i>
+                                        Join URL
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <mj-form-field
+                                        [record]="record"
+                                        [ShowLabel]="false"
+                                        FieldName="VideoJoinURL"
+                                        Type="textbox"
+                                        [EditMode]="EditMode"
+                                        [formContext]="formContext">
+                                    </mj-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    }
 
-</mj-record-form-container>
+                    <!-- Status & Recording Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Status & Recording</h3>
+                                <p class="card-subtitle">Meeting status and recordings</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-traffic-light"></i>
+                                    Status
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="statuses"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.Status"
+                                        (valueChange)="onStatusChange()"
+                                        name="Status"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value status-value" [ngClass]="statusColorClass">
+                                        <i [class]="statusIcon"></i>
+                                        {{ record.Status || 'Draft' }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Video Recording URL -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-film"></i>
+                                    Recording URL
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="VideoRecordingURL"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <!-- Transcript URL -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-file-alt"></i>
+                                    Transcript URL
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="TranscriptURL"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <!-- Calendar Event ID -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Calendar Event ID
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="CalendarEventID"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Agenda Items -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['agendaItems']">
+                            <div class="section-header" (click)="toggleSection('agendaItems')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                    <i class="fas fa-list-ol"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Agenda Items</h3>
+                                    <p class="section-subtitle">Meeting agenda</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('agendaItems') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['agendaItems']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Agenda Items','MeetingID')"
+                                        [NewRecordValues]="NewRecordValues('Agenda Items')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('agendaItems', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Attendance -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['attendance']">
+                            <div class="section-header" (click)="toggleSection('attendance')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Attendance</h3>
+                                    <p class="section-subtitle">Who attended the meeting</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('attendance') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['attendance']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Attendances','MeetingID')"
+                                        [NewRecordValues]="NewRecordValues('Attendances')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('attendance', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['actionItems']">
+                            <div class="section-header" (click)="toggleSection('actionItems')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Action Items</h3>
+                                    <p class="section-subtitle">Tasks from this meeting</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('actionItems') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['actionItems']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Action Items','MeetingID')"
+                                        [NewRecordValues]="NewRecordValues('Action Items')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Documents -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['artifacts']">
+                            <div class="section-header" (click)="toggleSection('artifacts')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Documents</h3>
+                                    <p class="section-subtitle">Related files and attachments</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('artifacts') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['artifacts']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','MeetingID')"
+                                        [NewRecordValues]="NewRecordValues('Artifacts')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>
