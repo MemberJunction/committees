@@ -1,4 +1,10 @@
 .DS_Store
+.cache/
+node_modules/
+.turbo/
+codegen.output.log
+SQL Scripts/
+Schema Files/
 Update_MemberJunction_Packages_To_Latest.ps1
 install.config.json
 .env
