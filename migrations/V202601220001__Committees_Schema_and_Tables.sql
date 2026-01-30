@@ -197,6 +197,21 @@ CREATE TABLE Committees.ActionItem (
 GO
 
 ---------------------------------------------------------------------------
+-- Artifact types with optional extension entity support
+---------------------------------------------------------------------------
+CREATE TABLE Committees.ArtifactType (
+    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(MAX),
+    ExtendedEntityID UNIQUEIDENTIFIER,
+    IconClass NVARCHAR(100),
+    CONSTRAINT PK_ArtifactType PRIMARY KEY (ID),
+    CONSTRAINT UQ_ArtifactType_Name UNIQUE (Name),
+    CONSTRAINT FK_ArtifactType_Entity FOREIGN KEY (ExtendedEntityID) REFERENCES __mj.[Entity](ID)
+);
+GO
+
+---------------------------------------------------------------------------
 -- External artifact links (documents, files, etc.)
 ---------------------------------------------------------------------------
 CREATE TABLE Committees.Artifact (
@@ -207,21 +222,83 @@ CREATE TABLE Committees.Artifact (
     ActionItemID UNIQUEIDENTIFIER,
     Title NVARCHAR(255) NOT NULL,
     Description NVARCHAR(MAX),
+    ArtifactTypeID UNIQUEIDENTIFIER NOT NULL,
     Provider NVARCHAR(50) NOT NULL,
     ExternalID NVARCHAR(500),
     URL NVARCHAR(2000) NOT NULL,
     MimeType NVARCHAR(100),
     FileSize BIGINT,
     UploadedByUserID UNIQUEIDENTIFIER,
-    ArtifactType NVARCHAR(50) NOT NULL DEFAULT 'Document',
     CONSTRAINT PK_Artifact PRIMARY KEY (ID),
     CONSTRAINT FK_Artifact_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),
     CONSTRAINT FK_Artifact_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
     CONSTRAINT FK_Artifact_AgendaItem FOREIGN KEY (AgendaItemID) REFERENCES Committees.AgendaItem(ID),
     CONSTRAINT FK_Artifact_ActionItem FOREIGN KEY (ActionItemID) REFERENCES Committees.ActionItem(ID),
+    CONSTRAINT FK_Artifact_ArtifactType FOREIGN KEY (ArtifactTypeID) REFERENCES Committees.ArtifactType(ID),
     CONSTRAINT FK_Artifact_UploadedBy FOREIGN KEY (UploadedByUserID) REFERENCES __mj.[User](ID),
-    CONSTRAINT CK_Artifact_Provider CHECK (Provider IN ('GoogleDrive', 'SharePoint', 'Box', 'OneDrive', 'Dropbox', 'URL')),
-    CONSTRAINT CK_Artifact_Type CHECK (ArtifactType IN ('Document', 'Spreadsheet', 'Presentation', 'Minutes', 'Agenda', 'Recording', 'Transcript', 'Image', 'Other'))
+    CONSTRAINT CK_Artifact_Provider CHECK (Provider IN ('GoogleDrive', 'SharePoint', 'Box', 'OneDrive', 'Dropbox', 'URL'))
+);
+GO
+
+---------------------------------------------------------------------------
+-- Minutes extension (1:1 with Artifact for Minutes type)
+---------------------------------------------------------------------------
+CREATE TABLE Committees.Minute (
+    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
+    ArtifactID UNIQUEIDENTIFIER NOT NULL,
+    ApprovalStatus NVARCHAR(50) NOT NULL DEFAULT 'Draft',
+    ApprovedAt DATETIMEOFFSET,
+    ApprovedByMeetingID UNIQUEIDENTIFIER,
+    Notes NVARCHAR(MAX),
+    CONSTRAINT PK_Minute PRIMARY KEY (ID),
+    CONSTRAINT FK_Minute_Artifact FOREIGN KEY (ArtifactID) REFERENCES Committees.Artifact(ID),
+    CONSTRAINT FK_Minute_ApprovedByMeeting FOREIGN KEY (ApprovedByMeetingID) REFERENCES Committees.Meeting(ID),
+    CONSTRAINT UQ_Minute_Artifact UNIQUE (ArtifactID),
+    CONSTRAINT CK_Minute_ApprovalStatus CHECK (ApprovalStatus IN ('Draft', 'PendingApproval', 'Approved', 'Rejected'))
+);
+GO
+
+---------------------------------------------------------------------------
+-- Motions put to vote during meetings
+---------------------------------------------------------------------------
+CREATE TABLE Committees.Motion (
+    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
+    MeetingID UNIQUEIDENTIFIER NOT NULL,
+    AgendaItemID UNIQUEIDENTIFIER,
+    Sequence INT NOT NULL DEFAULT 1,
+    Title NVARCHAR(255) NOT NULL,
+    Description NVARCHAR(MAX),
+    MovedByMembershipID UNIQUEIDENTIFIER,
+    SecondedByMembershipID UNIQUEIDENTIFIER,
+    Result NVARCHAR(50) NOT NULL DEFAULT 'Pending',
+    ResultSummary NVARCHAR(255),
+    YesCount INT,
+    NoCount INT,
+    AbstainCount INT,
+    Notes NVARCHAR(MAX),
+    CONSTRAINT PK_Motion PRIMARY KEY (ID),
+    CONSTRAINT FK_Motion_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
+    CONSTRAINT FK_Motion_AgendaItem FOREIGN KEY (AgendaItemID) REFERENCES Committees.AgendaItem(ID),
+    CONSTRAINT FK_Motion_MovedBy FOREIGN KEY (MovedByMembershipID) REFERENCES Committees.Membership(ID),
+    CONSTRAINT FK_Motion_SecondedBy FOREIGN KEY (SecondedByMembershipID) REFERENCES Committees.Membership(ID),
+    CONSTRAINT CK_Motion_Result CHECK (Result IN ('Pending', 'Passed', 'Failed', 'Tabled', 'Withdrawn'))
+);
+GO
+
+---------------------------------------------------------------------------
+-- Individual vote records per motion
+---------------------------------------------------------------------------
+CREATE TABLE Committees.Vote (
+    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
+    MotionID UNIQUEIDENTIFIER NOT NULL,
+    MembershipID UNIQUEIDENTIFIER NOT NULL,
+    VoteValue NVARCHAR(20) NOT NULL,
+    Notes NVARCHAR(500),
+    CONSTRAINT PK_Vote PRIMARY KEY (ID),
+    CONSTRAINT FK_Vote_Motion FOREIGN KEY (MotionID) REFERENCES Committees.Motion(ID),
+    CONSTRAINT FK_Vote_Membership FOREIGN KEY (MembershipID) REFERENCES Committees.Membership(ID),
+    CONSTRAINT CK_Vote_Value CHECK (VoteValue IN ('Yes', 'No', 'Abstain', 'Absent')),
+    CONSTRAINT UQ_Vote UNIQUE (MotionID, MembershipID)
 );
 GO
 
@@ -350,6 +427,16 @@ EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Notes about ho
 GO
 
 ---------------------------------------------------------------------------
+-- EXTENDED PROPERTIES: ArtifactType table
+---------------------------------------------------------------------------
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Categories of artifacts with optional extension entity for type-specific fields', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Display name for the artifact type', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'Name';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Detailed description of this artifact type', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'Description';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Optional reference to an MJ Entity that provides additional fields for this artifact type via a 1:1 extension table', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'ExtendedEntityID';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Font Awesome icon class for UI display', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'IconClass';
+GO
+
+---------------------------------------------------------------------------
 -- EXTENDED PROPERTIES: Artifact table
 ---------------------------------------------------------------------------
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Links to external documents and files from various providers', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Artifact';
@@ -360,7 +447,41 @@ EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Provider-speci
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Direct URL to access the artifact', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Artifact', @level2type = N'COLUMN', @level2name = N'URL';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'MIME type of the file', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Artifact', @level2type = N'COLUMN', @level2name = N'MimeType';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'File size in bytes', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Artifact', @level2type = N'COLUMN', @level2name = N'FileSize';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Type of artifact: Document, Spreadsheet, Presentation, Minutes, Agenda, Recording, Transcript, Image, Other', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Artifact', @level2type = N'COLUMN', @level2name = N'ArtifactType';
+GO
+
+---------------------------------------------------------------------------
+-- EXTENDED PROPERTIES: Minute table
+---------------------------------------------------------------------------
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Extension entity for Minutes artifacts with approval tracking', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Minute';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Current approval status: Draft, PendingApproval, Approved, Rejected', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Minute', @level2type = N'COLUMN', @level2name = N'ApprovalStatus';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Timestamp when the minutes were approved', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Minute', @level2type = N'COLUMN', @level2name = N'ApprovedAt';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Reference to the meeting at which these minutes were approved (typically the next meeting)', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Minute', @level2type = N'COLUMN', @level2name = N'ApprovedByMeetingID';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Additional notes about the minutes', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Minute', @level2type = N'COLUMN', @level2name = N'Notes';
+GO
+
+---------------------------------------------------------------------------
+-- EXTENDED PROPERTIES: Motion table
+---------------------------------------------------------------------------
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Formal motions put to vote during committee meetings', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Display order when multiple motions exist for the same agenda item', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'Sequence';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Title of the motion', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'Title';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Full text or description of the motion', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'Description';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'The committee member who made the motion', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'MovedByMembershipID';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'The committee member who seconded the motion', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'SecondedByMembershipID';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Outcome of the vote: Pending, Passed, Failed, Tabled, Withdrawn', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'Result';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Human-readable vote tally, e.g. 7-2-1 or Passed unanimously', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'ResultSummary';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Number of Yes votes', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'YesCount';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Number of No votes', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'NoCount';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Number of Abstain votes', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'AbstainCount';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Additional notes about the motion or vote', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Motion', @level2type = N'COLUMN', @level2name = N'Notes';
+GO
+
+---------------------------------------------------------------------------
+-- EXTENDED PROPERTIES: Vote table
+---------------------------------------------------------------------------
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Individual vote records for committee motions', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Vote';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'The vote cast: Yes, No, Abstain, or Absent', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Vote', @level2type = N'COLUMN', @level2name = N'VoteValue';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Optional notes explaining the vote', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Vote', @level2type = N'COLUMN', @level2name = N'Notes';
 GO
 
 ---------------------------------------------------------------------------
@@ -386,3 +507,110 @@ INSERT INTO Committees.Role (Name, Description, IsOfficer, IsVotingRole, Sequenc
 ('Liaison', 'Represents another group or organization', 0, 0, 120),
 ('Advisor', 'Provides expertise without membership', 0, 0, 130);
 GO
+
+---------------------------------------------------------------------------
+-- SEED DATA: Default Artifact Types
+-- ExtendedEntityID is NULL for now; will be populated after CodeGen
+-- registers the Minute entity in the __mj.Entity table
+---------------------------------------------------------------------------
+INSERT INTO Committees.ArtifactType (Name, Description, ExtendedEntityID, IconClass) VALUES
+('Document', 'General document', NULL, 'fa-solid fa-file'),
+('Spreadsheet', 'Spreadsheet or data file', NULL, 'fa-solid fa-file-excel'),
+('Presentation', 'Slide deck or presentation', NULL, 'fa-solid fa-file-powerpoint'),
+('Minutes', 'Meeting minutes with approval tracking', NULL, 'fa-solid fa-clipboard-check'),
+('Agenda', 'Meeting agenda document', NULL, 'fa-solid fa-list-check'),
+('Recording', 'Audio or video recording', NULL, 'fa-solid fa-video'),
+('Transcript', 'Meeting transcript', NULL, 'fa-solid fa-closed-captioning'),
+('Image', 'Image or diagram', NULL, 'fa-solid fa-image'),
+('Other', 'Other artifact type', NULL, 'fa-solid fa-file-lines');
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- CODE GEN RUN

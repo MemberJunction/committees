@@ -1,0 +1,194 @@
+{
+  "individualResults": [
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": null,
+      "schemaName": "__mj",
+      "migrations": [],
+      "migrationsExecuted": 0,
+      "success": false,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-01-30T15:28:44.413453",
+      "operation": "migrate",
+      "exception": "Migration V202601220001__Committees_Schema_and_Tables.sql failed\n----------------------------------------------------------------\nSQL State  : S0000\nError Code : 1767\nMessage    : Foreign key \u0027FK_Membership_User\u0027 references invalid table \u0027__mj.User\u0027.\nLocation   : ./migrations/V202601220001__Committees_Schema_and_Tables.sql (/Users/amith/g-drive/develop/committees/./migrations/V202601220001__Committees_Schema_and_Tables.sql)\nLine       : 80\nStatement  : ---------------------------------------------------------------------------\n-- Committee membership (links to MJ User entity)\n---------------------------------------------------------------------------\nCREATE TABLE Committees.Membership (\n    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),\n    CommitteeID UNIQUEIDENTIFIER NOT NULL,\n    UserID UNIQUEIDENTIFIER NOT NULL,\n    RoleID UNIQUEIDENTIFIER NOT NULL,\n    TermID UNIQUEIDENTIFIER,\n    StartDate DATE NOT NULL,\n    EndDate DATE,\n    Status NVARCHAR(50) NOT NULL DEFAULT \u0027Active\u0027,\n    EndReason NVARCHAR(100),\n    Notes NVARCHAR(MAX),\n    CONSTRAINT PK_Membership PRIMARY KEY (ID),\n    CONSTRAINT FK_Membership_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),\n    CONSTRAINT FK_Membership_User FOREIGN KEY (UserID) REFERENCES __mj.[User](ID),\n    CONSTRAINT FK_Membership_Role FOREIGN KEY (RoleID) REFERENCES Committees.Role(ID),\n    CONSTRAINT FK_Membership_Term FOREIGN KEY (TermID) REFERENCES Committees.Term(ID),\n    CONSTRAINT CK_Membership_Status CHECK (Status IN (\u0027Active\u0027, \u0027Pending\u0027, \u0027Ended\u0027, \u0027Suspended\u0027))\n);\n",
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": null,
+      "schemaName": "__mj",
+      "migrations": [],
+      "migrationsExecuted": 0,
+      "success": false,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-01-30T15:29:20.829893",
+      "operation": "migrate",
+      "exception": "Migration V202601220001__Committees_Schema_and_Tables.sql failed\n----------------------------------------------------------------\nSQL State  : S0000\nError Code : 1767\nMessage    : Foreign key \u0027FK_Membership_User\u0027 references invalid table \u0027__mj.User\u0027.\nLocation   : ./migrations/V202601220001__Committees_Schema_and_Tables.sql (/Users/amith/g-drive/develop/committees/./migrations/V202601220001__Committees_Schema_and_Tables.sql)\nLine       : 80\nStatement  : ---------------------------------------------------------------------------\n-- Committee membership (links to MJ User entity)\n---------------------------------------------------------------------------\nCREATE TABLE Committees.Membership (\n    ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),\n    CommitteeID UNIQUEIDENTIFIER NOT NULL,\n    UserID UNIQUEIDENTIFIER NOT NULL,\n    RoleID UNIQUEIDENTIFIER NOT NULL,\n    TermID UNIQUEIDENTIFIER,\n    StartDate DATE NOT NULL,\n    EndDate DATE,\n    Status NVARCHAR(50) NOT NULL DEFAULT \u0027Active\u0027,\n    EndReason NVARCHAR(100),\n    Notes NVARCHAR(MAX),\n    CONSTRAINT PK_Membership PRIMARY KEY (ID),\n    CONSTRAINT FK_Membership_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),\n    CONSTRAINT FK_Membership_User FOREIGN KEY (UserID) REFERENCES __mj.[User](ID),\n    CONSTRAINT FK_Membership_Role FOREIGN KEY (RoleID) REFERENCES Committees.Role(ID),\n    CONSTRAINT FK_Membership_Term FOREIGN KEY (TermID) REFERENCES Committees.Term(ID),\n    CONSTRAINT CK_Membership_Status CHECK (Status IN (\u0027Active\u0027, \u0027Pending\u0027, \u0027Ended\u0027, \u0027Suspended\u0027))\n);\n",
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": "202601270915",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202601122300",
+          "description": "v3.0 Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/B202601122300__v3.0_Baseline.sql",
+          "executionTime": 13947
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200000",
+          "description": "v3.1.x  Add DashboardPartType Table",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601200000__v3.1.x__Add_DashboardPartType_Table.sql",
+          "executionTime": 136
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200001",
+          "description": "v3.1.x  Dashboard Sharing Tables",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601200001__v3.1.x__Dashboard_Sharing_Tables.sql",
+          "executionTime": 191
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200002",
+          "description": "v3.1.x  Add Test Variables Support",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601200002__v3.1.x__Add_Test_Variables_Support.sql",
+          "executionTime": 208
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200003",
+          "description": "v3.1.x  Add Image Generation Models",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601200003__v3.1.x__Add_Image_Generation_Models.sql",
+          "executionTime": 187
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200004",
+          "description": "v3.1.x  Binary Output And Media Description",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601200004__v3.1.x__Binary_Output_And_Media_Description.sql",
+          "executionTime": 150
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211745",
+          "description": "v3.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601211745__v3.1.x__Metadata_Sync.sql",
+          "executionTime": 2518
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211800",
+          "description": "v3.2.x Enterprise File Storage Accounts",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601211800__v3.2.x_Enterprise_File_Storage_Accounts.sql",
+          "executionTime": 72
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211825",
+          "description": "v3.2.x  APIKeys",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601211825__v3.2.x__APIKeys.sql",
+          "executionTime": 148
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221315",
+          "description": "v3.2.x  Unified Notification System",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601221315__v3.2.x__Unified_Notification_System.sql",
+          "executionTime": 148
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221358",
+          "description": "v3.2.x  Virtual Fields Cleanup",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601221358__v3.2.x__Virtual_Fields_Cleanup.sql",
+          "executionTime": 48
+        },
+        {
+          "category": "Versioned",
+          "version": "202601222042",
+          "description": "v3.2.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601222042__v3.2.x__Metadata_Sync.sql",
+          "executionTime": 1202
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251750",
+          "description": "v3.3.x  Add Multi Tenant Scoping To Agent Memory",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601251750__v3.3.x__Add_Multi_Tenant_Scoping_To_Agent_Memory.sql",
+          "executionTime": 323
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251751",
+          "description": "v3.3.x  Add Agent Memory Lifecycle Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601251751__v3.3.x__Add_Agent_Memory_Lifecycle_Fields.sql",
+          "executionTime": 14444
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251753",
+          "description": "v3.3.x  Reranking Framework And Metadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601251753__v3.3.x__Reranking_Framework_And_Metadata.sql",
+          "executionTime": 12894
+        },
+        {
+          "category": "Versioned",
+          "version": "202601261008",
+          "description": "v3.3.x  API Key Scopes Authorization",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601261008__v3.3.x__API_Key_Scopes_Authorization.sql",
+          "executionTime": 14491
+        },
+        {
+          "category": "Versioned",
+          "version": "202601270915",
+          "description": "3.3.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/v3/V202601270915__3.3.x__Metadata_Sync.sql",
+          "executionTime": 1482
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TUhKjzU/migrations/R__RefreshMetadata.sql",
+          "executionTime": 14452
+        }
+      ],
+      "migrationsExecuted": 18,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-01-30T15:29:44.056928",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
+    }
+  ]
+}
