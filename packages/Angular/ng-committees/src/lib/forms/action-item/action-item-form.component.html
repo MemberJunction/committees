@@ -1,118 +1,522 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Task Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="taskDetails"
-        sectionName="Task Details"
-        icon="fa fa-tasks"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Title"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="action-item-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="action-item-icon-wrapper" [ngClass]="priorityColorClass">
+                        <i class="fas fa-tasks"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CommitteeID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                    <div class="action-item-details">
+                        <div class="badge-row">
+                            @if (record.Priority) {
+                                <span class="priority-badge" [ngClass]="priorityColorClass">
+                                    <i [class]="priorityIcon"></i>
+                                    {{ record.Priority }}
+                                </span>
+                            }
+                            @if (record.Status) {
+                                <span class="status-badge" [ngClass]="statusColorClass">
+                                    <i [class]="statusIcon"></i>
+                                    {{ record.Status }}
+                                </span>
+                            }
+                            @if (isOverdue) {
+                                <span class="overdue-badge">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Overdue
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="MeetingID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                        <h1 class="action-item-title">
+                            {{ record.Title || 'New Action Item' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="AgendaItemID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        @if (record.DueDate || daysUntilDue) {
+                            <div class="quick-stats">
+                                @if (record.DueDate) {
+                                    <div class="stat" [class.overdue]="isOverdue">
+                                        <i class="fas fa-calendar-day"></i>
+                                        <span>Due: {{ formatDate(record.DueDate) }}</span>
+                                    </div>
+                                }
+                                @if (daysUntilDue) {
+                                    <div class="stat" [class.overdue]="isOverdue">
+                                        <i class="fas fa-hourglass-half"></i>
+                                        <span>{{ daysUntilDue }}</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-    <!-- Assignment -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="assignment"
-        sectionName="Assignment"
-        icon="fa fa-user-plus"
-        [form]="this"
-        [formContext]="formContext">
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="AssignedToUserID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="AssignedByUserID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
-    </mj-collapsible-panel>
+            <div class="form-content">
+                <div class="cards-grid">
 
-    <!-- Tracking -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="tracking"
-        sectionName="Tracking"
-        icon="fa fa-chart-line"
-        [form]="this"
-        [formContext]="formContext">
+                    <!-- Task Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Task Details</h3>
+                                <p class="card-subtitle">Basic action item information</p>
+                            </div>
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="DueDate"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        <div class="card-body">
+                            <!-- Title -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Title')">
+                                <label class="form-label">
+                                    <i class="fas fa-heading"></i>
+                                    Title
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Title')"
+                                    (keyup)="onFieldInput('Title')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Title"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Title')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['Title'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Priority"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Description"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                            <!-- Committee -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('CommitteeID')">
+                                <label class="form-label">
+                                    <i class="fas fa-users"></i>
+                                    Committee
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="committees"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.CommitteeID"
+                                        [loading]="isLoadingCommittees"
+                                        [filterable]="true"
+                                        (filterChange)="onFieldInput('CommitteeID')"
+                                        (valueChange)="onFieldInput('CommitteeID')"
+                                        name="CommitteeID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a committee...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-users"></i>
+                                        {{ getCommitteeName() || 'Not selected' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('CommitteeID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['CommitteeID'] }}
+                                    </div>
+                                }
+                            </div>
 
-    <!-- Completion -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="completion"
-        sectionName="Completion"
-        icon="fa fa-check-circle"
-        [form]="this"
-        [formContext]="formContext">
+                            <!-- Meeting -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Meeting
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="meetings"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.MeetingID"
+                                        [loading]="isLoadingMeetings"
+                                        [filterable]="true"
+                                        name="MeetingID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a meeting...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ getMeetingName() || 'Not linked to a meeting' }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CompletedAt"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Agenda Item -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-list-ol"></i>
+                                    Agenda Item
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="agendaItems"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.AgendaItemID"
+                                        [loading]="isLoadingAgendaItems"
+                                        [filterable]="true"
+                                        name="AgendaItemID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select an agenda item...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-list-ol"></i>
+                                        {{ getAgendaItemName() || 'Not linked to an agenda item' }}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CompletionNotes"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <!-- Assignment Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Assignment</h3>
+                                <p class="card-subtitle">Who is responsible</p>
+                            </div>
+                        </div>
 
-    <!-- Related: Artifacts -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="artifacts"
-        sectionName="Documents"
-        icon="fa fa-file-alt"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('artifacts')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','ActionItemID')"
-                [NewRecordValues]="NewRecordValues('Artifacts')"
-                [AllowLoad]="IsSectionExpanded('artifacts')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                        <div class="card-body">
+                            <!-- Assigned To -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user-check"></i>
+                                    Assigned To
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="users"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.AssignedToUserID"
+                                        [loading]="isLoadingUsers"
+                                        [filterable]="true"
+                                        name="AssignedToUserID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select assignee...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-user-check"></i>
+                                        {{ getAssignedToName() || 'Unassigned' }}
+                                    </div>
+                                }
+                            </div>
 
-</mj-record-form-container>
+                            <!-- Assigned By -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user-tag"></i>
+                                    Assigned By
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="users"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.AssignedByUserID"
+                                        [loading]="isLoadingUsers"
+                                        [filterable]="true"
+                                        name="AssignedByUserID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select assigner...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-user-tag"></i>
+                                        {{ getAssignedByName() || 'Not specified' }}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Tracking</h3>
+                                <p class="card-subtitle">Priority, status and due date</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Due Date -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('DueDate')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-day"></i>
+                                    Due Date
+                                    @if (record.Status !== 'Completed' && record.Status !== 'Cancelled') {
+                                        <span class="required">*</span>
+                                    } @else {
+                                        <span class="optional">(optional)</span>
+                                    }
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datepicker
+                                        [(ngModel)]="record.DueDate"
+                                        (valueChange)="onDateChange()"
+                                        name="DueDate"
+                                        class="form-datepicker"
+                                        [format]="'MM/dd/yyyy'"
+                                        [placeholder]="'Select due date...'">
+                                    </kendo-datepicker>
+                                } @else {
+                                    <div class="readonly-value" [class.overdue]="isOverdue">
+                                        <i class="fas fa-calendar-day"></i>
+                                        {{ formatDate(record.DueDate) || 'Not set' }}
+                                        @if (daysUntilDue) {
+                                            <span class="due-indicator">({{ daysUntilDue }})</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('DueDate')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['DueDate'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-flag"></i>
+                                    Priority
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="priorities"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.Priority"
+                                        (valueChange)="onStatusChange()"
+                                        name="Priority"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value priority-value" [ngClass]="priorityColorClass">
+                                        <i [class]="priorityIcon"></i>
+                                        {{ record.Priority || 'Medium' }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tasks"></i>
+                                    Status
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="statuses"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.Status"
+                                        (valueChange)="onStatusChange()"
+                                        name="Status"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value status-value" [ngClass]="statusColorClass">
+                                        <i [class]="statusIcon"></i>
+                                        {{ record.Status || 'Pending' }}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Completion</h3>
+                                <p class="card-subtitle">Completion details</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Completed At -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('CompletedAt')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-check"></i>
+                                    Completed At
+                                    @if (record.Status === 'Completed') {
+                                        <span class="required">*</span>
+                                    } @else {
+                                        <span class="optional">(optional)</span>
+                                    }
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datepicker
+                                        [(ngModel)]="record.CompletedAt"
+                                        (valueChange)="onDateChange()"
+                                        name="CompletedAt"
+                                        class="form-datepicker"
+                                        [format]="'MM/dd/yyyy'"
+                                        [placeholder]="'Select completion date...'">
+                                    </kendo-datepicker>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-calendar-check"></i>
+                                        {{ formatDate(record.CompletedAt) || 'Not completed' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('CompletedAt')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['CompletedAt'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Completion Notes -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-sticky-note"></i>
+                                    Completion Notes
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="CompletionNotes"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Artifacts -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['artifacts']">
+                            <div class="section-header" (click)="toggleSection('artifacts')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Documents</h3>
+                                    <p class="section-subtitle">Related files and attachments</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('artifacts') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['artifacts']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','ActionItemID')"
+                                        [NewRecordValues]="NewRecordValues('Artifacts')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>

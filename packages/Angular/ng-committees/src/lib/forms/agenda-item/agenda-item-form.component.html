@@ -1,146 +1,490 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Item Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="itemDetails"
-        sectionName="Item Details"
-        icon="fa fa-list-ol"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Title"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="agenda-item-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="MeetingID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="agenda-item-icon-wrapper">
+                        <i [class]="itemTypeIcon"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="ParentAgendaItemID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                    <div class="agenda-item-details">
+                        <div class="badge-row">
+                            @if (record.ItemType) {
+                                <span class="type-badge">
+                                    <i [class]="itemTypeIcon"></i>
+                                    {{ record.ItemType }}
+                                </span>
+                            }
+                            @if (record.Status) {
+                                <span class="status-badge" [ngClass]="statusColorClass">
+                                    <i [class]="statusIcon"></i>
+                                    {{ record.Status }}
+                                </span>
+                            }
+                            @if (durationDisplay) {
+                                <span class="duration-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ durationDisplay }}
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Sequence"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        <h1 class="agenda-item-title">
+                            {{ record.Title || 'New Agenda Item' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="ItemType"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        @if (record.IsSaved && record.Sequence !== null && record.Sequence !== undefined) {
+                            <div class="quick-stats">
+                                <div class="stat">
+                                    <i class="fas fa-sort-numeric-up"></i>
+                                    <span>Sequence: {{ record.Sequence }}</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-    <!-- Presentation -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="presentation"
-        sectionName="Presentation"
-        icon="fa fa-user"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="PresenterUserID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+            <div class="form-content">
+                <div class="cards-grid">
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="DurationMinutes"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <!-- Item Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Item Details</h3>
+                                <p class="card-subtitle">Basic agenda item information</p>
+                            </div>
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="RelatedDocumentURL"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        <div class="card-body">
+                            <!-- Title -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Title')">
+                                <label class="form-label">
+                                    <i class="fas fa-heading"></i>
+                                    Title
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Title')"
+                                    (keyup)="onFieldInput('Title')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Title"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Title')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['Title'] }}
+                                    </div>
+                                }
+                            </div>
 
-    <!-- Outcome -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="outcome"
-        sectionName="Outcome"
-        icon="fa fa-check-circle"
-        [form]="this"
-        [formContext]="formContext">
+                            <!-- Meeting -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('MeetingID')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Meeting
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="meetings"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.MeetingID"
+                                        [loading]="isLoadingMeetings"
+                                        [filterable]="true"
+                                        (filterChange)="onFieldInput('MeetingID')"
+                                        (valueChange)="onFieldInput('MeetingID')"
+                                        name="MeetingID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a meeting...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ getMeetingName() || 'Not selected' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('MeetingID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['MeetingID'] }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                            <!-- Parent Agenda Item -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-level-up-alt"></i>
+                                    Parent Item
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="parentAgendaItems"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.ParentAgendaItemID"
+                                        [loading]="isLoadingParentItems"
+                                        [filterable]="true"
+                                        name="ParentAgendaItemID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'None (top-level item)' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-level-up-alt"></i>
+                                        {{ getParentAgendaItemName() || 'None (top-level item)' }}
+                                    </div>
+                                }
+                            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Notes"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                            <!-- Item Type -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Item Type
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="itemTypes"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.ItemType"
+                                        (valueChange)="onStatusChange()"
+                                        name="ItemType"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value type-value">
+                                        <i [class]="itemTypeIcon"></i>
+                                        {{ record.ItemType || 'Not specified' }}
+                                    </div>
+                                }
+                            </div>
 
-    <!-- Related: Sub-Items -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="subItems"
-        sectionName="Sub-Items"
-        icon="fa fa-indent"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('subItems')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Agenda Items','ParentAgendaItemID')"
-                [NewRecordValues]="NewRecordValues('Agenda Items')"
-                [AllowLoad]="IsSectionExpanded('subItems')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('subItems', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                            <!-- Sequence -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Sequence')">
+                                <label class="form-label">
+                                    <i class="fas fa-sort-numeric-up"></i>
+                                    Sequence
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Sequence')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Sequence"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Sequence')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['Sequence'] }}
+                                    </div>
+                                }
+                            </div>
 
-    <!-- Related: Action Items -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="actionItems"
-        sectionName="Action Items"
-        icon="fa fa-tasks"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('actionItems')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Action Items','AgendaItemID')"
-                [NewRecordValues]="NewRecordValues('Action Items')"
-                [AllowLoad]="IsSectionExpanded('actionItems')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Description"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Related: Artifacts -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="artifacts"
-        sectionName="Documents"
-        icon="fa fa-file-alt"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('artifacts')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','AgendaItemID')"
-                [NewRecordValues]="NewRecordValues('Artifacts')"
-                [AllowLoad]="IsSectionExpanded('artifacts')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                    <!-- Presentation Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Presentation</h3>
+                                <p class="card-subtitle">Presenter and timing</p>
+                            </div>
+                        </div>
 
-</mj-record-form-container>
+                        <div class="card-body">
+                            <!-- Presenter -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user-tie"></i>
+                                    Presenter
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="users"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.PresenterUserID"
+                                        [loading]="isLoadingUsers"
+                                        [filterable]="true"
+                                        name="PresenterUserID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a presenter...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-user-tie"></i>
+                                        {{ getPresenterName() || 'Not assigned' }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Duration -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('DurationMinutes')">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Duration (minutes)
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('DurationMinutes')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="DurationMinutes"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('DurationMinutes')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['DurationMinutes'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Related Document URL -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-link"></i>
+                                    Related Document URL
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="RelatedDocumentURL"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outcome Card -->
+                    <div class="info-card full-width" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Outcome</h3>
+                                <p class="card-subtitle">Status and notes</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body two-column">
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tasks"></i>
+                                    Status
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="statuses"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.Status"
+                                        (valueChange)="onStatusChange()"
+                                        name="Status"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value status-value" [ngClass]="statusColorClass">
+                                        <i [class]="statusIcon"></i>
+                                        {{ record.Status || 'Pending' }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-sticky-note"></i>
+                                    Notes
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Notes"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Sub-Items -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['subItems']">
+                            <div class="section-header" (click)="toggleSection('subItems')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                    <i class="fas fa-indent"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Sub-Items</h3>
+                                    <p class="section-subtitle">Child agenda items</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('subItems') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['subItems']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Agenda Items','ParentAgendaItemID')"
+                                        [NewRecordValues]="NewRecordValues('Agenda Items')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('subItems', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['actionItems']">
+                            <div class="section-header" (click)="toggleSection('actionItems')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Action Items</h3>
+                                    <p class="section-subtitle">Tasks from this agenda item</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('actionItems') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['actionItems']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Action Items','AgendaItemID')"
+                                        [NewRecordValues]="NewRecordValues('Action Items')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('actionItems', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Artifacts -->
+                        <div class="expandable-section" [class.expanded]="expandedSections['artifacts']">
+                            <div class="section-header" (click)="toggleSection('artifacts')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Documents</h3>
+                                    <p class="section-subtitle">Related files and attachments</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('artifacts') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections['artifacts']) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Artifacts','AgendaItemID')"
+                                        [NewRecordValues]="NewRecordValues('Artifacts')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('artifacts', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>

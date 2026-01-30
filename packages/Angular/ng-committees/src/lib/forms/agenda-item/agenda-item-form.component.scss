@@ -1,0 +1,791 @@
+/* ============================================================================
+   AGENDA ITEM FORM STYLES - INDIGO/VIOLET THEME
+   ============================================================================ */
+
+/* ============================================================================
+   CRITICAL: MJ-FORM-FIELD GRID LAYOUT OVERRIDES
+   These MUST be at the top and use :host to ensure proper scoping
+   ============================================================================ */
+
+:host ::ng-deep mj-form-field[type="textbox"] .record-form-row,
+:host ::ng-deep mj-form-field[ng-reflect-type="textbox"] .record-form-row,
+:host ::ng-deep mj-form-field[type="textarea"] .record-form-row,
+:host ::ng-deep mj-form-field[ng-reflect-type="textarea"] .record-form-row {
+  display: block !important;
+  grid-template-columns: none !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+:host ::ng-deep mj-form-field .record-form-field-container {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+:host ::ng-deep mj-form-field input[type="text"],
+:host ::ng-deep mj-form-field textarea,
+:host ::ng-deep mj-form-field .k-input,
+:host ::ng-deep mj-form-field .k-textbox {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+:host ::ng-deep mj-form-field textarea {
+  min-height: 100px !important;
+  resize: vertical !important;
+}
+
+/* Hide default form toolbar */
+::ng-deep mj-form-toolbar {
+  display: none !important;
+}
+
+/* ============================================================================
+   CSS VARIABLES - DESIGN SYSTEM
+   ============================================================================ */
+
+:host {
+  /* Primary Colors - Indigo/Violet Theme */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #8b5cf6;
+  --primary-600: #7c3aed;
+  --primary-700: #6d28d9;
+  --primary-800: #5b21b6;
+  --primary-900: #4c1d95;
+
+  /* Neutral Colors */
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+
+  /* Semantic Colors */
+  --success-500: #22c55e;
+  --warning-500: #f59e0b;
+  --error-500: #ef4444;
+  --info-500: #3b82f6;
+
+  /* Status Colors */
+  --status-pending: #6b7280;
+  --status-inprogress: #3b82f6;
+  --status-completed: #22c55e;
+  --status-deferred: #f59e0b;
+  --status-cancelled: #ef4444;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   MAIN CONTAINER
+   ============================================================================ */
+
+.record-form-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 100%);
+}
+
+.record-form {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+/* ============================================================================
+   HERO HEADER
+   ============================================================================ */
+
+.agenda-item-hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 50%, var(--primary-900) 100%);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  margin-bottom: var(--space-8);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--primary-300);
+  top: -100px;
+  right: -50px;
+  animation: float 8s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 200px;
+  height: 200px;
+  background: var(--primary-400);
+  bottom: -50px;
+  left: 10%;
+  animation: float 6s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.agenda-item-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+
+  i {
+    font-size: 2rem;
+    color: white;
+  }
+}
+
+.agenda-item-details {
+  flex: 1;
+  min-width: 250px;
+}
+
+.badge-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.type-badge,
+.status-badge,
+.duration-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+.type-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  &.status-pending {
+    background: rgba(107, 114, 128, 0.3);
+  }
+  &.status-inprogress {
+    background: rgba(59, 130, 246, 0.3);
+  }
+  &.status-completed {
+    background: rgba(34, 197, 94, 0.3);
+  }
+  &.status-deferred {
+    background: rgba(245, 158, 11, 0.3);
+  }
+  &.status-cancelled {
+    background: rgba(239, 68, 68, 0.3);
+  }
+}
+
+.duration-badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.agenda-item-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.2;
+}
+
+.quick-stats {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+
+  i {
+    color: var(--primary-300);
+  }
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.btn-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 0.875rem;
+  }
+
+  &.btn-save {
+    background: white;
+    color: var(--primary-700);
+
+    &:hover {
+      background: var(--primary-50);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  &.btn-edit {
+    background: white;
+    color: var(--primary-700);
+
+    &:hover {
+      background: var(--primary-50);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  &.btn-cancel {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+/* ============================================================================
+   FORM CONTENT
+   ============================================================================ */
+
+.form-content {
+  padding: 0 var(--space-4);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   INFO CARDS
+   ============================================================================ */
+
+.info-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--neutral-200);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  &.edit-mode {
+    border-color: var(--primary-300);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1), var(--shadow-lg);
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: linear-gradient(135deg, var(--neutral-50) 0%, white 100%);
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 1.25rem;
+    color: white;
+  }
+}
+
+.card-title-section {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.card-subtitle {
+  font-size: 0.875rem;
+  color: var(--neutral-500);
+  margin: 0;
+}
+
+.card-body {
+  padding: var(--space-5);
+
+  &.two-column {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+/* ============================================================================
+   FORM GROUPS
+   ============================================================================ */
+
+.form-group {
+  margin-bottom: var(--space-5);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--neutral-700);
+  margin-bottom: var(--space-2);
+
+  i {
+    color: var(--neutral-400);
+    font-size: 0.875rem;
+  }
+
+  .required {
+    color: var(--error-500);
+    font-weight: 600;
+  }
+
+  .optional {
+    color: var(--neutral-400);
+    font-weight: 400;
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================================================
+   FORM DROPDOWNS
+   ============================================================================ */
+
+.form-dropdown {
+  width: 100% !important;
+
+  ::ng-deep {
+    .k-dropdown-wrap,
+    .k-picker-wrap {
+      border-radius: var(--radius-md) !important;
+      border-color: var(--neutral-300) !important;
+      background: white !important;
+      min-height: 42px !important;
+
+      &:hover {
+        border-color: var(--primary-400) !important;
+      }
+
+      &.k-focus,
+      &.k-state-focused {
+        border-color: var(--primary-500) !important;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15) !important;
+      }
+    }
+
+    .k-input-inner {
+      padding: var(--space-2) var(--space-3) !important;
+    }
+  }
+}
+
+/* ============================================================================
+   READONLY VALUES
+   ============================================================================ */
+
+.readonly-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  color: var(--neutral-700);
+  font-size: 0.9375rem;
+  border: 1px solid var(--neutral-200);
+
+  i {
+    color: var(--neutral-400);
+  }
+
+  &.type-value {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-color: var(--primary-200);
+
+    i {
+      color: var(--primary-500);
+    }
+  }
+
+  &.status-value {
+    font-weight: 500;
+
+    &.status-pending {
+      background: rgba(107, 114, 128, 0.1);
+      color: var(--status-pending);
+      border-color: rgba(107, 114, 128, 0.2);
+    }
+    &.status-inprogress {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--status-inprogress);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    &.status-completed {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--status-completed);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    &.status-deferred {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--status-deferred);
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+    &.status-cancelled {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--status-cancelled);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+/* ============================================================================
+   VALIDATION ERRORS
+   ============================================================================ */
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--error-500);
+  font-size: 0.8125rem;
+  font-weight: 500;
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================================================
+   RELATED SECTIONS
+   ============================================================================ */
+
+.related-sections {
+  margin-top: var(--space-8);
+}
+
+.expandable-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-4);
+  overflow: hidden;
+  border: 1px solid var(--neutral-200);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  &.expanded {
+    .section-toggle {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: var(--neutral-50);
+  }
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 1rem;
+    color: white;
+  }
+}
+
+.section-title-area {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: 0.8125rem;
+  color: var(--neutral-500);
+  margin: var(--space-1) 0 0 0;
+}
+
+.section-badge {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.section-toggle {
+  color: var(--neutral-400);
+  transition: transform 0.2s ease;
+}
+
+.section-body {
+  padding: var(--space-5);
+  border-top: 1px solid var(--neutral-100);
+  background: var(--neutral-50);
+}
+
+/* ============================================================================
+   MJ-FORM-FIELD OVERRIDES
+   ============================================================================ */
+
+::ng-deep {
+  mj-form-field {
+    display: block;
+    width: 100%;
+
+    .record-form-row {
+      display: block !important;
+      width: 100% !important;
+    }
+
+    .record-form-field-container {
+      width: 100% !important;
+    }
+
+    input[type="text"],
+    textarea,
+    .k-input,
+    .k-textbox {
+      width: 100% !important;
+      border-radius: var(--radius-md) !important;
+      border-color: var(--neutral-300) !important;
+      padding: var(--space-2) var(--space-3) !important;
+      font-size: 0.9375rem !important;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        border-color: var(--primary-400) !important;
+      }
+
+      &:focus {
+        border-color: var(--primary-500) !important;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15) !important;
+        outline: none !important;
+      }
+    }
+
+    textarea {
+      min-height: 100px !important;
+      resize: vertical !important;
+    }
+
+    /* Read-only styling */
+    .k-input.k-readonly,
+    input[readonly],
+    textarea[readonly] {
+      background: var(--neutral-50) !important;
+      border-color: var(--neutral-200) !important;
+      color: var(--neutral-600) !important;
+      cursor: default !important;
+    }
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .record-form {
+    padding: var(--space-4);
+  }
+
+  .agenda-item-hero {
+    padding: var(--space-5);
+  }
+
+  .hero-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .agenda-item-icon-wrapper {
+    width: 60px;
+    height: 60px;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+
+  .agenda-item-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+
+    .btn-hero {
+      justify-content: center;
+    }
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
