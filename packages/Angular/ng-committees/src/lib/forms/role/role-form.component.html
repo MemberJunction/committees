@@ -1,69 +1,280 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Role Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="roleDetails"
-        sectionName="Role Details"
-        icon="fa fa-user-tag"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Name"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="role-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="role-icon-wrapper">
+                        <i class="fas fa-user-tag"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Sequence"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <div class="role-details">
+                        <div class="badge-row">
+                            @if (record.IsOfficer) {
+                                <span class="officer-badge">
+                                    <i class="fas fa-star"></i>
+                                    Officer Role
+                                </span>
+                            }
+                            @if (record.IsVotingRole) {
+                                <span class="voting-badge">
+                                    <i class="fas fa-vote-yea"></i>
+                                    Voting Role
+                                </span>
+                            }
+                            @if (!record.IsOfficer && !record.IsVotingRole) {
+                                <span class="standard-badge">
+                                    <i class="fas fa-user"></i>
+                                    Standard Role
+                                </span>
+                            }
+                        </div>
 
-    <!-- Permissions & Settings -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="permissions"
-        sectionName="Permissions & Settings"
-        icon="fa fa-cog"
-        [form]="this"
-        [formContext]="formContext">
+                        <h1 class="role-name">
+                            {{ record.Name || 'New Role' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IsOfficer"
-            Type="checkbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        @if (record.Description) {
+                            <p class="role-description">{{ record.Description }}</p>
+                        }
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IsVotingRole"
-            Type="checkbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        @if (record.IsSaved && record.Sequence !== null && record.Sequence !== undefined) {
+                            <div class="quick-stats">
+                                <div class="stat">
+                                    <i class="fas fa-sort-numeric-up"></i>
+                                    <span>Sequence: {{ record.Sequence }}</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="DefaultPermissionsJSON"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-    <!-- Related: Memberships -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="memberships"
-        sectionName="Memberships"
-        icon="fa fa-users"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('memberships')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Memberships','RoleID')"
-                [NewRecordValues]="NewRecordValues('Memberships')"
-                [AllowLoad]="IsSectionExpanded('memberships')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-</mj-record-form-container>
+            <div class="form-content">
+                <div class="cards-grid">
+
+                    <!-- Role Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Role Details</h3>
+                                <p class="card-subtitle">Basic role information</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Name -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Name')">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Role Name
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Name')"
+                                    (keyup)="onFieldInput('Name')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Name"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Name')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.Name }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Description"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <!-- Sequence -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Sequence')">
+                                <label class="form-label">
+                                    <i class="fas fa-sort-numeric-up"></i>
+                                    Display Order
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Sequence')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Sequence"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Sequence')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.Sequence }}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permissions & Settings Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Permissions & Settings</h3>
+                                <p class="card-subtitle">Role capabilities</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- IsOfficer -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-star"></i>
+                                    Officer Status
+                                </label>
+                                <label class="checkbox-wrapper">
+                                    <input
+                                        type="checkbox"
+                                        [(ngModel)]="record.IsOfficer"
+                                        [disabled]="!EditMode"
+                                        name="IsOfficer"
+                                        class="checkbox-input">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">This is an officer role</span>
+                                </label>
+                                <p class="field-hint">Officer roles typically have elevated privileges and responsibilities.</p>
+                            </div>
+
+                            <!-- IsVotingRole -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-vote-yea"></i>
+                                    Voting Rights
+                                </label>
+                                <label class="checkbox-wrapper">
+                                    <input
+                                        type="checkbox"
+                                        [(ngModel)]="record.IsVotingRole"
+                                        [disabled]="!EditMode"
+                                        name="IsVotingRole"
+                                        class="checkbox-input">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">Members with this role can vote</span>
+                                </label>
+                                <p class="field-hint">Voting roles can participate in committee decisions and elections.</p>
+                            </div>
+
+                            <!-- DefaultPermissionsJSON -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-code"></i>
+                                    Default Permissions (JSON)
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="DefaultPermissionsJSON"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                <p class="field-hint">JSON configuration for default role permissions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Memberships -->
+                        <div class="expandable-section" [class.expanded]="expandedSections.memberships">
+                            <div class="section-header" (click)="toggleSection('memberships')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Memberships</h3>
+                                    <p class="section-subtitle">Members assigned this role</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('memberships') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections.memberships) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Memberships','RoleID')"
+                                        [NewRecordValues]="NewRecordValues('Memberships')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>
