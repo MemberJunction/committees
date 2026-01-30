@@ -1,56 +1,324 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Term Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="termDetails"
-        sectionName="Term Details"
-        icon="fa fa-calendar-check"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Name"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="term-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CommitteeID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="term-icon-wrapper">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="StartDate"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="term-details">
+                        <div class="badge-row">
+                            <span class="status-badge" [class]="'status-' + (record.Status?.toLowerCase() || 'pending')">
+                                <span class="pulse-dot"></span>
+                                {{ record.Status || 'Pending' }}
+                            </span>
+                            @if (termDurationDisplay) {
+                                <span class="duration-badge">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    {{ termDurationDisplay }}
+                                </span>
+                            }
+                            @if (daysRemainingDisplay) {
+                                <span class="remaining-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ daysRemainingDisplay }}
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndDate"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        <h1 class="term-name">
+                            {{ record.Name || 'New Term' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        @if (record.Committee) {
+                            <p class="term-committee">
+                                <i class="fas fa-users"></i>
+                                {{ record.Committee }}
+                            </p>
+                        }
 
-    <!-- Related: Memberships -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="memberships"
-        sectionName="Memberships"
-        icon="fa fa-users"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('memberships')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Memberships','TermID')"
-                [NewRecordValues]="NewRecordValues('Memberships')"
-                [AllowLoad]="IsSectionExpanded('memberships')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                        @if (record.IsSaved && record.StartDate) {
+                            <div class="quick-stats">
+                                <div class="stat">
+                                    <i class="fas fa-play-circle"></i>
+                                    <span>{{ formatDate(record.StartDate) }}</span>
+                                </div>
+                                @if (record.EndDate) {
+                                    <div class="stat">
+                                        <i class="fas fa-stop-circle"></i>
+                                        <span>{{ formatDate(record.EndDate) }}</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-</mj-record-form-container>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
+
+            <div class="form-content">
+                <div class="cards-grid">
+
+                    <!-- Term Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Term Details</h3>
+                                <p class="card-subtitle">Basic term information</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Name -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Name')">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Term Name
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Name')"
+                                    (keyup)="onFieldInput('Name')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Name"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Name')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.Name }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- CommitteeID -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('CommitteeID')">
+                                <label class="form-label">
+                                    <i class="fas fa-users"></i>
+                                    Committee
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <div class="dropdown-wrapper">
+                                        @if (isLoadingCommittees) {
+                                            <div class="dropdown-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <span>Loading committees...</span>
+                                            </div>
+                                        } @else {
+                                            <kendo-dropdownlist
+                                                [data]="committees"
+                                                textField="Name"
+                                                valueField="ID"
+                                                [(ngModel)]="record.CommitteeID"
+                                                [valuePrimitive]="true"
+                                                [defaultItem]="{ ID: null, Name: 'Select a committee...' }"
+                                                name="CommitteeID"
+                                                class="form-dropdown">
+                                            </kendo-dropdownlist>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="field-display">
+                                        @if (record.CommitteeID) {
+                                            <span class="field-value">{{ record.Committee }}</span>
+                                        } @else {
+                                            <span class="field-empty">No committee selected</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('CommitteeID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.CommitteeID }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-traffic-light"></i>
+                                    Status
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Status"
+                                    Type="dropdownlist"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Schedule</h3>
+                                <p class="card-subtitle">Term dates</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if (showStatusTransitionInfo) {
+                                <div class="info-banner">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>{{ statusTransitionMessage }}</p>
+                                </div>
+                            }
+
+                            <!-- StartDate -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('StartDate')">
+                                <label class="form-label">
+                                    <i class="fas fa-play-circle"></i>
+                                    Start Date
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="StartDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext"
+                                    (ValueChange)="onDateChange()">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('StartDate')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.StartDate }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- EndDate -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('EndDate')">
+                                <label class="form-label">
+                                    <i class="fas fa-stop-circle"></i>
+                                    End Date
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="EndDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext"
+                                    (ValueChange)="onDateChange()">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('EndDate')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.EndDate }}
+                                    </div>
+                                }
+                                <p class="field-hint">Leave empty for an ongoing term with no defined end date.</p>
+                            </div>
+
+                            <!-- Duration Summary -->
+                            @if (record.StartDate) {
+                                <div class="duration-summary">
+                                    <div class="duration-icon">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </div>
+                                    <div class="duration-content">
+                                        <div class="duration-label">Term Duration</div>
+                                        <div class="duration-value">{{ termDurationDisplay }}</div>
+                                        @if (daysRemainingDisplay && record.Status === 'Active') {
+                                            <div class="duration-remaining">{{ daysRemainingDisplay }}</div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Memberships -->
+                        <div class="expandable-section" [class.expanded]="expandedSections.memberships">
+                            <div class="section-header" (click)="toggleSection('memberships')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Memberships</h3>
+                                    <p class="section-subtitle">Members serving during this term</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('memberships') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections.memberships) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Memberships','TermID')"
+                                        [NewRecordValues]="NewRecordValues('Memberships')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('memberships', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>

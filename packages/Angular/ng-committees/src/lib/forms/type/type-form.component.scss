@@ -1,0 +1,1022 @@
+/* ============================================================================
+ * MODERN TYPE FORM - CONSISTENT WITH COMMITTEE/MEMBERSHIP FORM DESIGN
+ * ============================================================================
+ *
+ * Adapted from role-form.component.scss for visual consistency
+ * Uses a teal/cyan color scheme to differentiate from other forms
+ * ============================================================================
+ */
+
+/* CRITICAL: Override external mj-form-field grid layout - MUST be at top level */
+:host ::ng-deep mj-form-field[type="textbox"] .record-form-row,
+:host ::ng-deep mj-form-field[ng-reflect-type="textbox"] .record-form-row,
+:host ::ng-deep mj-form-field[type="textarea"] .record-form-row,
+:host ::ng-deep mj-form-field[ng-reflect-type="textarea"] .record-form-row {
+  display: block !important;
+  grid-template-columns: none !important;
+  width: 100% !important;
+  max-width: none !important;
+
+  > * {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Container Structure */
+.record-form-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.record-form {
+  display: flex;
+  flex-direction: column;
+  background-color: #F5F6FA;
+  padding: 0;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Hide the default form toolbar since we have custom buttons in hero header */
+::ng-deep mj-form-toolbar {
+  display: none !important;
+}
+
+:host {
+  /* === MODERN COLOR PALETTE - Teal/Cyan Theme === */
+  --primary-gradient: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+
+  /* Primary Colors */
+  --primary-50: #f0fdfa;
+  --primary-100: #ccfbf1;
+  --primary-500: #14b8a6;
+  --primary-600: #0d9488;
+  --primary-700: #0f766e;
+
+  /* Accent Colors */
+  --accent-500: #06b6d4;
+  --accent-600: #0891b2;
+
+  /* Semantic Colors */
+  --success-500: #10b981;
+  --success-600: #059669;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+
+  /* Neutral Scale */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* === SPACING SYSTEM (8px grid) === */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* === TYPOGRAPHY SCALE === */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* === ELEVATION SYSTEM === */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* === TRANSITIONS === */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: block;
+  position: relative;
+}
+
+/* ============================================================================
+ * HERO HEADER SECTION
+ * ============================================================================ */
+
+.type-hero {
+  position: relative;
+  background: var(--primary-gradient);
+  padding: var(--space-4) var(--space-6);
+  overflow: hidden;
+  margin: 0 0 var(--space-6) 0;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px -4px rgba(20, 184, 166, 0.3),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  }
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+
+  .gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+
+    &.orb-1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    &.orb-2 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+      bottom: -50px;
+      right: -50px;
+      animation-delay: -10s;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.type-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(30px);
+  border-radius: var(--radius-xl);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent);
+  }
+
+  i {
+    font-size: var(--text-xl);
+    color: white;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+}
+
+.type-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.badge-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.standards-badge,
+.general-badge,
+.term-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px var(--space-3);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-base);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  i {
+    font-size: 9px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+  }
+}
+
+.standards-badge {
+  background: rgba(251, 191, 36, 0.3);
+  border-color: rgba(251, 191, 36, 0.5);
+
+  i {
+    color: #fbbf24;
+  }
+}
+
+.term-badge {
+  background: rgba(6, 182, 212, 0.3);
+  border-color: rgba(6, 182, 212, 0.5);
+
+  i {
+    color: #22d3ee;
+  }
+}
+
+.type-name {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: white;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25),
+               0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.type-description {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: rgba(255, 255, 255, 0.95);
+  line-height: var(--leading-normal);
+  max-width: 500px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.btn-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-lg);
+  color: white;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-width: 100px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(0.99);
+  }
+
+  &.btn-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.4);
+      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  i {
+    font-size: var(--text-sm);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  }
+}
+
+
+/* ============================================================================
+ * FORM CONTENT - CARD GRID
+ * ============================================================================ */
+
+.form-content {
+  max-width: 100%;
+  margin: 0;
+  padding: 0 var(--space-6) var(--space-8) var(--space-6);
+  flex: 1;
+  min-height: 0;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.info-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+  border-bottom: 2px solid var(--gray-100);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+
+  i {
+    font-size: var(--text-xl);
+    color: white;
+  }
+}
+
+.card-title-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--gray-900);
+  line-height: var(--leading-tight);
+}
+
+.card-subtitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--leading-normal);
+}
+
+.card-body {
+  padding: var(--space-6) var(--space-3);
+
+  ::ng-deep mj-form-field,
+  ::ng-deep mj-form-field > *,
+  ::ng-deep mj-form-field > * > *,
+  ::ng-deep mj-form-field kendo-textbox,
+  ::ng-deep mj-form-field kendo-dropdownlist,
+  ::ng-deep mj-form-field kendo-combobox,
+  ::ng-deep mj-form-field .k-dropdown,
+  ::ng-deep mj-form-field input[type="text"] {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    display: block !important;
+  }
+
+  /* Exclude dropdown internal elements from 100% width - they need flex behavior */
+  ::ng-deep kendo-dropdownlist .k-input-inner,
+  ::ng-deep kendo-dropdownlist .k-input,
+  ::ng-deep .k-dropdownlist .k-input-inner,
+  ::ng-deep .k-dropdownlist .k-input {
+    width: auto !important;
+    flex: 1 1 auto !important;
+  }
+
+}
+
+/* ============================================================================
+ * FORM FIELDS
+ * ============================================================================ */
+
+.form-group {
+  margin-bottom: var(--space-5);
+  width: 100%;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  > div {
+    width: 100% !important;
+    max-width: none !important;
+
+    > * {
+      width: 100% !important;
+      max-width: none !important;
+    }
+  }
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  i {
+    font-size: var(--text-sm);
+    color: var(--primary-500);
+  }
+
+  .required {
+    color: var(--error-500);
+    margin-left: var(--space-1);
+  }
+
+  .optional {
+    color: var(--gray-400);
+    margin-left: var(--space-1);
+    font-weight: var(--font-normal);
+    font-size: var(--text-xs);
+    text-transform: lowercase;
+  }
+}
+
+.field-hint {
+  margin: var(--space-2) 0 0 0;
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  line-height: var(--leading-relaxed);
+}
+
+/* ============================================================================
+ * CHECKBOX STYLES
+ * ============================================================================ */
+
+.checkbox-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--gray-100);
+  }
+
+  .checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+
+    &::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border: 2px solid white;
+      border-top: none;
+      border-right: none;
+      transform: rotate(-45deg) scale(0);
+      transition: transform var(--transition-fast);
+      margin-top: -2px;
+    }
+  }
+
+  .checkbox-input:checked + .checkbox-custom {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+
+    &::after {
+      transform: rotate(-45deg) scale(1);
+    }
+  }
+
+  .checkbox-input:disabled + .checkbox-custom {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .checkbox-input:focus-visible + .checkbox-custom {
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3);
+  }
+
+  .checkbox-label {
+    font-size: var(--text-sm);
+    color: var(--gray-700);
+    font-weight: var(--font-medium);
+    line-height: 1;
+  }
+}
+
+/* ============================================================================
+ * VALIDATION & INFO BANNERS
+ * ============================================================================ */
+
+.field-error {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid var(--error-500);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--error-600);
+  animation: slideInRight var(--transition-base);
+  line-height: 1.5;
+
+  i {
+    font-size: var(--text-sm);
+    margin-right: var(--space-2);
+    vertical-align: middle;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================================
+ * RELATED SECTIONS - EXPANDABLE
+ * ============================================================================ */
+
+.related-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.expandable-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  &.expanded {
+    .section-toggle {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+  cursor: pointer;
+  transition: all var(--transition-base);
+
+  &:hover {
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+  }
+}
+
+.section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+
+  i {
+    font-size: var(--text-xl);
+    color: white;
+  }
+}
+
+.section-title-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-title {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--gray-900);
+  line-height: var(--leading-tight);
+}
+
+.section-subtitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--leading-normal);
+}
+
+.section-badge {
+  padding: var(--space-1) var(--space-3);
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-toggle {
+  font-size: var(--text-lg);
+  color: var(--gray-400);
+  transition: transform var(--transition-base);
+}
+
+.section-body {
+  padding: var(--space-6);
+  border-top: 2px solid var(--gray-100);
+  animation: expandSection var(--transition-slow);
+}
+
+@keyframes expandSection {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+ * FIELD COMPONENT OVERRIDES
+ * ============================================================================ */
+
+/* Override external mj-form-field grid layout */
+/* Only apply to textbox and textarea fields, NOT datepicker or dropdownlist */
+::ng-deep mj-form-field[type="textbox"] .record-form-row,
+::ng-deep mj-form-field[ng-reflect-type="textbox"] .record-form-row,
+::ng-deep mj-form-field[type="textarea"] .record-form-row,
+::ng-deep mj-form-field[ng-reflect-type="textarea"] .record-form-row {
+  display: block !important;
+  grid-template-columns: none !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+::ng-deep mj-form-field {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+
+  /* Force textbox/textarea wrappers to full width */
+  &[type="textbox"],
+  &[ng-reflect-type="textbox"],
+  &[type="textarea"],
+  &[ng-reflect-type="textarea"] {
+    > *,
+    > * > *,
+    > * > * > * {
+      width: 100% !important;
+      max-width: none !important;
+    }
+  }
+
+  /* Textbox and textarea - full width */
+  kendo-textbox,
+  kendo-textarea,
+  .k-textbox,
+  .k-textarea {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    padding: var(--space-3) var(--space-4) !important;
+    border: 2px solid var(--gray-200) !important;
+    border-radius: var(--radius-md) !important;
+    font-size: var(--text-base) !important;
+    transition: all var(--transition-fast) !important;
+
+    &:focus {
+      border-color: var(--primary-500) !important;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1) !important;
+      outline: none !important;
+    }
+
+    &::placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1 !important;
+      font-style: italic !important;
+    }
+  }
+
+  textarea {
+    min-height: 100px !important;
+    resize: vertical !important;
+  }
+}
+
+::ng-deep .form-group {
+  mj-form-field {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    * {
+      box-sizing: border-box !important;
+    }
+  }
+
+  /* Textbox and textarea - force full width */
+  mj-form-field[type="textbox"],
+  mj-form-field[ng-reflect-type="textbox"],
+  mj-form-field[type="textarea"],
+  mj-form-field[ng-reflect-type="textarea"] {
+    .record-form-row {
+      display: block !important;
+      grid-template-columns: none !important;
+      width: 100% !important;
+      max-width: none !important;
+    }
+
+    > * {
+      display: block !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+    }
+  }
+
+  kendo-textbox {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    .k-input-inner,
+    .k-input-value-text,
+    .k-input,
+    input {
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+    }
+  }
+}
+
+
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================ */
+
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--space-4);
+  }
+
+  .type-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .type-description {
+    text-align: center;
+  }
+
+  .form-content {
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .type-hero {
+    padding: var(--space-8) 0;
+  }
+
+  .hero-content {
+    padding: 0 var(--space-4);
+  }
+
+  .form-content {
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
+  }
+
+  .type-name {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* ============================================================================
+ * ANIMATIONS & MICRO-INTERACTIONS
+ * ============================================================================ */
+
+.info-card {
+  animation: fadeInUp 0.4s ease-out backwards;
+
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: calc(#{$i} * 0.05s);
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+ * ACCESSIBILITY
+ * ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

@@ -1,55 +1,263 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Type Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="typeDetails"
-        sectionName="Type Details"
-        icon="fa fa-tag"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Name"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <div class="type-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Description"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="type-icon-wrapper">
+                        @if (record.IconClass) {
+                            <i [class]="record.IconClass"></i>
+                        } @else {
+                            <i class="fas fa-layer-group"></i>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IsStandards"
-            Type="checkbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="type-details">
+                        <div class="badge-row">
+                            @if (record.IsStandards) {
+                                <span class="standards-badge">
+                                    <i class="fas fa-certificate"></i>
+                                    Standards Committee
+                                </span>
+                            } @else {
+                                <span class="general-badge">
+                                    <i class="fas fa-sitemap"></i>
+                                    General Committee
+                                </span>
+                            }
+                            @if (record.DefaultTermMonths) {
+                                <span class="term-badge">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {{ termMonthsDisplay }}
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="DefaultTermMonths"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        <h1 class="type-name">
+                            {{ record.Name || 'New Committee Type' }}
+                        </h1>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="IconClass"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        @if (record.Description) {
+                            <p class="type-description">{{ record.Description }}</p>
+                        }
+                    </div>
 
-    <!-- Related: Committees -->
-    <mj-collapsible-panel
-        slot="after-panels"
-        sectionKey="committees"
-        sectionName="Committees"
-        icon="fa fa-users"
-        variant="related-entity"
-        [form]="this"
-        [formContext]="formContext"
-        [badgeCount]="GetSectionRowCount('committees')"
-        [defaultExpanded]="false">
-        <div *ngIf="record.IsSaved">
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Committees','TypeID')"
-                [NewRecordValues]="NewRecordValues('Committees')"
-                [AllowLoad]="IsSectionExpanded('committees')"
-                [ShowToolbar]="false"
-                (AfterDataLoad)="SetSectionRowCount('committees', $event.totalRowCount)">
-            </mj-explorer-entity-data-grid>
-        </div>
-    </mj-collapsible-panel>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-</mj-record-form-container>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
+
+            <div class="form-content">
+                <div class="cards-grid">
+
+                    <!-- Type Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Type Details</h3>
+                                <p class="card-subtitle">Basic type information</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Name -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Name')">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Type Name
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('Name')"
+                                    (keyup)="onFieldInput('Name')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Name"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('Name')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.Name }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Description"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <!-- IconClass -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-icons"></i>
+                                    Icon Class
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="IconClass"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                <p class="field-hint">FontAwesome class (e.g., "fas fa-users", "fas fa-gavel")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Settings</h3>
+                                <p class="card-subtitle">Type configuration</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- IsStandards -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-certificate"></i>
+                                    Standards Committee
+                                </label>
+                                <label class="checkbox-wrapper">
+                                    <input
+                                        type="checkbox"
+                                        [(ngModel)]="record.IsStandards"
+                                        [disabled]="!EditMode"
+                                        name="IsStandards"
+                                        class="checkbox-input">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">This is a standards committee type</span>
+                                </label>
+                                <p class="field-hint">Standards committees follow specific governance and voting procedures.</p>
+                            </div>
+
+                            <!-- DefaultTermMonths -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('DefaultTermMonths')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Default Term Length
+                                    <span class="optional">(months)</span>
+                                </label>
+                                <mj-form-field
+                                    (input)="onFieldInput('DefaultTermMonths')"
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="DefaultTermMonths"
+                                    Type="textbox"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('DefaultTermMonths')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.DefaultTermMonths }}
+                                    </div>
+                                }
+                                <p class="field-hint">
+                                    @if (record.DefaultTermMonths) {
+                                        Current: {{ termMonthsDisplay }}
+                                    } @else {
+                                        Leave empty for no default term length
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ====================================================================
+                    RELATED ENTITIES - EXPANDABLE SECTIONS
+                    ==================================================================== -->
+
+                @if (record.IsSaved) {
+                    <div class="related-sections">
+
+                        <!-- Committees -->
+                        <div class="expandable-section" [class.expanded]="expandedSections.committees">
+                            <div class="section-header" (click)="toggleSection('committees')">
+                                <div class="section-icon" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="section-title-area">
+                                    <h3 class="section-title">Committees</h3>
+                                    <p class="section-subtitle">Committees using this type</p>
+                                </div>
+                                <div class="section-badge">{{ GetSectionRowCount('committees') }}</div>
+                                <i class="fas fa-chevron-right section-toggle"></i>
+                            </div>
+
+                            @if (expandedSections.committees) {
+                                <div class="section-body">
+                                    <mj-explorer-entity-data-grid
+                                        [Params]="BuildRelationshipViewParamsByEntityName('Committees','TypeID')"
+                                        [NewRecordValues]="NewRecordValues('Committees')"
+                                        [AllowLoad]="true"
+                                        [ShowToolbar]="true"
+                                        (AfterDataLoad)="SetSectionRowCount('committees', $event.totalRowCount)">
+                                    </mj-explorer-entity-data-grid>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </form>
+    }
+</div>
