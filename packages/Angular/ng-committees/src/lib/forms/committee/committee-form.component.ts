@@ -11,6 +11,7 @@ import { BaseFormComponent } from '@memberjunction/ng-base-forms';
 import { CommitteeEntityExtended } from '@memberjunction/committees-core';
 import { RunView, ValidationResult } from '@memberjunction/core';
 import { SharedService } from '@memberjunction/ng-shared';
+import { WorkspaceStateManager } from '@memberjunction/ng-base-application';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
@@ -99,7 +100,8 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         sharedService: SharedService,
         public router: Router,
         route: ActivatedRoute,
-        cdr: ChangeDetectorRef
+        cdr: ChangeDetectorRef,
+        private workspaceManager: WorkspaceStateManager
     ) {
         super(elementRef, sharedService, router, route, cdr);
     }
@@ -519,8 +521,11 @@ export class CommitteeFormComponent extends BaseFormComponent implements OnInit,
         this.validationErrors = {};
         this.touchedFields.clear();
 
-        // Navigate back to the committees list
-        this.router.navigate(['/app/committees']);
+        // Close the current tab
+        const activeTabId = this.workspaceManager.GetActiveTabId();
+        if (activeTabId) {
+            this.workspaceManager.CloseTab(activeTabId);
+        }
     }
 
     private showSuccessNotification(message: string): void {

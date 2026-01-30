@@ -1,73 +1,461 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Assignment -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="assignment"
-        sectionName="Assignment"
-        icon="fa fa-user-plus"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="CommitteeID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+            <div class="membership-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="UserID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="membership-icon-wrapper">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="RoleID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                    <div class="membership-details">
+                        <div class="badge-row">
+                            <span class="status-badge" [class]="'status-' + record.Status?.toLowerCase()">
+                                <span class="pulse-dot"></span>
+                                {{ record.Status || 'Active' }}
+                            </span>
+                            @if (isOfficerRole) {
+                                <span class="officer-badge">
+                                    <i class="fas fa-star"></i>
+                                    Officer
+                                </span>
+                            }
+                            @if (record.TermID) {
+                                <span class="term-badge">
+                                    <i class="fas fa-calendar-check"></i>
+                                    {{ selectedTermName }}
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="TermID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        <h1 class="membership-name">
+                            @if (record.IsSaved) {
+                                {{ selectedUserName || 'Member' }}
+                            } @else {
+                                New Membership
+                            }
+                        </h1>
 
-    <!-- Period & Status -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="period"
-        sectionName="Period & Status"
-        icon="fa fa-calendar-alt"
-        [form]="this"
-        [formContext]="formContext">
+                        @if (record.IsSaved && selectedCommitteeName) {
+                            <p class="membership-committee">
+                                <i class="fas fa-users-cog"></i>
+                                {{ selectedCommitteeName }}
+                                @if (selectedRoleName) {
+                                    <span class="role-separator">as</span>
+                                    <strong>{{ selectedRoleName }}</strong>
+                                }
+                            </p>
+                        }
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="StartDate"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                        @if (record.IsSaved) {
+                            <div class="quick-stats">
+                                <div class="stat">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>{{ membershipDays }} days</span>
+                                </div>
+                                @if (record.StartDate) {
+                                    <div class="stat">
+                                        <i class="fas fa-play-circle"></i>
+                                        <span>Since {{ record.StartDate | date:'mediumDate' }}</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndDate"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Status"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="EndReason"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+            <div class="form-content">
+                <div class="cards-grid">
 
-    <!-- Notes -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="notes"
-        sectionName="Notes"
-        icon="fa fa-sticky-note"
-        [form]="this"
-        [formContext]="formContext">
+                    <!-- Assignment Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Assignment</h3>
+                                <p class="card-subtitle">Committee and role assignment</p>
+                            </div>
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Notes"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        <div class="card-body">
+                            <!-- Committee -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('CommitteeID')">
+                                <label class="form-label">
+                                    <i class="fas fa-users-cog"></i>
+                                    Committee
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <div class="dropdown-wrapper">
+                                        @if (isLoadingCommittees) {
+                                            <div class="dropdown-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <span>Loading committees...</span>
+                                            </div>
+                                        } @else {
+                                            <kendo-dropdownlist
+                                                [data]="committees"
+                                                textField="Name"
+                                                valueField="ID"
+                                                [(ngModel)]="record.CommitteeID"
+                                                [valuePrimitive]="true"
+                                                [defaultItem]="{ ID: null, Name: 'Select a committee...' }"
+                                                name="CommitteeID"
+                                                class="form-dropdown"
+                                                (valueChange)="onCommitteeChange()">
+                                            </kendo-dropdownlist>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="field-display">
+                                        @if (record.CommitteeID) {
+                                            <span class="field-value">{{ selectedCommitteeName }}</span>
+                                        } @else {
+                                            <span class="field-empty">No committee selected</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('CommitteeID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.CommitteeID }}
+                                    </div>
+                                }
+                            </div>
 
-</mj-record-form-container>
+                            <!-- User -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('UserID')">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Member
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <div class="dropdown-wrapper">
+                                        @if (isLoadingUsers) {
+                                            <div class="dropdown-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <span>Loading users...</span>
+                                            </div>
+                                        } @else {
+                                            <kendo-dropdownlist
+                                                [data]="users"
+                                                textField="Name"
+                                                valueField="ID"
+                                                [(ngModel)]="record.UserID"
+                                                [valuePrimitive]="true"
+                                                [defaultItem]="{ ID: null, Name: 'Select a member...' }"
+                                                name="UserID"
+                                                class="form-dropdown"
+                                                [filterable]="true">
+                                            </kendo-dropdownlist>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="field-display">
+                                        @if (record.UserID) {
+                                            <span class="field-value">{{ selectedUserName }}</span>
+                                        } @else {
+                                            <span class="field-empty">No member selected</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('UserID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.UserID }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('RoleID')">
+                                <label class="form-label">
+                                    <i class="fas fa-user-tag"></i>
+                                    Role
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <div class="dropdown-wrapper">
+                                        @if (isLoadingRoles) {
+                                            <div class="dropdown-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <span>Loading roles...</span>
+                                            </div>
+                                        } @else {
+                                            <kendo-dropdownlist
+                                                [data]="roles"
+                                                textField="Name"
+                                                valueField="ID"
+                                                [(ngModel)]="record.RoleID"
+                                                [valuePrimitive]="true"
+                                                [defaultItem]="{ ID: null, Name: 'Select a role...' }"
+                                                name="RoleID"
+                                                class="form-dropdown">
+                                            </kendo-dropdownlist>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="field-display">
+                                        @if (record.RoleID) {
+                                            <span class="field-value">
+                                                {{ selectedRoleName }}
+                                                @if (isOfficerRole) {
+                                                    <span class="officer-indicator">
+                                                        <i class="fas fa-star"></i>
+                                                    </span>
+                                                }
+                                            </span>
+                                        } @else {
+                                            <span class="field-empty">No role selected</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('RoleID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.RoleID }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Term (Optional) -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('TermID')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-check"></i>
+                                    Term
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <div class="dropdown-wrapper">
+                                        @if (isLoadingTerms) {
+                                            <div class="dropdown-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <span>Loading terms...</span>
+                                            </div>
+                                        } @else if (!record.CommitteeID) {
+                                            <div class="dropdown-hint">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Select a committee first to see available terms</span>
+                                            </div>
+                                        } @else if (terms.length === 0) {
+                                            <div class="dropdown-hint">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>No terms defined for this committee</span>
+                                            </div>
+                                        } @else {
+                                            <kendo-dropdownlist
+                                                [data]="terms"
+                                                textField="Name"
+                                                valueField="ID"
+                                                [(ngModel)]="record.TermID"
+                                                [valuePrimitive]="true"
+                                                [defaultItem]="{ ID: null, Name: 'No term (ongoing membership)' }"
+                                                name="TermID"
+                                                class="form-dropdown">
+                                            </kendo-dropdownlist>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="field-display">
+                                        @if (record.TermID) {
+                                            <span class="field-value">{{ selectedTermName }}</span>
+                                        } @else {
+                                            <span class="field-empty">No term assigned</span>
+                                        }
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('TermID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.TermID }}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Period & Status Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Period & Status</h3>
+                                <p class="card-subtitle">Membership dates and status</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if (showStatusTransitionInfo) {
+                                <div class="info-banner">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>{{ statusTransitionMessage }}</p>
+                                </div>
+                            }
+
+                            <!-- Start Date -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('StartDate')">
+                                <label class="form-label">
+                                    <i class="fas fa-play-circle"></i>
+                                    Start Date
+                                    <span class="required">*</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="StartDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext"
+                                    (ValueChange)="onDateChange()">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('StartDate')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.StartDate }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('EndDate')">
+                                <label class="form-label">
+                                    <i class="fas fa-stop-circle"></i>
+                                    End Date
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="EndDate"
+                                    Type="datepicker"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext"
+                                    (ValueChange)="onDateChange()">
+                                </mj-form-field>
+                                @if (shouldShowFieldError('EndDate')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors.EndDate }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('Status')">
+                                <label class="form-label">
+                                    <i class="fas fa-traffic-light"></i>
+                                    Status
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Status"
+                                    Type="dropdownlist"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+
+                            <!-- End Reason (shown when status is Ended) -->
+                            @if (record.Status === 'Ended' || record.EndDate) {
+                                <div class="form-group" (focusout)="markFieldAsTouched('EndReason')">
+                                    <label class="form-label">
+                                        <i class="fas fa-comment-alt"></i>
+                                        End Reason
+                                        @if (record.Status === 'Ended') {
+                                            <span class="required">*</span>
+                                        }
+                                    </label>
+                                    <mj-form-field
+                                        (input)="onFieldInput('EndReason')"
+                                        [record]="record"
+                                        [ShowLabel]="false"
+                                        FieldName="EndReason"
+                                        Type="textbox"
+                                        [EditMode]="EditMode"
+                                        [formContext]="formContext">
+                                    </mj-form-field>
+                                    @if (shouldShowFieldError('EndReason')) {
+                                        <div class="field-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ validationErrors.EndReason }}
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Notes Card -->
+                    <div class="info-card notes-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-sticky-note"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Notes</h3>
+                                <p class="card-subtitle">Additional membership information</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Notes
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Notes"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    }
+</div>
