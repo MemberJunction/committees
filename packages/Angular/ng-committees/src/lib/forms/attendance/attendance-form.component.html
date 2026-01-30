@@ -1,49 +1,316 @@
-<mj-record-form-container [record]="record" [formComponent]="this">
+<div class="record-form-container">
+    @if (record) {
+        <form class="record-form" #form="ngForm">
+            <mj-form-toolbar [form]="this"></mj-form-toolbar>
 
-    <!-- Attendance Details -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="attendanceDetails"
-        sectionName="Attendance Details"
-        icon="fa fa-user-check"
-        [form]="this"
-        [formContext]="formContext">
+            <!-- ================================================================
+                 HERO HEADER
+                 ================================================================ -->
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="MeetingID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+            <div class="attendance-hero">
+                <div class="hero-background">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="UserID"
-            Type="textbox" [EditMode]="EditMode" [formContext]="formContext"
-            LinkType="Record" LinkComponentType="Search">
-        </mj-form-field>
+                <div class="hero-content">
+                    <div class="attendance-icon-wrapper" [ngClass]="statusColorClass">
+                        <i [class]="statusIcon"></i>
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="AttendanceStatus"
-            Type="dropdownlist" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="attendance-details">
+                        <div class="badge-row">
+                            <span class="status-badge" [ngClass]="statusColorClass">
+                                <i [class]="statusIcon"></i>
+                                {{ record.AttendanceStatus || 'Expected' }}
+                            </span>
+                            @if (durationDisplay) {
+                                <span class="duration-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ durationDisplay }}
+                                </span>
+                            }
+                        </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="Notes"
-            Type="textarea" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+                        <h1 class="attendance-title">
+                            @if (record.IsSaved) {
+                                Attendance Record
+                            } @else {
+                                New Attendance Record
+                            }
+                        </h1>
 
-    <!-- Timing -->
-    <mj-collapsible-panel
-        slot="field-panels"
-        sectionKey="timing"
-        sectionName="Timing"
-        icon="fa fa-clock"
-        [form]="this"
-        [formContext]="formContext">
+                        @if (record.JoinedAt || record.LeftAt) {
+                            <div class="quick-stats">
+                                @if (record.JoinedAt) {
+                                    <div class="stat">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        <span>Joined: {{ formatDateTime(record.JoinedAt) }}</span>
+                                    </div>
+                                }
+                                @if (record.LeftAt) {
+                                    <div class="stat">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>Left: {{ formatDateTime(record.LeftAt) }}</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="JoinedAt"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
+                    <div class="hero-actions">
+                        @if (EditMode) {
+                            <button class="btn-hero btn-save" (click)="SaveRecord(true)">
+                                <i class="fas fa-save"></i>
+                                <span>Save</span>
+                            </button>
+                            <button class="btn-hero btn-cancel" (click)="handleCancel()">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                        } @else {
+                            <button class="btn-hero btn-edit" (click)="StartEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
 
-        <mj-form-field [record]="record" [ShowLabel]="true" FieldName="LeftAt"
-            Type="datepicker" [EditMode]="EditMode" [formContext]="formContext">
-        </mj-form-field>
-    </mj-collapsible-panel>
+            <!-- ========================================================================
+                MAIN FORM CONTENT - CARD GRID
+                ======================================================================== -->
 
-</mj-record-form-container>
+            <div class="form-content">
+                <div class="cards-grid">
+
+                    <!-- Attendance Details Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Attendance Details</h3>
+                                <p class="card-subtitle">Meeting and participant information</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Meeting -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('MeetingID')">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Meeting
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="meetings"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.MeetingID"
+                                        [loading]="isLoadingMeetings"
+                                        [filterable]="true"
+                                        (filterChange)="onFieldInput('MeetingID')"
+                                        (valueChange)="onFieldInput('MeetingID')"
+                                        name="MeetingID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a meeting...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ getMeetingName() || 'Not selected' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('MeetingID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['MeetingID'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- User -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('UserID')">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    User
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="users"
+                                        textField="Name"
+                                        valueField="ID"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.UserID"
+                                        [loading]="isLoadingUsers"
+                                        [filterable]="true"
+                                        (filterChange)="onFieldInput('UserID')"
+                                        (valueChange)="onFieldInput('UserID')"
+                                        name="UserID"
+                                        class="form-dropdown"
+                                        [defaultItem]="{ ID: null, Name: 'Select a user...' }">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-user"></i>
+                                        {{ getUserName() || 'Not selected' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('UserID')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['UserID'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Attendance Status -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('AttendanceStatus')">
+                                <label class="form-label">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    Status
+                                    <span class="required">*</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-dropdownlist
+                                        [data]="attendanceStatuses"
+                                        textField="Name"
+                                        valueField="Value"
+                                        [valuePrimitive]="true"
+                                        [(ngModel)]="record.AttendanceStatus"
+                                        (valueChange)="onStatusChange()"
+                                        name="AttendanceStatus"
+                                        class="form-dropdown">
+                                    </kendo-dropdownlist>
+                                } @else {
+                                    <div class="readonly-value status-value" [ngClass]="statusColorClass">
+                                        <i [class]="statusIcon"></i>
+                                        {{ record.AttendanceStatus || 'Expected' }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-sticky-note"></i>
+                                    Notes
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                <mj-form-field
+                                    [record]="record"
+                                    [ShowLabel]="false"
+                                    FieldName="Notes"
+                                    Type="textarea"
+                                    [EditMode]="EditMode"
+                                    [formContext]="formContext">
+                                </mj-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timing Card -->
+                    <div class="info-card" [class.edit-mode]="EditMode">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="card-title-section">
+                                <h3 class="card-title">Timing</h3>
+                                <p class="card-subtitle">Join and leave times</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Joined At -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('JoinedAt')">
+                                <label class="form-label">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Joined At
+                                    @if (record.AttendanceStatus === 'Present' || record.AttendanceStatus === 'Partial') {
+                                        <span class="required">*</span>
+                                    } @else {
+                                        <span class="optional">(optional)</span>
+                                    }
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datetimepicker
+                                        [(ngModel)]="record.JoinedAt"
+                                        (valueChange)="onDateChange()"
+                                        name="JoinedAt"
+                                        class="form-datetime"
+                                        [format]="'MM/dd/yyyy HH:mm'"
+                                        [placeholder]="'Select join time...'">
+                                    </kendo-datetimepicker>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        {{ formatDateTime(record.JoinedAt) || 'Not recorded' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('JoinedAt')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['JoinedAt'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Left At -->
+                            <div class="form-group" (focusout)="markFieldAsTouched('LeftAt')">
+                                <label class="form-label">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Left At
+                                    <span class="optional">(optional)</span>
+                                </label>
+                                @if (EditMode) {
+                                    <kendo-datetimepicker
+                                        [(ngModel)]="record.LeftAt"
+                                        (valueChange)="onDateChange()"
+                                        name="LeftAt"
+                                        class="form-datetime"
+                                        [format]="'MM/dd/yyyy HH:mm'"
+                                        [placeholder]="'Select leave time...'">
+                                    </kendo-datetimepicker>
+                                } @else {
+                                    <div class="readonly-value">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        {{ formatDateTime(record.LeftAt) || 'Not recorded' }}
+                                    </div>
+                                }
+                                @if (shouldShowFieldError('LeftAt')) {
+                                    <div class="field-error">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {{ validationErrors['LeftAt'] }}
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Duration Display (Read-only) -->
+                            @if (durationDisplay) {
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-hourglass-half"></i>
+                                        Duration
+                                    </label>
+                                    <div class="readonly-value duration-value">
+                                        <i class="fas fa-stopwatch"></i>
+                                        {{ durationDisplay }}
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    }
+</div>

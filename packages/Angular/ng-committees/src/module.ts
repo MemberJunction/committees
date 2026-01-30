@@ -5,6 +5,7 @@ import { FormToolbarModule } from '@memberjunction/ng-form-toolbar';
 
 // Kendo UI imports
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 
 // MemberJunction imports - these provide the form infrastructure
 import { BaseFormsModule } from '@memberjunction/ng-base-forms';
@@ -43,6 +44,7 @@ imports: [
         FormsModule,
         // Kendo UI modules
         DropDownsModule,
+        DateInputsModule,
         // MemberJunction modules we use in templates
         BaseFormsModule,
         EntityViewerModule,
