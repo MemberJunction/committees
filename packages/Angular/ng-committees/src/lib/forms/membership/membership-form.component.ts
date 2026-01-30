@@ -217,7 +217,7 @@ export class MembershipFormComponent extends BaseFormComponent implements OnInit
         try {
             const rv = new RunView();
             const result = await rv.RunView({
-                EntityName: 'Roles',
+                EntityName: 'Roles__Committees',
                 ExtraFilter: '',
                 OrderBy: 'Sequence, Name',
                 ResultType: 'simple'

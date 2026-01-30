@@ -536,7 +536,6 @@
   ::ng-deep mj-form-field kendo-textbox,
   ::ng-deep mj-form-field kendo-dropdownlist,
   ::ng-deep mj-form-field kendo-combobox,
-  ::ng-deep mj-form-field .k-input,
   ::ng-deep mj-form-field .k-dropdown,
   ::ng-deep mj-form-field input[type="text"] {
     width: 100% !important;
@@ -544,6 +543,16 @@
     min-width: 0 !important;
     display: block !important;
   }
+
+  /* Exclude dropdown internal elements from 100% width - they need flex behavior */
+  ::ng-deep kendo-dropdownlist .k-input-inner,
+  ::ng-deep kendo-dropdownlist .k-input,
+  ::ng-deep .k-dropdownlist .k-input-inner,
+  ::ng-deep .k-dropdownlist .k-input {
+    width: auto !important;
+    flex: 1 1 auto !important;
+  }
+
 }
 
 /* ============================================================================
@@ -607,12 +616,48 @@
   width: 100%;
 }
 
+/* Preserve Kendo dropdownlist internal flex layout */
+::ng-deep kendo-dropdownlist,
+::ng-deep .k-dropdownlist {
+  display: block !important;
+  width: 100% !important;
+
+  .k-picker,
+  .k-dropdown-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .k-input-inner,
+  .k-input {
+    width: auto !important;
+    flex: 1 1 auto !important;
+    display: block !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 32px) !important;
+  }
+
+  .k-button,
+  .k-select,
+  .k-input-button {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 32px !important;
+  }
+}
+
 .form-dropdown {
   width: 100% !important;
 
   ::ng-deep {
     .k-dropdown-wrap,
     .k-picker {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
       border: 2px solid var(--gray-300) !important;
       border-radius: var(--radius-md) !important;
       background: white !important;
@@ -631,10 +676,15 @@
     }
 
     .k-input-inner,
-    .k-input-value-text {
+    .k-input-value-text,
+    .k-input {
+      width: auto !important;
+      flex: 1 1 auto !important;
       font-size: var(--text-base) !important;
       color: var(--gray-900) !important;
       padding: var(--space-2) var(--space-3) !important;
+      min-width: 0 !important;
+      max-width: calc(100% - 32px) !important;
     }
 
     .k-input-inner::placeholder {
@@ -643,7 +693,13 @@
     }
 
     .k-button,
-    .k-select {
+    .k-select,
+    .k-input-button {
+      flex: 0 0 auto !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 32px !important;
       background: transparent !important;
       border: none !important;
       color: var(--gray-500) !important;
@@ -999,10 +1055,7 @@
     }
   }
 
-  kendo-textbox,
-  kendo-dropdownlist,
-  kendo-combobox,
-  kendo-multicolumncombobox {
+  kendo-textbox {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
@@ -1015,6 +1068,39 @@
       width: 100% !important;
       max-width: none !important;
       min-width: 0 !important;
+    }
+  }
+
+  /* Dropdowns need flex layout for button alignment */
+  kendo-dropdownlist,
+  kendo-combobox,
+  kendo-multicolumncombobox {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    .k-picker,
+    .k-dropdown-wrap {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+
+    .k-input-inner,
+    .k-input-value-text,
+    .k-input {
+      width: auto !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      max-width: calc(100% - 32px) !important;
+    }
+
+    .k-button,
+    .k-select,
+    .k-input-button {
+      flex: 0 0 auto !important;
+      width: 32px !important;
     }
   }
 }
