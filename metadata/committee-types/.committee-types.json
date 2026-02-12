@@ -1,0 +1,47 @@
+[
+  {
+    "fields": {
+      "Name": "Board of Directors",
+      "Description": "Governing board with fiduciary responsibility",
+      "IsStandards": false,
+      "DefaultTermMonths": 12,
+      "IconClass": "fa-solid fa-landmark"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Standing Committee",
+      "Description": "Permanent committee with ongoing responsibilities",
+      "IsStandards": false,
+      "DefaultTermMonths": 12,
+      "IconClass": "fa-solid fa-users"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Ad Hoc Committee",
+      "Description": "Temporary committee for specific purpose",
+      "IsStandards": false,
+      "DefaultTermMonths": null,
+      "IconClass": "fa-solid fa-clock"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Workgroup",
+      "Description": "Task-focused group with defined deliverables",
+      "IsStandards": false,
+      "DefaultTermMonths": null,
+      "IconClass": "fa-solid fa-briefcase"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Standards Working Group",
+      "Description": "Committee developing standards or specifications",
+      "IsStandards": true,
+      "DefaultTermMonths": null,
+      "IconClass": "fa-solid fa-file-contract"
+    }
+  }
+]

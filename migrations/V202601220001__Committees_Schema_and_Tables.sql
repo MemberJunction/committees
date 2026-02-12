@@ -212,7 +212,7 @@ CREATE TABLE Committees.ArtifactType (
 GO
 
 ---------------------------------------------------------------------------
--- External artifact links (documents, files, etc.)
+-- Artifact links (documents, files, etc.)
 ---------------------------------------------------------------------------
 CREATE TABLE Committees.Artifact (
     ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
@@ -429,7 +429,7 @@ GO
 ---------------------------------------------------------------------------
 -- EXTENDED PROPERTIES: ArtifactType table
 ---------------------------------------------------------------------------
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Categories of artifacts with optional extension entity for type-specific fields', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Categories of committee artifacts with optional extension entity for type-specific fields', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Display name for the artifact type', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'Name';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Detailed description of this artifact type', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'Description';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Optional reference to an MJ Entity that provides additional fields for this artifact type via a 1:1 extension table', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'ArtifactType', @level2type = N'COLUMN', @level2name = N'ExtendedEntityID';
@@ -485,132 +485,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Optional notes
 GO
 
 ---------------------------------------------------------------------------
--- SEED DATA: Default Committee Types
+-- SEED DATA: Managed via metadata/ folder using mj-sync tool
+-- Run: npx mj-sync push --dir ./metadata
+-- See metadata/ for committee-types, roles, and artifact-types
 ---------------------------------------------------------------------------
-INSERT INTO Committees.Type (Name, Description, IsStandards, DefaultTermMonths, IconClass) VALUES
-('Board of Directors', 'Governing board with fiduciary responsibility', 0, 12, 'fa-solid fa-landmark'),
-('Standing Committee', 'Permanent committee with ongoing responsibilities', 0, 12, 'fa-solid fa-users'),
-('Ad Hoc Committee', 'Temporary committee for specific purpose', 0, NULL, 'fa-solid fa-clock'),
-('Workgroup', 'Task-focused group with defined deliverables', 0, NULL, 'fa-solid fa-briefcase'),
-('Standards Working Group', 'Committee developing standards or specifications', 1, NULL, 'fa-solid fa-file-contract');
-GO
-
----------------------------------------------------------------------------
--- SEED DATA: Default Roles
----------------------------------------------------------------------------
-INSERT INTO Committees.Role (Name, Description, IsOfficer, IsVotingRole, Sequence) VALUES
-('Chair', 'Leads the committee and runs meetings', 1, 1, 10),
-('Vice Chair', 'Supports chair and leads in their absence', 1, 1, 20),
-('Secretary', 'Records minutes and manages documentation', 1, 1, 30),
-('Member', 'Voting member of the committee', 0, 1, 100),
-('Non-Voting Member', 'Participates but does not vote', 0, 0, 110),
-('Liaison', 'Represents another group or organization', 0, 0, 120),
-('Advisor', 'Provides expertise without membership', 0, 0, 130);
-GO
-
----------------------------------------------------------------------------
--- SEED DATA: Default Artifact Types
--- ExtendedEntityID is NULL for now; will be populated after CodeGen
--- registers the Minute entity in the __mj.Entity table
----------------------------------------------------------------------------
-INSERT INTO Committees.ArtifactType (Name, Description, ExtendedEntityID, IconClass) VALUES
-('Document', 'General document', NULL, 'fa-solid fa-file'),
-('Spreadsheet', 'Spreadsheet or data file', NULL, 'fa-solid fa-file-excel'),
-('Presentation', 'Slide deck or presentation', NULL, 'fa-solid fa-file-powerpoint'),
-('Minutes', 'Meeting minutes with approval tracking', NULL, 'fa-solid fa-clipboard-check'),
-('Agenda', 'Meeting agenda document', NULL, 'fa-solid fa-list-check'),
-('Recording', 'Audio or video recording', NULL, 'fa-solid fa-video'),
-('Transcript', 'Meeting transcript', NULL, 'fa-solid fa-closed-captioning'),
-('Image', 'Image or diagram', NULL, 'fa-solid fa-image'),
-('Other', 'Other artifact type', NULL, 'fa-solid fa-file-lines');
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- CODE GEN RUN

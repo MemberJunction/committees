@@ -1,0 +1,18 @@
+[
+  {
+    "fields": {
+      "SchemaName": "Committees",
+      "EntityIDMin": 1,
+      "EntityIDMax": 1000000,
+      "EntityNamePrefix": "Committees: ",
+      "Description": "Committee management app for governance, meetings, and action tracking"
+    },
+    "primaryKey": {
+      "ID": "A57C9A73-3FA7-4336-A8F6-C22C998B4854"
+    },
+    "sync": {
+      "lastModified": "2026-02-12T01:46:31.150Z",
+      "checksum": "90703331227ae1591795b2610ae624f51e713221c0bce1353fb73cd86c20af6f"
+    }
+  }
+]

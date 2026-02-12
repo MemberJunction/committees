@@ -189,6 +189,518 @@
       "operation": "migrate",
       "exception": null,
       "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": null,
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202601122300",
+          "description": "v3.0 Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/B202601122300__v3.0_Baseline.sql",
+          "executionTime": 18526
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200000",
+          "description": "v3.1.x  Add DashboardPartType Table",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601200000__v3.1.x__Add_DashboardPartType_Table.sql",
+          "executionTime": 174
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200001",
+          "description": "v3.1.x  Dashboard Sharing Tables",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601200001__v3.1.x__Dashboard_Sharing_Tables.sql",
+          "executionTime": 261
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200002",
+          "description": "v3.1.x  Add Test Variables Support",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601200002__v3.1.x__Add_Test_Variables_Support.sql",
+          "executionTime": 353
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200003",
+          "description": "v3.1.x  Add Image Generation Models",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601200003__v3.1.x__Add_Image_Generation_Models.sql",
+          "executionTime": 248
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200004",
+          "description": "v3.1.x  Binary Output And Media Description",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601200004__v3.1.x__Binary_Output_And_Media_Description.sql",
+          "executionTime": 209
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211745",
+          "description": "v3.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601211745__v3.1.x__Metadata_Sync.sql",
+          "executionTime": 2942
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211800",
+          "description": "v3.2.x Enterprise File Storage Accounts",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601211800__v3.2.x_Enterprise_File_Storage_Accounts.sql",
+          "executionTime": 97
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211825",
+          "description": "v3.2.x  APIKeys",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601211825__v3.2.x__APIKeys.sql",
+          "executionTime": 204
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221315",
+          "description": "v3.2.x  Unified Notification System",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601221315__v3.2.x__Unified_Notification_System.sql",
+          "executionTime": 198
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221358",
+          "description": "v3.2.x  Virtual Fields Cleanup",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601221358__v3.2.x__Virtual_Fields_Cleanup.sql",
+          "executionTime": 71
+        },
+        {
+          "category": "Versioned",
+          "version": "202601222042",
+          "description": "v3.2.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601222042__v3.2.x__Metadata_Sync.sql",
+          "executionTime": 1367
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251750",
+          "description": "v3.3.x  Add Multi Tenant Scoping To Agent Memory",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601251750__v3.3.x__Add_Multi_Tenant_Scoping_To_Agent_Memory.sql",
+          "executionTime": 492
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251751",
+          "description": "v3.3.x  Add Agent Memory Lifecycle Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601251751__v3.3.x__Add_Agent_Memory_Lifecycle_Fields.sql",
+          "executionTime": 17746
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251753",
+          "description": "v3.3.x  Reranking Framework And Metadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601251753__v3.3.x__Reranking_Framework_And_Metadata.sql",
+          "executionTime": 25898
+        }
+      ],
+      "migrationsExecuted": 15,
+      "success": false,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-01-30T16:10:32.162573",
+      "operation": "migrate",
+      "exception": "Migration V202601261008__v3.3.x__API_Key_Scopes_Authorization.sql failed\n------------------------------------------------------------------------\nSQL State  : S0001\nError Code : 596\nMessage    : Cannot continue the execution because the session is in the kill state.\nLocation   : /var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601261008__v3.3.x__API_Key_Scopes_Authorization.sql (/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TkZ3Kv8/migrations/v3/V202601261008__v3.3.x__API_Key_Scopes_Authorization.sql)\nLine       : 10\nStatement  : -- \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n-- API KEY SCOPES AUTHORIZATION SYSTEM\n-- Adds application binding, hierarchical scopes, and pattern-based access control\n-- \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\n\n-- NEED R Scripts here since we\u0027re modifying tables modified in the last migraiton that is\n-- also part of 3.3\n/* SQL text to recompile all views */\nEXEC [__mj].spRecompileAllViews\n\n/* SQL text to update existing entities from schema */\nEXEC [__mj].spUpdateExistingEntitiesFromSchema @ExcludedSchemaNames\u003d\u0027sys,staging\u0027\n\n/* SQL text to sync schema info from database schemas */\nEXEC [__mj].spUpdateSchemaInfoFromDatabase @ExcludedSchemaNames\u003d\u0027sys,staging\u0027\n\n/* SQL text to delete unneeded entity fields */\nEXEC [__mj].spDeleteUnneededEntityFields @ExcludedSchemaNames\u003d\u0027sys,staging\u0027\n\n/* SQL text to update existing entity fields from schema */\nEXEC [__mj].spUpdateExistingEntityFieldsFromSchema @ExcludedSchemaNames\u003d\u0027sys,staging\u0027\n\n/* SQL text to set default column width where needed */\nEXEC [__mj].spSetDefaultColumnWidthWhereNeeded @ExcludedSchemaNames\u003d\u0027sys,staging\u0027\n\n/* SQL text to recompile all stored procedures in dependency order */\nEXEC [__mj].spRecompileAllProceduresInDependencyOrder @ExcludedSchemaNames\u003d\u0027sys,staging\u0027, @LogOutput\u003d0, @ContinueOnError\u003d1\n",
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": "202601270915",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202601122300",
+          "description": "v3.0 Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/B202601122300__v3.0_Baseline.sql",
+          "executionTime": 17230
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200000",
+          "description": "v3.1.x  Add DashboardPartType Table",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601200000__v3.1.x__Add_DashboardPartType_Table.sql",
+          "executionTime": 166
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200001",
+          "description": "v3.1.x  Dashboard Sharing Tables",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601200001__v3.1.x__Dashboard_Sharing_Tables.sql",
+          "executionTime": 229
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200002",
+          "description": "v3.1.x  Add Test Variables Support",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601200002__v3.1.x__Add_Test_Variables_Support.sql",
+          "executionTime": 337
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200003",
+          "description": "v3.1.x  Add Image Generation Models",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601200003__v3.1.x__Add_Image_Generation_Models.sql",
+          "executionTime": 267
+        },
+        {
+          "category": "Versioned",
+          "version": "202601200004",
+          "description": "v3.1.x  Binary Output And Media Description",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601200004__v3.1.x__Binary_Output_And_Media_Description.sql",
+          "executionTime": 225
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211745",
+          "description": "v3.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601211745__v3.1.x__Metadata_Sync.sql",
+          "executionTime": 2933
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211800",
+          "description": "v3.2.x Enterprise File Storage Accounts",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601211800__v3.2.x_Enterprise_File_Storage_Accounts.sql",
+          "executionTime": 115
+        },
+        {
+          "category": "Versioned",
+          "version": "202601211825",
+          "description": "v3.2.x  APIKeys",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601211825__v3.2.x__APIKeys.sql",
+          "executionTime": 215
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221315",
+          "description": "v3.2.x  Unified Notification System",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601221315__v3.2.x__Unified_Notification_System.sql",
+          "executionTime": 229
+        },
+        {
+          "category": "Versioned",
+          "version": "202601221358",
+          "description": "v3.2.x  Virtual Fields Cleanup",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601221358__v3.2.x__Virtual_Fields_Cleanup.sql",
+          "executionTime": 77
+        },
+        {
+          "category": "Versioned",
+          "version": "202601222042",
+          "description": "v3.2.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601222042__v3.2.x__Metadata_Sync.sql",
+          "executionTime": 1378
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251750",
+          "description": "v3.3.x  Add Multi Tenant Scoping To Agent Memory",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601251750__v3.3.x__Add_Multi_Tenant_Scoping_To_Agent_Memory.sql",
+          "executionTime": 500
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251751",
+          "description": "v3.3.x  Add Agent Memory Lifecycle Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601251751__v3.3.x__Add_Agent_Memory_Lifecycle_Fields.sql",
+          "executionTime": 17730
+        },
+        {
+          "category": "Versioned",
+          "version": "202601251753",
+          "description": "v3.3.x  Reranking Framework And Metadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601251753__v3.3.x__Reranking_Framework_And_Metadata.sql",
+          "executionTime": 15063
+        },
+        {
+          "category": "Versioned",
+          "version": "202601261008",
+          "description": "v3.3.x  API Key Scopes Authorization",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601261008__v3.3.x__API_Key_Scopes_Authorization.sql",
+          "executionTime": 17309
+        },
+        {
+          "category": "Versioned",
+          "version": "202601270915",
+          "description": "3.3.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/v3/V202601270915__3.3.x__Metadata_Sync.sql",
+          "executionTime": 1772
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T13csfB/migrations/R__RefreshMetadata.sql",
+          "executionTime": 17301
+        }
+      ],
+      "migrationsExecuted": 18,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-01-30T16:12:16.088625",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": "202602111335",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202602061600",
+          "description": "v4.0  Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/B202602061600__v4.0__Baseline.sql",
+          "executionTime": 16366
+        },
+        {
+          "category": "Versioned",
+          "version": "202602061800",
+          "description": "v4.1.x  Enable MJ Cascade Delete to AI Agent and Prompt",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/V202602061800__v4.1.x__Enable_MJ_Cascade_Delete_to_AI_Agent_and_Prompt.sql",
+          "executionTime": 105
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092054",
+          "description": "v4.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/V202602092054__v4.1.x__Metadata_Sync.sql",
+          "executionTime": 2355
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092055",
+          "description": "v4.2.x  CodeGenBug OneTimeFix For Metadata Missing Virtual Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/V202602092055__v4.2.x__CodeGenBug_OneTimeFix_For_Metadata_Missing_Virtual_Fields.sql",
+          "executionTime": 33
+        },
+        {
+          "category": "Versioned",
+          "version": "202602110733",
+          "description": "v4.3.x  Add EntityNamePrefix Suffix To SchemaInfo",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/V202602110733__v4.3.x__Add_EntityNamePrefix_Suffix_To_SchemaInfo.sql",
+          "executionTime": 55
+        },
+        {
+          "category": "Versioned",
+          "version": "202602111335",
+          "description": "v4.3.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/v4/V202602111335__v4.3.x__Metadata_Sync.sql",
+          "executionTime": 1182
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/T9at6br/migrations/R__RefreshMetadata.sql",
+          "executionTime": 32733
+        }
+      ],
+      "migrationsExecuted": 7,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-02-11T19:28:29.877989",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": "202602111335",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202602061600",
+          "description": "v4.0  Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/B202602061600__v4.0__Baseline.sql",
+          "executionTime": 32626
+        },
+        {
+          "category": "Versioned",
+          "version": "202602061800",
+          "description": "v4.1.x  Enable MJ Cascade Delete to AI Agent and Prompt",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/V202602061800__v4.1.x__Enable_MJ_Cascade_Delete_to_AI_Agent_and_Prompt.sql",
+          "executionTime": 305
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092054",
+          "description": "v4.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/V202602092054__v4.1.x__Metadata_Sync.sql",
+          "executionTime": 3035
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092055",
+          "description": "v4.2.x  CodeGenBug OneTimeFix For Metadata Missing Virtual Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/V202602092055__v4.2.x__CodeGenBug_OneTimeFix_For_Metadata_Missing_Virtual_Fields.sql",
+          "executionTime": 45
+        },
+        {
+          "category": "Versioned",
+          "version": "202602110733",
+          "description": "v4.3.x  Add EntityNamePrefix Suffix To SchemaInfo",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/V202602110733__v4.3.x__Add_EntityNamePrefix_Suffix_To_SchemaInfo.sql",
+          "executionTime": 136
+        },
+        {
+          "category": "Versioned",
+          "version": "202602111335",
+          "description": "v4.3.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/v4/V202602111335__v4.3.x__Metadata_Sync.sql",
+          "executionTime": 1425
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/TDryTDF/migrations/R__RefreshMetadata.sql",
+          "executionTime": 21702
+        }
+      ],
+      "migrationsExecuted": 7,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-02-11T19:30:16.402643",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": null,
+      "targetSchemaVersion": "202602111335",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Baseline",
+          "version": "202602061600",
+          "description": "v4.0  Baseline",
+          "type": "SQL_BASELINE",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/B202602061600__v4.0__Baseline.sql",
+          "executionTime": 15930
+        },
+        {
+          "category": "Versioned",
+          "version": "202602061800",
+          "description": "v4.1.x  Enable MJ Cascade Delete to AI Agent and Prompt",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/V202602061800__v4.1.x__Enable_MJ_Cascade_Delete_to_AI_Agent_and_Prompt.sql",
+          "executionTime": 111
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092054",
+          "description": "v4.1.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/V202602092054__v4.1.x__Metadata_Sync.sql",
+          "executionTime": 2311
+        },
+        {
+          "category": "Versioned",
+          "version": "202602092055",
+          "description": "v4.2.x  CodeGenBug OneTimeFix For Metadata Missing Virtual Fields",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/V202602092055__v4.2.x__CodeGenBug_OneTimeFix_For_Metadata_Missing_Virtual_Fields.sql",
+          "executionTime": 39
+        },
+        {
+          "category": "Versioned",
+          "version": "202602110733",
+          "description": "v4.3.x  Add EntityNamePrefix Suffix To SchemaInfo",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/V202602110733__v4.3.x__Add_EntityNamePrefix_Suffix_To_SchemaInfo.sql",
+          "executionTime": 49
+        },
+        {
+          "category": "Versioned",
+          "version": "202602111335",
+          "description": "v4.3.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/v4/V202602111335__v4.3.x__Metadata_Sync.sql",
+          "executionTime": 1181
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Tr26U4D/migrations/R__RefreshMetadata.sql",
+          "executionTime": 18193
+        }
+      ],
+      "migrationsExecuted": 7,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-02-11T19:36:19.318614",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
     }
   ]
 }

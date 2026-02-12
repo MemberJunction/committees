@@ -1,0 +1,18 @@
+{
+  "entity": "Committees: Artifact Types",
+  "filePattern": "**/.*.json",
+  "pull": {
+    "createNewFileIfNotFound": true,
+    "newFileName": ".artifact-types.json",
+    "appendRecordsToExistingFile": true,
+    "updateExistingRecords": true,
+    "ignoreNullFields": true,
+    "ignoreVirtualFields": true,
+    "lookupFields": {
+      "ExtendedEntityID": {
+        "entity": "Entities",
+        "field": "Name"
+      }
+    }
+  }
+}

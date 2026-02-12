@@ -1,0 +1,65 @@
+[
+  {
+    "fields": {
+      "Name": "Chair",
+      "Description": "Leads the committee and runs meetings",
+      "IsOfficer": true,
+      "IsVotingRole": true,
+      "Sequence": 10
+    }
+  },
+  {
+    "fields": {
+      "Name": "Vice Chair",
+      "Description": "Supports chair and leads in their absence",
+      "IsOfficer": true,
+      "IsVotingRole": true,
+      "Sequence": 20
+    }
+  },
+  {
+    "fields": {
+      "Name": "Secretary",
+      "Description": "Records minutes and manages documentation",
+      "IsOfficer": true,
+      "IsVotingRole": true,
+      "Sequence": 30
+    }
+  },
+  {
+    "fields": {
+      "Name": "Member",
+      "Description": "Voting member of the committee",
+      "IsOfficer": false,
+      "IsVotingRole": true,
+      "Sequence": 100
+    }
+  },
+  {
+    "fields": {
+      "Name": "Non-Voting Member",
+      "Description": "Participates but does not vote",
+      "IsOfficer": false,
+      "IsVotingRole": false,
+      "Sequence": 110
+    }
+  },
+  {
+    "fields": {
+      "Name": "Liaison",
+      "Description": "Represents another group or organization",
+      "IsOfficer": false,
+      "IsVotingRole": false,
+      "Sequence": 120
+    }
+  },
+  {
+    "fields": {
+      "Name": "Advisor",
+      "Description": "Provides expertise without membership",
+      "IsOfficer": false,
+      "IsVotingRole": false,
+      "Sequence": 130
+    }
+  }
+]

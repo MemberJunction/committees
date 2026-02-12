@@ -100,21 +100,15 @@ module.exports = {
   // New Entity Defaults Overrides
   // ---------------------------------------------------------------------------
   // Default v3.x settings for new entities
-  // newEntityDefaults: {
-  //   TrackRecordChanges: true,
-  //   AuditRecordAccess: false,
-  //   AuditViewRuns: false,
-  //   AllowAllRowsAPI: false,
-  //   AllowCreateAPI: true,
-  //   AllowUpdateAPI: true,
-  //   AllowDeleteAPI: true,
-  //   AllowUserSearchAPI: false,
-  //   CascadeDeletes: false,
-  //   UserViewMaxRows: 1000,
-  //   AddToApplicationWithSchemaName: true,
-  //   IncludeFirstNFieldsAsDefaultInView: 5,
-  //   NameRulesBySchema: [{ SchemaName: '${mj_core_schema}', EntityNamePrefix: 'MJ: ' }]
-  // },
+  newEntityDefaults: {
+    NameRulesBySchema: [{ SchemaName: '${mj_core_schema}', EntityNamePrefix: 'MJ: ' },
+{
+  SchemaName: 'Committees',
+  EntityNamePrefix: 'Committees: ',
+  EntityNameSuffix: '',
+}
+    ]
+  },
 
   // ---------------------------------------------------------------------------
   // Schema/Table Exclusions

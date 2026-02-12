@@ -1,0 +1,66 @@
+[
+  {
+    "fields": {
+      "Name": "Document",
+      "Description": "General document",
+      "IconClass": "fa-solid fa-file"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Spreadsheet",
+      "Description": "Spreadsheet or data file",
+      "IconClass": "fa-solid fa-file-excel"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Presentation",
+      "Description": "Slide deck or presentation",
+      "IconClass": "fa-solid fa-file-powerpoint"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Minutes",
+      "Description": "Meeting minutes with approval tracking",
+      "ExtendedEntityID": "@lookup:Entities.Name=Minutes",
+      "IconClass": "fa-solid fa-clipboard-check"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Agenda",
+      "Description": "Meeting agenda document",
+      "IconClass": "fa-solid fa-list-check"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Recording",
+      "Description": "Audio or video recording",
+      "IconClass": "fa-solid fa-video"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Transcript",
+      "Description": "Meeting transcript",
+      "IconClass": "fa-solid fa-closed-captioning"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Image",
+      "Description": "Image or diagram",
+      "IconClass": "fa-solid fa-image"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Other",
+      "Description": "Other artifact type",
+      "IconClass": "fa-solid fa-file-lines"
+    }
+  }
+]

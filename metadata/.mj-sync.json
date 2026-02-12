@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "push": {
+    "autoCreateMissingRecords": true
+  },
+  "directoryOrder": [
+    "schema-info",
+    "committee-types",
+    "roles",
+    "artifact-types"
+  ],
+  "emitSyncNotes": false
+}
