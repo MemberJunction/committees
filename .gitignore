@@ -43,3 +43,5 @@ SQL Scripts/demo/metadata/queries/SQL/submission-status-summary.sql
 SQL Scripts/demo/metadata/queries/SQL/top-accounts-by-outstanding.sql
 SQL Scripts/generated/.gitkeep
 SQL Scripts/utilities/MJ Metadata Wipe Out - CAREFUL.sql
+report.html
+report.json

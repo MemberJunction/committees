@@ -1,5 +1,6 @@
 -- Committees App Schema and Tables
 -- Phase 1: Core Entities
+-- Depends on: V202602150001__BizAppsCommon_Schema_and_Tables.sql
 
 CREATE SCHEMA Committees;
 GO
@@ -38,6 +39,7 @@ CREATE TABLE Committees.Committee (
     CONSTRAINT PK_Committee PRIMARY KEY (ID),
     CONSTRAINT FK_Committee_Type FOREIGN KEY (TypeID) REFERENCES Committees.Type(ID),
     CONSTRAINT FK_Committee_Parent FOREIGN KEY (ParentCommitteeID) REFERENCES Committees.Committee(ID),
+    CONSTRAINT FK_Committee_Organization FOREIGN KEY (OrganizationID) REFERENCES __mj_BizAppsCommon.Organization(ID),
     CONSTRAINT CK_Committee_Status CHECK (Status IN ('Active', 'Inactive', 'Pending', 'Dissolved'))
 );
 GO
@@ -75,12 +77,12 @@ CREATE TABLE Committees.Role (
 GO
 
 ---------------------------------------------------------------------------
--- Committee membership (links to MJ User entity)
+-- Committee membership (links to BizAppsCommon Person)
 ---------------------------------------------------------------------------
 CREATE TABLE Committees.Membership (
     ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
     CommitteeID UNIQUEIDENTIFIER NOT NULL,
-    UserID UNIQUEIDENTIFIER NOT NULL,
+    PersonID UNIQUEIDENTIFIER NOT NULL,
     RoleID UNIQUEIDENTIFIER NOT NULL,
     TermID UNIQUEIDENTIFIER,
     StartDate DATE NOT NULL,
@@ -90,7 +92,7 @@ CREATE TABLE Committees.Membership (
     Notes NVARCHAR(MAX),
     CONSTRAINT PK_Membership PRIMARY KEY (ID),
     CONSTRAINT FK_Membership_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),
-    CONSTRAINT FK_Membership_User FOREIGN KEY (UserID) REFERENCES __mj.[User](ID),
+    CONSTRAINT FK_Membership_Person FOREIGN KEY (PersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
     CONSTRAINT FK_Membership_Role FOREIGN KEY (RoleID) REFERENCES Committees.Role(ID),
     CONSTRAINT FK_Membership_Term FOREIGN KEY (TermID) REFERENCES Committees.Term(ID),
     CONSTRAINT CK_Membership_Status CHECK (Status IN ('Active', 'Pending', 'Ended', 'Suspended'))
@@ -134,7 +136,7 @@ CREATE TABLE Committees.AgendaItem (
     Sequence INT NOT NULL,
     Title NVARCHAR(255) NOT NULL,
     Description NVARCHAR(MAX),
-    PresenterUserID UNIQUEIDENTIFIER,
+    PresenterPersonID UNIQUEIDENTIFIER,
     DurationMinutes INT,
     ItemType NVARCHAR(50) NOT NULL DEFAULT 'Discussion',
     RelatedDocumentURL NVARCHAR(1000),
@@ -143,7 +145,7 @@ CREATE TABLE Committees.AgendaItem (
     CONSTRAINT PK_AgendaItem PRIMARY KEY (ID),
     CONSTRAINT FK_AgendaItem_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
     CONSTRAINT FK_AgendaItem_Parent FOREIGN KEY (ParentAgendaItemID) REFERENCES Committees.AgendaItem(ID),
-    CONSTRAINT FK_AgendaItem_Presenter FOREIGN KEY (PresenterUserID) REFERENCES __mj.[User](ID),
+    CONSTRAINT FK_AgendaItem_Presenter FOREIGN KEY (PresenterPersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
     CONSTRAINT CK_AgendaItem_Type CHECK (ItemType IN ('Information', 'Discussion', 'Action', 'Vote', 'Report', 'Other')),
     CONSTRAINT CK_AgendaItem_Status CHECK (Status IN ('Pending', 'Discussed', 'Tabled', 'Completed', 'Skipped'))
 );
@@ -155,16 +157,16 @@ GO
 CREATE TABLE Committees.Attendance (
     ID UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
     MeetingID UNIQUEIDENTIFIER NOT NULL,
-    UserID UNIQUEIDENTIFIER NOT NULL,
+    PersonID UNIQUEIDENTIFIER NOT NULL,
     AttendanceStatus NVARCHAR(50) NOT NULL DEFAULT 'Expected',
     JoinedAt DATETIMEOFFSET,
     LeftAt DATETIMEOFFSET,
     Notes NVARCHAR(500),
     CONSTRAINT PK_Attendance PRIMARY KEY (ID),
     CONSTRAINT FK_Attendance_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
-    CONSTRAINT FK_Attendance_User FOREIGN KEY (UserID) REFERENCES __mj.[User](ID),
+    CONSTRAINT FK_Attendance_Person FOREIGN KEY (PersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
     CONSTRAINT CK_Attendance_Status CHECK (AttendanceStatus IN ('Expected', 'Present', 'Absent', 'Excused', 'Partial')),
-    CONSTRAINT UQ_Attendance UNIQUE (MeetingID, UserID)
+    CONSTRAINT UQ_Attendance UNIQUE (MeetingID, PersonID)
 );
 GO
 
@@ -178,8 +180,8 @@ CREATE TABLE Committees.ActionItem (
     AgendaItemID UNIQUEIDENTIFIER,
     Title NVARCHAR(255) NOT NULL,
     Description NVARCHAR(MAX),
-    AssignedToUserID UNIQUEIDENTIFIER NOT NULL,
-    AssignedByUserID UNIQUEIDENTIFIER,
+    AssignedToPersonID UNIQUEIDENTIFIER NOT NULL,
+    AssignedByPersonID UNIQUEIDENTIFIER,
     DueDate DATE,
     Priority NVARCHAR(20) NOT NULL DEFAULT 'Medium',
     Status NVARCHAR(50) NOT NULL DEFAULT 'Open',
@@ -189,8 +191,8 @@ CREATE TABLE Committees.ActionItem (
     CONSTRAINT FK_ActionItem_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),
     CONSTRAINT FK_ActionItem_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
     CONSTRAINT FK_ActionItem_AgendaItem FOREIGN KEY (AgendaItemID) REFERENCES Committees.AgendaItem(ID),
-    CONSTRAINT FK_ActionItem_AssignedTo FOREIGN KEY (AssignedToUserID) REFERENCES __mj.[User](ID),
-    CONSTRAINT FK_ActionItem_AssignedBy FOREIGN KEY (AssignedByUserID) REFERENCES __mj.[User](ID),
+    CONSTRAINT FK_ActionItem_AssignedTo FOREIGN KEY (AssignedToPersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
+    CONSTRAINT FK_ActionItem_AssignedBy FOREIGN KEY (AssignedByPersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
     CONSTRAINT CK_ActionItem_Priority CHECK (Priority IN ('Low', 'Medium', 'High', 'Critical')),
     CONSTRAINT CK_ActionItem_Status CHECK (Status IN ('Open', 'InProgress', 'Blocked', 'Completed', 'Cancelled'))
 );
@@ -228,14 +230,14 @@ CREATE TABLE Committees.Artifact (
     URL NVARCHAR(2000) NOT NULL,
     MimeType NVARCHAR(100),
     FileSize BIGINT,
-    UploadedByUserID UNIQUEIDENTIFIER,
+    UploadedByPersonID UNIQUEIDENTIFIER,
     CONSTRAINT PK_Artifact PRIMARY KEY (ID),
     CONSTRAINT FK_Artifact_Committee FOREIGN KEY (CommitteeID) REFERENCES Committees.Committee(ID),
     CONSTRAINT FK_Artifact_Meeting FOREIGN KEY (MeetingID) REFERENCES Committees.Meeting(ID),
     CONSTRAINT FK_Artifact_AgendaItem FOREIGN KEY (AgendaItemID) REFERENCES Committees.AgendaItem(ID),
     CONSTRAINT FK_Artifact_ActionItem FOREIGN KEY (ActionItemID) REFERENCES Committees.ActionItem(ID),
     CONSTRAINT FK_Artifact_ArtifactType FOREIGN KEY (ArtifactTypeID) REFERENCES Committees.ArtifactType(ID),
-    CONSTRAINT FK_Artifact_UploadedBy FOREIGN KEY (UploadedByUserID) REFERENCES __mj.[User](ID),
+    CONSTRAINT FK_Artifact_UploadedBy FOREIGN KEY (UploadedByPersonID) REFERENCES __mj_BizAppsCommon.Person(ID),
     CONSTRAINT CK_Artifact_Provider CHECK (Provider IN ('GoogleDrive', 'SharePoint', 'Box', 'OneDrive', 'Dropbox', 'URL'))
 );
 GO
@@ -361,7 +363,7 @@ GO
 ---------------------------------------------------------------------------
 -- EXTENDED PROPERTIES: Membership table
 ---------------------------------------------------------------------------
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'User assignments to committees with roles and terms', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Membership';
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Person assignments to committees with roles and terms', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Membership';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Date the membership started', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Membership', @level2type = N'COLUMN', @level2name = N'StartDate';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Date the membership ended, if applicable', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Membership', @level2type = N'COLUMN', @level2name = N'EndDate';
 EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Current status: Active, Pending, Ended, or Suspended', @level0type = N'SCHEMA', @level0name = N'Committees', @level1type = N'TABLE', @level1name = N'Membership', @level2type = N'COLUMN', @level2name = N'Status';
