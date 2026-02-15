@@ -16,15 +16,19 @@
       "console": "integratedTerminal",
       "sourceMaps": true,
       "resolveSourceMapLocations": [
-        "${workspaceFolder}/**",
-        "!**/node_modules/@memberjunction/**"
+        "${workspaceFolder}/apps/MJAPI/**",
+        "${workspaceFolder}/packages/GeneratedEntities/**",
+        "${workspaceFolder}/packages/GeneratedActions/**",
+        "!**/node_modules/**"
       ],
       "outFiles": [
         "${workspaceFolder}/apps/MJAPI/dist/**/*.js",
-        "${workspaceFolder}/packages/*/dist/**/*.js"
+        "${workspaceFolder}/packages/GeneratedEntities/dist/**/*.js",
+        "${workspaceFolder}/packages/GeneratedActions/dist/**/*.js"
       ],
       "skipFiles": [
-        "<node_internals>/**"
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
       ]
     },
     {
@@ -32,7 +36,7 @@
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "serve-explorer",
-      "url": "http://localhost:4201",
+      "url": "http://localhost:4301",
       "webRoot": "${workspaceFolder}/apps/MJExplorer",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
@@ -45,7 +49,7 @@
       "type": "chrome",
       "request": "attach",
       "port": 9222,
-      "url": "http://localhost:4201",
+      "url": "http://localhost:4301",
       "webRoot": "${workspaceFolder}/apps/MJExplorer",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

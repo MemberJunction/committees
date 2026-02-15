@@ -4,7 +4,7 @@
     {
       "label": "serve-explorer",
       "type": "shell",
-      "command": "NODE_OPTIONS=--max-old-space-size=16384 npx ng serve --port 4201",
+      "command": "NODE_OPTIONS=--max-old-space-size=16384 npx ng serve --port 4301",
       "isBackground": true,
       "options": {
         "cwd": "${workspaceFolder}/apps/MJExplorer"

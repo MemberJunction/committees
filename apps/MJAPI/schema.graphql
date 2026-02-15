@@ -96,16 +96,6 @@ type AnalyzerSettingsGQL {
   enabled: Boolean!
 }
 
-type AskSkipResultType {
-  AIMessageConversationDetailId: String!
-  ConversationId: String!
-  ResponsePhase: SkipResponsePhase!
-  Result: String!
-  Status: String!
-  Success: Boolean!
-  UserMessageConversationDetailId: String!
-}
-
 type AutoTrimSettingsGQL {
   enabled: Boolean!
   maxAgeMs: Int
@@ -115,6 +105,12 @@ type AutoTrimSettingsGQL {
 type CallerLocationGQL {
   count: Int!
   location: String!
+}
+
+type CaptureErrorOutput {
+  EntityName: String!
+  ErrorMessage: String!
+  RecordID: String!
 }
 
 type CategoryOverrideGQL {
@@ -148,8 +144,8 @@ type CommitteesActionItem_ {
   AssignedToUser: String!
   AssignedToUserID: String!
   Committee: String!
-  CommitteeArtifacts_ActionItemIDArray: [CommitteesCommitteeArtifact_!]!
   CommitteeID: String!
+  Committees_Artifacts_ActionItemIDArray: [CommitteesArtifact_!]!
 
   """Timestamp when the action item was completed"""
   CompletedAt: Timestamp
@@ -179,9 +175,10 @@ type CommitteesActionItem_ {
 
 """Structured agenda items for meetings with hierarchy support"""
 type CommitteesAgendaItem_ {
-  ActionItems_AgendaItemIDArray: [CommitteesActionItem_!]!
-  AgendaItems_ParentAgendaItemIDArray: [CommitteesAgendaItem_!]!
-  CommitteeArtifacts_AgendaItemIDArray: [CommitteesCommitteeArtifact_!]!
+  Committees_ActionItems_AgendaItemIDArray: [CommitteesActionItem_!]!
+  Committees_AgendaItems_ParentAgendaItemIDArray: [CommitteesAgendaItem_!]!
+  Committees_Artifacts_AgendaItemIDArray: [CommitteesArtifact_!]!
+  Committees_Motions_AgendaItemIDArray: [CommitteesMotion_!]!
 
   """Detailed description of the agenda item"""
   Description: String
@@ -193,7 +190,6 @@ type CommitteesAgendaItem_ {
   """Type of item: Information, Discussion, Action, Vote, Report, Other"""
   ItemType: String!
   MeetingID: String!
-  Motions_AgendaItemIDArray: [CommitteesMotion_!]!
 
   """Discussion notes and outcomes captured during the meeting"""
   Notes: String
@@ -213,6 +209,69 @@ type CommitteesAgendaItem_ {
 
   """Title of the agenda item"""
   Title: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Categories of committee artifacts with optional extension entity for type-specific fields
+"""
+type CommitteesArtifactType_ {
+  Committees_Artifacts_ArtifactTypeIDArray: [CommitteesArtifact_!]!
+
+  """Detailed description of this artifact type"""
+  Description: String
+  ExtendedEntity: String
+
+  """
+  Optional reference to an MJ Entity that provides additional fields for this artifact type via a 1:1 extension table
+  """
+  ExtendedEntityID: String
+  ID: String!
+
+  """Font Awesome icon class for UI display"""
+  IconClass: String
+
+  """Display name for the artifact type"""
+  Name: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""Links to external documents and files from various providers"""
+type CommitteesArtifact_ {
+  ActionItemID: String
+  AgendaItemID: String
+  ArtifactType: String!
+  ArtifactTypeID: String!
+  Committee: String
+  CommitteeID: String
+  Committees_Minutes_ArtifactIDArray: [CommitteesMinute_!]!
+
+  """Description of the artifact contents"""
+  Description: String
+
+  """Provider-specific document or file ID"""
+  ExternalID: String
+
+  """File size in bytes"""
+  FileSize: Int
+  ID: String!
+  MeetingID: String
+
+  """MIME type of the file"""
+  MimeType: String
+
+  """Storage provider: GoogleDrive, SharePoint, Box, OneDrive, Dropbox, URL"""
+  Provider: String!
+
+  """Display title for the artifact"""
+  Title: String!
+
+  """Direct URL to access the artifact"""
+  URL: String!
+  UploadedByUser: String
+  UploadedByUserID: String
   _mj__CreatedAt: Timestamp!
   _mj__UpdatedAt: Timestamp!
 }
@@ -238,77 +297,16 @@ type CommitteesAttendance_ {
   _mj__UpdatedAt: Timestamp!
 }
 
-"""
-Categories of committee artifacts with optional extension entity for type-specific fields
-"""
-type CommitteesCommitteeArtifactType_ {
-  CommitteeArtifacts_CommitteeArtifactTypeIDArray: [CommitteesCommitteeArtifact_!]!
-
-  """Detailed description of this artifact type"""
-  Description: String
-  ExtendedEntity: String
-
-  """
-  Optional reference to an MJ Entity that provides additional fields for this artifact type via a 1:1 extension table
-  """
-  ExtendedEntityID: String
-  ID: String!
-
-  """Font Awesome icon class for UI display"""
-  IconClass: String
-
-  """Display name for the artifact type"""
-  Name: String!
-  _mj__CreatedAt: Timestamp!
-  _mj__UpdatedAt: Timestamp!
-}
-
-"""Links to external documents and files from various providers"""
-type CommitteesCommitteeArtifact_ {
-  ActionItemID: String
-  AgendaItemID: String
-  Committee: String
-  CommitteeArtifactType: String!
-  CommitteeArtifactTypeID: String!
-  CommitteeID: String
-
-  """Description of the artifact contents"""
-  Description: String
-
-  """Provider-specific document or file ID"""
-  ExternalID: String
-
-  """File size in bytes"""
-  FileSize: Int
-  ID: String!
-  MeetingID: String
-
-  """MIME type of the file"""
-  MimeType: String
-  Minutes_ArtifactIDArray: [CommitteesMinute_!]!
-
-  """Storage provider: GoogleDrive, SharePoint, Box, OneDrive, Dropbox, URL"""
-  Provider: String!
-
-  """Display title for the artifact"""
-  Title: String!
-
-  """Direct URL to access the artifact"""
-  URL: String!
-  UploadedByUser: String
-  UploadedByUserID: String
-  _mj__CreatedAt: Timestamp!
-  _mj__UpdatedAt: Timestamp!
-}
-
 """Core committee records with hierarchy support"""
 type CommitteesCommittee_ {
-  ActionItems_CommitteeIDArray: [CommitteesActionItem_!]!
-
   """URL to the committee charter document"""
   CharterDocumentURL: String
-  CommitteeArtifacts_CommitteeIDArray: [CommitteesCommitteeArtifact_!]!
-  Committees_ParentCommitteeIDArray: [CommitteesCommittee_!]!
+  Committees_ActionItems_CommitteeIDArray: [CommitteesActionItem_!]!
+  Committees_Artifacts_CommitteeIDArray: [CommitteesArtifact_!]!
+  Committees_Committees_ParentCommitteeIDArray: [CommitteesCommittee_!]!
+  Committees_Meetings_CommitteeIDArray: [CommitteesMeeting_!]!
+  Committees_Memberships_CommitteeIDArray: [CommitteesMembership_!]!
+  Committees_Terms_CommitteeIDArray: [CommitteesTerm_!]!
 
   """Detailed description of the committee purpose and scope"""
   Description: String
@@ -322,8 +320,6 @@ type CommitteesCommittee_ {
 
   """Whether the committee is visible to all users"""
   IsPublic: Boolean!
-  Meetings_CommitteeIDArray: [CommitteesMeeting_!]!
-  Memberships_CommitteeIDArray: [CommitteesMembership_!]!
 
   """Brief statement of the committee mission"""
   MissionStatement: String
@@ -337,7 +333,6 @@ type CommitteesCommittee_ {
 
   """Current status: Active, Inactive, Pending, or Dissolved"""
   Status: String!
-  Terms_CommitteeIDArray: [CommitteesTerm_!]!
   Type: String!
   TypeID: String!
   _mj__CreatedAt: Timestamp!
@@ -346,15 +341,16 @@ type CommitteesCommittee_ {
 
 """Committee meeting records with scheduling and video conferencing info"""
 type CommitteesMeeting_ {
-  ActionItems_MeetingIDArray: [CommitteesActionItem_!]!
-  AgendaItems_MeetingIDArray: [CommitteesAgendaItem_!]!
-  Attendances_MeetingIDArray: [CommitteesAttendance_!]!
-
   """External calendar event ID for sync purposes"""
   CalendarEventID: String
   Committee: String!
-  CommitteeArtifacts_MeetingIDArray: [CommitteesCommitteeArtifact_!]!
   CommitteeID: String!
+  Committees_ActionItems_MeetingIDArray: [CommitteesActionItem_!]!
+  Committees_AgendaItems_MeetingIDArray: [CommitteesAgendaItem_!]!
+  Committees_Artifacts_MeetingIDArray: [CommitteesArtifact_!]!
+  Committees_Attendances_MeetingIDArray: [CommitteesAttendance_!]!
+  Committees_Minutes_ApprovedByMeetingIDArray: [CommitteesMinute_!]!
+  Committees_Motions_MeetingIDArray: [CommitteesMotion_!]!
 
   """Detailed description or purpose of the meeting"""
   Description: String
@@ -368,8 +364,6 @@ type CommitteesMeeting_ {
 
   """Meeting format: Virtual, InPerson, or Hybrid"""
   LocationType: String!
-  Minutes_ApprovedByMeetingIDArray: [CommitteesMinute_!]!
-  Motions_MeetingIDArray: [CommitteesMotion_!]!
 
   """Scheduled start date and time with timezone offset"""
   StartDateTime: Timestamp!
@@ -407,6 +401,9 @@ type CommitteesMeeting_ {
 type CommitteesMembership_ {
   Committee: String!
   CommitteeID: String!
+  Committees_Motions_MovedByMembershipIDArray: [CommitteesMotion_!]!
+  Committees_Motions_SecondedByMembershipIDArray: [CommitteesMotion_!]!
+  Committees_Votes_MembershipIDArray: [CommitteesVote_!]!
 
   """Date the membership ended, if applicable"""
   EndDate: Timestamp
@@ -414,8 +411,6 @@ type CommitteesMembership_ {
   """Reason the membership ended: Term ended, Resigned, Removed, etc."""
   EndReason: String
   ID: String!
-  Motions_MovedByMembershipIDArray: [CommitteesMotion_!]!
-  Motions_SecondedByMembershipIDArray: [CommitteesMotion_!]!
 
   """Additional notes about this membership"""
   Notes: String
@@ -431,7 +426,6 @@ type CommitteesMembership_ {
   TermID: String
   User: String!
   UserID: String!
-  Votes_MembershipIDArray: [CommitteesVote_!]!
   _mj__CreatedAt: Timestamp!
   _mj__UpdatedAt: Timestamp!
 }
@@ -462,6 +456,7 @@ type CommitteesMotion_ {
   """Number of Abstain votes"""
   AbstainCount: Int
   AgendaItemID: String
+  Committees_Votes_MotionIDArray: [CommitteesVote_!]!
 
   """Full text or description of the motion"""
   Description: String
@@ -491,7 +486,6 @@ type CommitteesMotion_ {
 
   """Title of the motion"""
   Title: String!
-  Votes_MotionIDArray: [CommitteesVote_!]!
 
   """Number of Yes votes"""
   YesCount: Int
@@ -501,6 +495,8 @@ type CommitteesMotion_ {
 
 """Roles that members can hold on committees"""
 type CommitteesRole_ {
+  Committees_Memberships_RoleIDArray: [CommitteesMembership_!]!
+
   """JSON object defining default permissions for this role"""
   DefaultPermissionsJSON: String
 
@@ -513,7 +509,6 @@ type CommitteesRole_ {
 
   """Whether members in this role can vote"""
   IsVotingRole: Boolean!
-  Memberships_RoleIDArray: [CommitteesMembership_!]!
 
   """Display name for the role"""
   Name: String!
@@ -528,11 +523,11 @@ type CommitteesRole_ {
 type CommitteesTerm_ {
   Committee: String!
   CommitteeID: String!
+  Committees_Memberships_TermIDArray: [CommitteesMembership_!]!
 
   """End date of the term"""
   EndDate: Timestamp
   ID: String!
-  Memberships_TermIDArray: [CommitteesMembership_!]!
 
   """Display name for the term, e.g. 2025-2026"""
   Name: String!
@@ -548,7 +543,7 @@ type CommitteesTerm_ {
 
 """Categories of committees such as Board, Standing, Ad Hoc, Workgroup"""
 type CommitteesType_ {
-  Committees_TypeIDArray: [CommitteesCommittee_!]!
+  Committees_Committees_TypeIDArray: [CommitteesCommittee_!]!
 
   """Default term length in months for committees of this type"""
   DefaultTermMonths: Int
@@ -727,20 +722,10 @@ input CreateCommitteesAgendaItemInput {
   Title: String
 }
 
-input CreateCommitteesAttendanceInput {
-  AttendanceStatus: String
-  ID: String
-  JoinedAt: Timestamp
-  LeftAt: Timestamp
-  MeetingID: String
-  Notes: String
-  UserID: String
-}
-
-input CreateCommitteesCommitteeArtifactInput {
+input CreateCommitteesArtifactInput {
   ActionItemID: String
   AgendaItemID: String
-  CommitteeArtifactTypeID: String
+  ArtifactTypeID: String
   CommitteeID: String
   Description: String
   ExternalID: String
@@ -754,12 +739,22 @@ input CreateCommitteesCommitteeArtifactInput {
   UploadedByUserID: String
 }
 
-input CreateCommitteesCommitteeArtifactTypeInput {
+input CreateCommitteesArtifactTypeInput {
   Description: String
   ExtendedEntityID: String
   ID: String
   IconClass: String
   Name: String
+}
+
+input CreateCommitteesAttendanceInput {
+  AttendanceStatus: String
+  ID: String
+  JoinedAt: Timestamp
+  LeftAt: Timestamp
+  MeetingID: String
+  Notes: String
+  UserID: String
 }
 
 input CreateCommitteesCommitteeInput {
@@ -880,6 +875,16 @@ type CreateFilePayload {
   File: MJFile_!
   NameExists: Boolean!
   UploadUrl: String!
+}
+
+type CreateLabelResultOutput {
+  CaptureErrors: [CaptureErrorOutput!]
+  Error: String
+  ItemsCaptured: Int
+  LabelID: String
+  LabelName: String
+  Success: Boolean!
+  SyntheticSnapshotsCreated: Int
 }
 
 input CreateMJAIActionInput {
@@ -1368,16 +1373,23 @@ input CreateMJAIModelCostInput {
 
 input CreateMJAIModelInput {
   AIModelTypeID: String
+  APIName: String
   CostRank: Int
   Description: String
+  DriverClass: String
+  DriverImportPath: String
   ID: String
   InheritTypeModalities: Boolean
+  InputTokenLimit: Int
   IsActive: Boolean
   ModelSelectionInsights: String
   Name: String
   PowerRank: Int
   PriorVersionID: String
   SpeedRank: Int
+  SupportedResponseFormats: String
+  SupportsEffortLevel: Boolean
+  Vendor: String
 }
 
 input CreateMJAIModelModalityInput {
@@ -1724,6 +1736,7 @@ input CreateMJAPIScopeInput {
   Name: String
   ParentID: String
   ResourceType: String
+  UIConfig: String
 }
 
 input CreateMJAccessControlRuleInput {
@@ -2786,10 +2799,13 @@ input CreateMJEntityFieldInput {
   IncludeRelatedEntityNameFieldInBaseView: Boolean
   IsNameField: Boolean
   IsPrimaryKey: Boolean
+  IsSoftForeignKey: Boolean
+  IsSoftPrimaryKey: Boolean
   IsUnique: Boolean
   RelatedEntityDisplayType: String
   RelatedEntityFieldName: String
   RelatedEntityID: String
+  RelatedEntityJoinFields: String
   RelatedEntityNameFieldMap: String
   ScopeDefault: String
   SendEncryptedValue: Boolean
@@ -3112,6 +3128,171 @@ input CreateMJListShareInput {
   Role: String
   Status: String
   UserID: String
+}
+
+input CreateMJMCPServerConnectionInput {
+  AutoGenerateActions: Boolean
+  AutoSyncTools: Boolean
+  CompanyID: String
+  CredentialID: String
+  CustomHeaderName: String
+  Description: String
+  EnvironmentVars: String
+  ID: String
+  LastConnectedAt: Timestamp
+  LastErrorMessage: String
+  LogInputParameters: Boolean
+  LogOutputContent: Boolean
+  LogToolCalls: Boolean
+  MCPServerID: String
+  MaxOutputLogSize: Int
+  Name: String
+  Status: String
+}
+
+input CreateMJMCPServerConnectionPermissionInput {
+  CanExecute: Boolean
+  CanModify: Boolean
+  CanViewCredentials: Boolean
+  ID: String
+  MCPServerConnectionID: String
+  RoleID: String
+  UserID: String
+}
+
+input CreateMJMCPServerConnectionToolInput {
+  DefaultInputValues: String
+  ID: String
+  IsEnabled: Boolean
+  MCPServerConnectionID: String
+  MCPServerToolID: String
+  MaxCallsPerMinute: Int
+}
+
+input CreateMJMCPServerInput {
+  Command: String
+  CommandArgs: String
+  ConnectionTimeoutMs: Int
+  CredentialTypeID: String
+  DefaultAuthType: String
+  Description: String
+  DocumentationURL: String
+  ID: String
+  IconClass: String
+  LastSyncAt: Timestamp
+  Name: String
+  OAuthClientID: String
+  OAuthClientSecretEncrypted: String
+  OAuthIssuerURL: String
+  OAuthMetadataCacheTTLMinutes: Int
+  OAuthRequirePKCE: Boolean
+  OAuthScopes: String
+  RateLimitPerHour: Int
+  RateLimitPerMinute: Int
+  RequestTimeoutMs: Int
+  ServerURL: String
+  Status: String
+  TransportType: String
+}
+
+input CreateMJMCPServerToolInput {
+  Annotations: String
+  DiscoveredAt: Timestamp
+  GeneratedActionCategoryID: String
+  GeneratedActionID: String
+  ID: String
+  InputSchema: String
+  LastSeenAt: Timestamp
+  MCPServerID: String
+  OutputSchema: String
+  Status: String
+  ToolDescription: String
+  ToolName: String
+  ToolTitle: String
+}
+
+input CreateMJMCPToolExecutionLogInput {
+  DurationMs: Int
+  EndedAt: Timestamp
+  ErrorMessage: String
+  ID: String
+  InputParameters: String
+  MCPServerConnectionID: String
+  MCPServerToolID: String
+  OutputContent: String
+  OutputTruncated: Boolean
+  StartedAt: Timestamp
+  Success: Boolean
+  ToolName: String
+  UserID: String
+}
+
+input CreateMJOAuthAuthServerMetadataCacheInput {
+  AuthorizationEndpoint: String
+  CachedAt: Timestamp
+  CodeChallengeMethodsSupported: String
+  ExpiresAt: Timestamp
+  GrantTypesSupported: String
+  ID: String
+  IssuerURL: String
+  JwksURI: String
+  MetadataJSON: String
+  RegistrationEndpoint: String
+  ResponseTypesSupported: String
+  RevocationEndpoint: String
+  ScopesSupported: String
+  TokenEndpoint: String
+  TokenEndpointAuthMethods: String
+}
+
+input CreateMJOAuthAuthorizationStateInput {
+  AuthorizationURL: String
+  CodeChallenge: String
+  CodeVerifier: String
+  CompletedAt: Timestamp
+  ErrorCode: String
+  ErrorDescription: String
+  ExpiresAt: Timestamp
+  FrontendReturnURL: String
+  ID: String
+  InitiatedAt: Timestamp
+  MCPServerConnectionID: String
+  RedirectURI: String
+  RequestedScopes: String
+  StateParameter: String
+  Status: String
+  UserID: String
+}
+
+input CreateMJOAuthClientRegistrationInput {
+  ClientID: String
+  ClientIDIssuedAt: Timestamp
+  ClientSecretEncrypted: String
+  ClientSecretExpiresAt: Timestamp
+  GrantTypes: String
+  ID: String
+  IssuerURL: String
+  MCPServerConnectionID: String
+  MCPServerID: String
+  RedirectURIs: String
+  RegistrationAccessToken: String
+  RegistrationClientURI: String
+  RegistrationResponse: String
+  ResponseTypes: String
+  Scope: String
+  Status: String
+}
+
+input CreateMJOAuthTokenInput {
+  CredentialID: String
+  ExpiresAt: Timestamp
+  ID: String
+  IssuerURL: String
+  LastRefreshAt: Timestamp
+  MCPServerConnectionID: String
+  RefreshCount: Int
+  Scope: String
+  TokenType: String
 }
 
 input CreateMJOutputDeliveryTypeInput {
@@ -3553,6 +3734,8 @@ input CreateMJSchemaInfoInput {
   Description: String
   EntityIDMax: Int
   EntityIDMin: Int
+  EntityNamePrefix: String
+  EntityNameSuffix: String
   ID: String
   SchemaName: String
 }
@@ -3970,6 +4153,43 @@ input CreateMJVersionInstallationInput {
   Type: String
 }
 
+input CreateMJVersionLabelInput {
+  CreatedByUserID: String
+  CreationDurationMS: Int
+  Description: String
+  EntityID: String
+  ExternalSystemID: String
+  ID: String
+  ItemCount: Int
+  Name: String
+  ParentID: String
+  RecordID: String
+  Scope: String
+  Status: String
+}
+
+input CreateMJVersionLabelItemInput {
+  EntityID: String
+  ID: String
+  RecordChangeID: String
+  RecordID: String
+  VersionLabelID: String
+}
+
+input CreateMJVersionLabelRestoreInput {
+  CompletedItems: Int
+  EndedAt: Timestamp
+  ErrorLog: String
+  FailedItems: Int
+  ID: String
+  PreRestoreLabelID: String
+  StartedAt: Timestamp
+  Status: String
+  TotalItems: Int
+  UserID: String
+  VersionLabelID: String
+}
+
 input CreateMJWorkflowEngineInput {
   Description: String
   DriverClass: String
@@ -4083,6 +4303,19 @@ type CreateReportResultType {
   Success: Boolean!
 }
 
+input CreateVersionLabelInput {
+  Description: String
+  EntityName: String
+  ExcludeEntities: [String!]
+  ExternalSystemID: String
+  IncludeDependencies: Boolean
+  MaxDepth: Int
+  Name: String!
+  ParentID: String
+  RecordKeys: [KeyValuePairInput!]
+  Scope: String
+}
+
 input DatasetItemFilterTypeGQL {
   Filter: String!
   ItemCode: String!
@@ -4107,6 +4340,8 @@ type DatasetStatusResultType {
 }
 
 input DeleteOptionsInput {
+  IsParentEntityDelete: Boolean!
+  ReplayOnly: Boolean!
   SkipEntityAIActions: Boolean!
   SkipEntityActions: Boolean!
 }
@@ -4181,6 +4416,20 @@ type EntityRecordNameResult {
   Success: Boolean!
 }
 
+input ExecuteMCPToolInput {
+  ConnectionID: String!
+  InputArgs: String
+  ToolID: String!
+  ToolName: String!
+}
+
+type ExecuteMCPToolResult {
+  DurationMs: Float
+  ErrorMessage: String
+  Result: JSONObject
+  Success: Boolean!
+}
+
 type ExecuteTaskGraphResult {
   errorMessage: String
   results: [TaskExecutionResultType!]!
@@ -4233,13 +4482,33 @@ type GetDataOutputType {
   Success: Boolean!
 }
 
-type Info {
-  Arch: String!
-  CpuModel: String!
-  Hostname: String!
-  IsSystemUser: Boolean!
-  Platform: String!
-  Version: String!
+input GetMCPOAuthStatusInput {
+  StateParameter: String!
+}
+
+type ISAChildEntityResult {
+  ChildEntityName: String
+  ErrorMessage: String
+  Success: Boolean!
+}
+
+input InitiateMCPOAuthInput {
+  AdditionalScopes: String
+  ConnectionID: String!
+
+  """
+  Frontend URL to use as redirect_uri. When provided, the frontend handles the OAuth callback instead of the API server.
+  """
+  FrontendCallbackUrl: String
+}
+
+type InitiateMCPOAuthResult {
+  AuthorizationUrl: String
+  ErrorMessage: String
+  ExpiresAt: Timestamp
+  StateParameter: String
+  Success: Boolean!
+  UsedDynamicRegistration: Boolean
 }
 
 """
@@ -4266,6 +4535,49 @@ input ListStorageObjectsInput {
   AccountID: String!
   Delimiter: String
   Prefix: String!
+}
+
+type MCPOAuthConnectionStatus {
+  ConnectionID: String!
+  GrantedScopes: String
+  HasRefreshToken: Boolean
+  HasValidTokens: Boolean!
+  IsAccessTokenExpired: Boolean
+  IsOAuthEnabled: Boolean!
+  IssuerUrl: String
+  ReauthorizationReason: String
+  RequiresReauthorization: Boolean!
+  TokenExpiresAt: Timestamp
+}
+
+type MCPOAuthEventNotification {
+  AuthorizationUrl: String
+  ConnectionID: String!
+  ErrorMessage: String
+  EventType: String!
+  RequiresReauthorization: Boolean
+  StateParameter: String
+  Timestamp: Timestamp!
+}
+
+"""Status of an OAuth authorization flow"""
+enum MCPOAuthStatus {
+  COMPLETED
+  EXPIRED
+  FAILED
+  PENDING
+}
+
+type MCPOAuthStatusResult {
+  AuthErrorCode: String
+  AuthErrorDescription: String
+  CompletedAt: Timestamp
+  ConnectionID: String
+  ErrorMessage: String
+  InitiatedAt: Timestamp
+  IsRetryable: Boolean
+  Status: MCPOAuthStatus
+  Success: Boolean!
 }
 
 """List of all actions that are possible across all AI Models"""
@@ -7507,6 +7819,11 @@ type MJAPIScope_ {
   """
   ResourceType: String
   RootParentID: String
+
+  """
+  JSON configuration for UI presentation. Schema: { "icon": "fa-solid fa-xxx", "color": "#hexcolor" }. Icon should be a Font Awesome class. Color should be a hex color code.
+  """
+  UIConfig: String
   _mj__CreatedAt: Timestamp!
   _mj__UpdatedAt: Timestamp!
 }
@@ -7576,6 +7893,7 @@ type MJActionCategory_ {
   """Description of the action category."""
   Description: String
   ID: String!
+  MJ_MCPServerTools_GeneratedActionCategoryIDArray: [MJMCPServerTool_!]!
 
   """Name of the action category."""
   Name: String!
@@ -7831,6 +8149,7 @@ type MJAction_ {
   """
   IconClass: String
   MJ_AIAgentSteps_ActionIDArray: [MJAIAgentStep_!]!
+  MJ_MCPServerTools_GeneratedActionIDArray: [MJMCPServerTool_!]!
 
   """
   The name of the action. Must be unique within the combination of CategoryID and ParentID. Actions with the same name can exist in different categories or under different parents.
@@ -8709,6 +9028,7 @@ type MJCompany_ {
   """URL pointing to the company's logo image, used for branding in the UI."""
   LogoURL: String
   MJ_AIAgentExamples_CompanyIDArray: [MJAIAgentExample_!]!
+  MJ_MCPServerConnections_CompanyIDArray: [MJMCPServerConnection_!]!
   Name: String!
 
   """The primary website URL for this company or division."""
@@ -9605,6 +9925,7 @@ type MJCredentialType_ {
   IconClass: String
   MJ_AIVendors_CredentialTypeIDArray: [MJAIVendor_!]!
   MJ_Credentials_CredentialTypeIDArray: [MJCredential_!]!
+  MJ_MCPServers_CredentialTypeIDArray: [MJMCPServer_!]!
 
   """Unique name for the credential type (e.g., OpenAI, SendGrid, AWS S3)."""
   Name: String!
@@ -9659,6 +9980,8 @@ type MJCredential_ {
   LastValidatedAt: Timestamp
   MJ_AICredentialBindings_CredentialIDArray: [MJAICredentialBinding_!]!
   MJ_FileStorageAccounts_CredentialIDArray: [MJFileStorageAccount_!]!
+  MJ_MCPServerConnections_CredentialIDArray: [MJMCPServerConnection_!]!
+  MJ_OAuthTokens_CredentialIDArray: [MJOAuthToken_!]!
 
   """
   Human-readable name for this credential (e.g., Production SendGrid, Development OpenAI).
@@ -10791,6 +11114,16 @@ type MJEntityField_ {
   """
   IsPrimaryKey: Boolean!
 
+  """
+  When 1, indicates RelatedEntityID/RelatedEntityFieldName were set via metadata (not a database constraint). Protects these fields from being cleared by schema sync.
+  """
+  IsSoftForeignKey: Boolean!
+
+  """
+  When 1, indicates IsPrimaryKey was set via metadata (not a database constraint). Protects IsPrimaryKey from being cleared by schema sync.
+  """
+  IsSoftPrimaryKey: Boolean!
+
   """Indicates if the field must have unique values within the entity."""
   IsUnique: Boolean!
 
@@ -10821,6 +11154,11 @@ type MJEntityField_ {
   """
   RelatedEntityFieldName: String
   RelatedEntityID: String
+
+  """
+  JSON configuration for additional fields to join from the related entity into this entity's base view. Supports modes: extend (add to NameField), override (replace NameField), disable (no joins). Schema: { mode?: string, fields?: [{ field: string, alias?: string }] }
+  """
+  RelatedEntityJoinFields: String
 
   """
   For foreign key fields, maps which field in the related entity contains the display name. This is used by CodeGen to automatically add in virtual fields for the "Name Field" of the related entity.
@@ -11228,6 +11566,8 @@ type MJEntity_ {
   MJ_RecordLinks_SourceEntityIDArray: [MJRecordLink_!]!
   MJ_RecordLinks_TargetEntityIDArray: [MJRecordLink_!]!
   MJ_TestRuns_TargetLogEntityIDArray: [MJTestRun_!]!
+  MJ_VersionLabelItems_EntityIDArray: [MJVersionLabelItem_!]!
+  MJ_VersionLabels_EntityIDArray: [MJVersionLabel_!]!
   Name: String!
 
   """Optional suffix appended to entity names for display purposes."""
@@ -11886,6 +12226,373 @@ type MJList_ {
   _mj__UpdatedAt: Timestamp!
 }
 
+type MJMCPServerConnectionPermission_ {
+  """Can invoke tools via this connection"""
+  CanExecute: Boolean!
+
+  """Can modify connection settings"""
+  CanModify: Boolean!
+
+  """Can see credential info (but not decrypt)"""
+  CanViewCredentials: Boolean!
+  ID: String!
+  MCPServerConnection: String!
+  MCPServerConnectionID: String!
+  Role: String
+
+  """FK to Role (mutually exclusive with UserID)"""
+  RoleID: String
+  User: String
+
+  """FK to User (mutually exclusive with RoleID)"""
+  UserID: String
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+type MJMCPServerConnectionTool_ {
+  """JSON default values for tool inputs"""
+  DefaultInputValues: String
+  ID: String!
+
+  """Whether this tool is enabled for the connection"""
+  IsEnabled: Boolean!
+  MCPServerConnection: String!
+  MCPServerConnectionID: String!
+  MCPServerTool: String
+  MCPServerToolID: String!
+
+  """Override rate limit for this specific tool"""
+  MaxCallsPerMinute: Int
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+type MJMCPServerConnection_ {
+  """Auto-generate MJ Actions for discovered tools"""
+  AutoGenerateActions: Boolean!
+
+  """Auto-sync tools when connecting"""
+  AutoSyncTools: Boolean!
+  Company: String
+
+  """
+  Optional company association. NULL means the connection is global and available to all companies. Non-NULL restricts the connection to that specific company.
+  """
+  CompanyID: String
+  Credential: String
+
+  """FK to Credential entity (uses existing credential types)"""
+  CredentialID: String
+
+  """Custom header name for API key auth (default: X-API-Key)"""
+  CustomHeaderName: String
+  Description: String
+
+  """JSON object of environment variables for Stdio transport"""
+  EnvironmentVars: String
+  ID: String!
+  LastConnectedAt: Timestamp
+  LastErrorMessage: String
+
+  """Include input parameters in logs"""
+  LogInputParameters: Boolean!
+
+  """Include output content in logs"""
+  LogOutputContent: Boolean!
+
+  """Log all tool calls to execution log"""
+  LogToolCalls: Boolean!
+  MCPServer: String!
+  MCPServerID: String!
+  MJ_MCPServerConnectionPermissions_MCPServerConnectionIDArray: [MJMCPServerConnectionPermission_!]!
+  MJ_MCPServerConnectionTools_MCPServerConnectionIDArray: [MJMCPServerConnectionTool_!]!
+  MJ_MCPToolExecutionLogs_MCPServerConnectionIDArray: [MJMCPToolExecutionLog_!]!
+  MJ_OAuthAuthorizationStates_MCPServerConnectionIDArray: [MJOAuthAuthorizationState_!]!
+  MJ_OAuthClientRegistrations_MCPServerConnectionIDArray: [MJOAuthClientRegistration_!]!
+  MJ_OAuthTokens_MCPServerConnectionIDArray: [MJOAuthToken_!]!
+
+  """Max output size to log in bytes (default: 100KB)"""
+  MaxOutputLogSize: Int
+
+  """Connection name (unique per company)"""
+  Name: String!
+  Status: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+type MJMCPServerTool_ {
+  """JSON with tool hints (readOnlyHint, destructiveHint, etc.)"""
+  Annotations: String
+  DiscoveredAt: Timestamp!
+  GeneratedAction: String
+  GeneratedActionCategory: String
+  GeneratedActionCategoryID: String
+
+  """FK to auto-generated Action (if promoted)"""
+  GeneratedActionID: String
+  ID: String!
+
+  """JSON Schema for tool input parameters"""
+  InputSchema: String!
+  LastSeenAt: Timestamp!
+  MCPServer: String!
+  MCPServerID: String!
+  MJ_MCPServerConnectionTools_MCPServerToolIDArray: [MJMCPServerConnectionTool_!]!
+  MJ_MCPToolExecutionLogs_MCPServerToolIDArray: [MJMCPToolExecutionLog_!]!
+
+  """JSON Schema for tool output (if provided)"""
+  OutputSchema: String
+
+  """Tool status: Active, Inactive, or Deprecated"""
+  Status: String!
+  ToolDescription: String
+
+  """Tool identifier from the MCP server"""
+  ToolName: String!
+
+  """Human-readable title for the tool"""
+  ToolTitle: String
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+type MJMCPServer_ {
+  """Executable path for Stdio transport"""
+  Command: String
+
+  """JSON array of command arguments for Stdio transport"""
+  CommandArgs: String
+  ConnectionTimeoutMs: Int
+  CredentialType: String
+
+  """Expected credential type for this server"""
+  CredentialTypeID: String
+
+  """Default auth type: None, Bearer, APIKey, OAuth2, Basic, or Custom"""
+  DefaultAuthType: String!
+  Description: String
+  DocumentationURL: String
+  ID: String!
+  IconClass: String
+  LastSyncAt: Timestamp
+  MJ_MCPServerConnections_MCPServerIDArray: [MJMCPServerConnection_!]!
+  MJ_MCPServerTools_MCPServerIDArray: [MJMCPServerTool_!]!
+  MJ_OAuthClientRegistrations_MCPServerIDArray: [MJOAuthClientRegistration_!]!
+
+  """Unique display name for the MCP server"""
+  Name: String!
+
+  """Pre-configured OAuth client ID (when DCR is not supported)."""
+  OAuthClientID: String
+
+  """
+  Pre-configured OAuth client secret (encrypted at rest, when DCR is not supported).
+  """
+  OAuthClientSecretEncrypted: String
+
+  """
+  Authorization server issuer URL for OAuth 2.1 authentication (e.g., https://auth.example.com).
+  """
+  OAuthIssuerURL: String
+
+  """
+  Cache TTL for authorization server metadata in minutes. Default 1440 (24 hours).
+  """
+  OAuthMetadataCacheTTLMinutes: Int
+
+  """
+  Whether to require PKCE for OAuth flows. Always true for OAuth 2.1 compliance.
+  """
+  OAuthRequirePKCE: Boolean!
+
+  """Space-delimited OAuth scopes to request (e.g., "read write admin")."""
+  OAuthScopes: String
+  RateLimitPerHour: Int
+  RateLimitPerMinute: Int
+  RequestTimeoutMs: Int
+
+  """Server endpoint URL for HTTP/SSE/WebSocket transports"""
+  ServerURL: String
+
+  """Server status: Active, Inactive, or Deprecated"""
+  Status: String!
+
+  """Transport type: StreamableHTTP, SSE, Stdio, or WebSocket"""
+  TransportType: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+type MJMCPToolExecutionLog_ {
+  """Execution duration in milliseconds"""
+  DurationMs: Int
+  EndedAt: Timestamp
+  ErrorMessage: String
+  ID: String!
+
+  """JSON of input parameters (if logging enabled)"""
+  InputParameters: String
+  MCPServerConnection: String!
+  MCPServerConnectionID: String!
+  MCPServerTool: String
+
+  """FK to MCP Server Tool (null if tool not cached)"""
+  MCPServerToolID: String
+
+  """JSON of output content (if logging enabled)"""
+  OutputContent: String
+
+  """Whether output was truncated due to size"""
+  OutputTruncated: Boolean!
+  StartedAt: Timestamp!
+  Success: Boolean!
+
+  """Tool name (stored directly for resilience)"""
+  ToolName: String!
+  User: String!
+
+  """FK to User who initiated the call"""
+  UserID: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Caches OAuth 2.0 Authorization Server Metadata (RFC 8414) to reduce discovery requests.
+"""
+type MJOAuthAuthServerMetadataCache_ {
+  """URL of the authorization endpoint."""
+  AuthorizationEndpoint: String!
+  CachedAt: Timestamp!
+  CodeChallengeMethodsSupported: String
+  ExpiresAt: Timestamp!
+  GrantTypesSupported: String
+  ID: String!
+
+  """Authorization server issuer identifier URL."""
+  IssuerURL: String!
+  JwksURI: String
+
+  """
+  Full authorization server metadata JSON for debugging and extensibility.
+  """
+  MetadataJSON: String!
+
+  """URL of the dynamic client registration endpoint (RFC 7591)."""
+  RegistrationEndpoint: String
+  ResponseTypesSupported: String!
+  RevocationEndpoint: String
+  ScopesSupported: String
+
+  """URL of the token endpoint."""
+  TokenEndpoint: String!
+  TokenEndpointAuthMethods: String
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Tracks in-progress OAuth authorization flows with PKCE data for security.
+"""
+type MJOAuthAuthorizationState_ {
+  AuthorizationURL: String!
+
+  """PKCE code challenge sent to authorization server."""
+  CodeChallenge: String!
+
+  """
+  PKCE code verifier for token exchange (stored securely, never sent to auth server).
+  """
+  CodeVerifier: String!
+  CompletedAt: Timestamp
+  ErrorCode: String
+  ErrorDescription: String
+  ExpiresAt: Timestamp!
+
+  """
+  URL to redirect the user to after OAuth completion. If set, the OAuth callback will redirect here instead of showing a static HTML page.
+  """
+  FrontendReturnURL: String
+  ID: String!
+  InitiatedAt: Timestamp!
+  MCPServerConnection: String!
+  MCPServerConnectionID: String!
+  RedirectURI: String!
+  RequestedScopes: String
+
+  """Cryptographic state parameter for CSRF protection."""
+  StateParameter: String!
+
+  """Flow status: Pending, Completed, Failed, or Expired."""
+  Status: String!
+  User: String!
+  UserID: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""Stores OAuth Dynamic Client Registration (DCR) results per RFC 7591."""
+type MJOAuthClientRegistration_ {
+  """OAuth client ID assigned by the authorization server."""
+  ClientID: String!
+  ClientIDIssuedAt: Timestamp
+
+  """OAuth client secret (encrypted at rest) for confidential clients."""
+  ClientSecretEncrypted: String
+  ClientSecretExpiresAt: Timestamp
+  GrantTypes: String!
+  ID: String!
+  IssuerURL: String!
+  MCPServer: String!
+  MCPServerConnection: String!
+
+  """The MCP Server Connection this registration belongs to."""
+  MCPServerConnectionID: String!
+  MCPServerID: String!
+  RedirectURIs: String!
+  RegistrationAccessToken: String
+  RegistrationClientURI: String
+
+  """Full DCR response JSON for debugging and extensibility."""
+  RegistrationResponse: String!
+  ResponseTypes: String!
+  Scope: String
+
+  """Registration status: Active, Expired, or Revoked."""
+  Status: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Stores OAuth token metadata for MCP server connections. Actual tokens are stored via CredentialEngine for consistent encryption and audit logging.
+"""
+type MJOAuthToken_ {
+  Credential: String
+
+  """
+  Foreign key to Credential table where the OAuth tokens (access and refresh) are stored securely via CredentialEngine.
+  """
+  CredentialID: String
+
+  """When the access token expires."""
+  ExpiresAt: Timestamp!
+  ID: String!
+  IssuerURL: String!
+  LastRefreshAt: Timestamp
+  MCPServerConnection: String!
+  MCPServerConnectionID: String!
+
+  """Number of times the token has been refreshed."""
+  RefreshCount: Int!
+  Scope: String
+  TokenType: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
 """
 Defines methods for delivering generated outputs such as email, file storage, API endpoints, or messaging platforms.
 """
@@ -12487,6 +13194,7 @@ type MJRecordChange_ {
   ID: String!
   Integration: String
   IntegrationID: String
+  MJ_VersionLabelItems_RecordChangeIDArray: [MJVersionLabelItem_!]!
 
   """Field RecordID for entity Record Changes."""
   RecordID: String!
@@ -12837,6 +13545,7 @@ type MJRole_ {
   EntityPermissions_RoleNameArray: [MJEntityPermission_!]!
   ID: String!
   MJ_AIAgentPermissions_RoleIDArray: [MJAIAgentPermission_!]!
+  MJ_MCPServerConnectionPermissions_RoleIDArray: [MJMCPServerConnectionPermission_!]!
 
   """
   Role with full permissions to manage AI agents and all related entities. This role is required for AgentSpecSync operations to function correctly, allowing create, read, update, and delete operations on agents, prompts, actions, relationships, steps, and paths.
@@ -13166,6 +13875,16 @@ type MJSchemaInfo_ {
 
   """Field EntityIDMin for entity Schema Info."""
   EntityIDMin: Int!
+
+  """
+  Optional prefix to prepend to entity names generated for this schema. For example, setting this to "Committees: " would result in entity names like "Committees: Individuals". Can be overridden by mj.config.cjs NameRulesBySchema settings.
+  """
+  EntityNamePrefix: String
+
+  """
+  Optional suffix to append to entity names generated for this schema. Can be overridden by mj.config.cjs NameRulesBySchema settings.
+  """
+  EntityNameSuffix: String
   ID: String!
 
   """The database schema this information applies to."""
@@ -14413,6 +15132,9 @@ type MJUser_ {
   MJ_DashboardUserStates_UserIDArray: [MJDashboardUserState_!]!
   MJ_ListInvitations_CreatedByUserIDArray: [MJListInvitation_!]!
   MJ_ListShares_UserIDArray: [MJListShare_!]!
+  MJ_MCPServerConnectionPermissions_UserIDArray: [MJMCPServerConnectionPermission_!]!
+  MJ_MCPToolExecutionLogs_UserIDArray: [MJMCPToolExecutionLog_!]!
+  MJ_OAuthAuthorizationStates_UserIDArray: [MJOAuthAuthorizationState_!]!
   MJ_PublicLinks_UserIDArray: [MJPublicLink_!]!
   MJ_ReportUserStates_UserIDArray: [MJReportUserState_!]!
   MJ_ScheduledJobRuns_ExecutedByUserIDArray: [MJScheduledJobRun_!]!
@@ -14424,6 +15146,8 @@ type MJUser_ {
   MJ_TestSuiteRuns_RunByUserIDArray: [MJTestSuiteRun_!]!
   MJ_UserNotificationPreferences_UserIDArray: [MJUserNotificationPreference_!]!
   MJ_UserSettings_UserIDArray: [MJUserSetting_!]!
+  MJ_VersionLabelRestores_UserIDArray: [MJVersionLabelRestore_!]!
+  MJ_VersionLabels_CreatedByUserIDArray: [MJVersionLabel_!]!
   Name: String!
   QueryCategories_UserIDArray: [MJQueryCategory_!]!
   RecommendationRuns_RunByUserIDArray: [MJRecommendationRun_!]!
@@ -14530,6 +15254,141 @@ type MJVersionInstallation_ {
 
   """What type of installation was applied"""
   Type: String
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Links a Version Label to the specific RecordChange snapshot for each record captured by that label. Denormalizes EntityID and RecordID for efficient querying.
+"""
+type MJVersionLabelItem_ {
+  Entity: String!
+
+  """Denormalized entity reference for query performance"""
+  EntityID: String!
+  ID: String!
+  RecordChange: String!
+
+  """
+  The specific RecordChange entry representing the record state at label creation time
+  """
+  RecordChangeID: String!
+
+  """Denormalized record primary key for query performance"""
+  RecordID: String!
+  VersionLabel: String!
+
+  """The version label this item belongs to"""
+  VersionLabelID: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+Audit trail for restore operations performed against version labels. Tracks progress, success/failure counts, and links to the safety-net pre-restore label.
+"""
+type MJVersionLabelRestore_ {
+  """Number of records successfully restored so far"""
+  CompletedItems: Int!
+
+  """When the restore operation completed or failed"""
+  EndedAt: Timestamp
+
+  """Detailed error information for failed restore items"""
+  ErrorLog: String
+
+  """Number of records that failed to restore"""
+  FailedItems: Int!
+  ID: String!
+  PreRestoreLabel: String
+
+  """
+  Reference to the automatically created safety-net label that captured state before the restore began
+  """
+  PreRestoreLabelID: String
+
+  """When the restore operation began"""
+  StartedAt: Timestamp!
+
+  """Current status of the restore operation"""
+  Status: String!
+
+  """Total number of records to restore"""
+  TotalItems: Int!
+  User: String!
+
+  """The user who initiated the restore"""
+  UserID: String!
+  VersionLabel: String!
+
+  """The version label being restored to"""
+  VersionLabelID: String!
+  _mj__CreatedAt: Timestamp!
+  _mj__UpdatedAt: Timestamp!
+}
+
+"""
+A named point-in-time bookmark into the RecordChange history, used for versioning, diffing, and restoration.
+"""
+type MJVersionLabel_ {
+  CreatedByUser: String!
+
+  """The user who created this version label"""
+  CreatedByUserID: String!
+
+  """
+  Time in milliseconds taken to create this label and all its items. Used for estimation of future label creation operations.
+  """
+  CreationDurationMS: Int!
+
+  """Optional longer description of what this label represents"""
+  Description: String
+  Entity: String
+
+  """
+  When Scope is Entity or Record, identifies the target entity. NULL for System scope.
+  """
+  EntityID: String
+
+  """
+  Optional reference to an external system identifier such as a git SHA, release tag, or deployment ID
+  """
+  ExternalSystemID: String
+  ID: String!
+
+  """
+  Total number of VersionLabelItem rows created for this label. Populated after label creation completes.
+  """
+  ItemCount: Int!
+  MJ_VersionLabelItems_VersionLabelIDArray: [MJVersionLabelItem_!]!
+  MJ_VersionLabelRestores_PreRestoreLabelIDArray: [MJVersionLabelRestore_!]!
+  MJ_VersionLabelRestores_VersionLabelIDArray: [MJVersionLabelRestore_!]!
+  MJ_VersionLabels_ParentIDArray: [MJVersionLabel_!]!
+
+  """Human-readable label name, e.g. Release 2.5, Pre-Refactor Snapshot"""
+  Name: String!
+  Parent: String
+
+  """
+  Self-referencing parent for grouping related labels. When a user labels multiple records of the same entity, a parent label is created as the container and each individual record label references it via ParentID.
+  """
+  ParentID: String
+
+  """
+  When Scope is Record, identifies the specific record. NULL for System and Entity scopes.
+  """
+  RecordID: String
+  RootParentID: String
+
+  """
+  Breadth of the label: Record (one record and its dependency graph, the primary use case), Entity (one entity type), or System (all entities). Parent grouping labels may use any scope as a logical container.
+  """
+  Scope: String!
+
+  """
+  Lifecycle state: Active (current), Archived (historical reference only), Restored (this label was used in a restore operation)
+  """
+  Status: String!
   _mj__CreatedAt: Timestamp!
   _mj__UpdatedAt: Timestamp!
 }
@@ -14673,10 +15532,10 @@ type Mutation {
   CreateAPIKey(input: CreateAPIKeyInput!): CreateAPIKeyResult!
   CreateCommitteesActionItem(input: CreateCommitteesActionItemInput!): CommitteesActionItem_!
   CreateCommitteesAgendaItem(input: CreateCommitteesAgendaItemInput!): CommitteesAgendaItem_!
+  CreateCommitteesArtifact(input: CreateCommitteesArtifactInput!): CommitteesArtifact_!
+  CreateCommitteesArtifactType(input: CreateCommitteesArtifactTypeInput!): CommitteesArtifactType_!
   CreateCommitteesAttendance(input: CreateCommitteesAttendanceInput!): CommitteesAttendance_!
   CreateCommitteesCommittee(input: CreateCommitteesCommitteeInput!): CommitteesCommittee_!
-  CreateCommitteesCommitteeArtifact(input: CreateCommitteesCommitteeArtifactInput!): CommitteesCommitteeArtifact_!
-  CreateCommitteesCommitteeArtifactType(input: CreateCommitteesCommitteeArtifactTypeInput!): CommitteesCommitteeArtifactType_!
   CreateCommitteesMeeting(input: CreateCommitteesMeetingInput!): CommitteesMeeting_!
   CreateCommitteesMembership(input: CreateCommitteesMembershipInput!): CommitteesMembership_!
   CreateCommitteesMinute(input: CreateCommitteesMinuteInput!): CommitteesMinute_!
@@ -14866,6 +15725,16 @@ type Mutation {
   CreateMJListDetail(input: CreateMJListDetailInput!): MJListDetail_!
   CreateMJListInvitation(input: CreateMJListInvitationInput!): MJListInvitation_!
   CreateMJListShare(input: CreateMJListShareInput!): MJListShare_!
+  CreateMJMCPServer(input: CreateMJMCPServerInput!): MJMCPServer_!
+  CreateMJMCPServerConnection(input: CreateMJMCPServerConnectionInput!): MJMCPServerConnection_!
+  CreateMJMCPServerConnectionPermission(input: CreateMJMCPServerConnectionPermissionInput!): MJMCPServerConnectionPermission_!
+  CreateMJMCPServerConnectionTool(input: CreateMJMCPServerConnectionToolInput!): MJMCPServerConnectionTool_!
+  CreateMJMCPServerTool(input: CreateMJMCPServerToolInput!): MJMCPServerTool_!
+  CreateMJMCPToolExecutionLog(input: CreateMJMCPToolExecutionLogInput!): MJMCPToolExecutionLog_!
+  CreateMJOAuthAuthServerMetadataCache(input: CreateMJOAuthAuthServerMetadataCacheInput!): MJOAuthAuthServerMetadataCache_!
+  CreateMJOAuthAuthorizationState(input: CreateMJOAuthAuthorizationStateInput!): MJOAuthAuthorizationState_!
+  CreateMJOAuthClientRegistration(input: CreateMJOAuthClientRegistrationInput!): MJOAuthClientRegistration_!
+  CreateMJOAuthToken(input: CreateMJOAuthTokenInput!): MJOAuthToken_!
   CreateMJOutputDeliveryType(input: CreateMJOutputDeliveryTypeInput!): MJOutputDeliveryType_!
   CreateMJOutputFormatType(input: CreateMJOutputFormatTypeInput!): MJOutputFormatType_!
   CreateMJOutputTriggerType(input: CreateMJOutputTriggerTypeInput!): MJOutputTriggerType_!
@@ -14941,6 +15810,9 @@ type Mutation {
   CreateMJVectorDatabase(input: CreateMJVectorDatabaseInput!): MJVectorDatabase_!
   CreateMJVectorIndex(input: CreateMJVectorIndexInput!): MJVectorIndex_!
   CreateMJVersionInstallation(input: CreateMJVersionInstallationInput!): MJVersionInstallation_!
+  CreateMJVersionLabel(input: CreateMJVersionLabelInput!): MJVersionLabel_!
+  CreateMJVersionLabelItem(input: CreateMJVersionLabelItemInput!): MJVersionLabelItem_!
+  CreateMJVersionLabelRestore(input: CreateMJVersionLabelRestoreInput!): MJVersionLabelRestore_!
   CreateMJWorkflow(input: CreateMJWorkflowInput!): MJWorkflow_!
   CreateMJWorkflowEngine(input: CreateMJWorkflowEngineInput!): MJWorkflowEngine_!
   CreateMJWorkflowRun(input: CreateMJWorkflowRunInput!): MJWorkflowRun_!
@@ -14949,12 +15821,13 @@ type Mutation {
   CreatePreAuthUploadUrl(input: CreatePreAuthUploadUrlInput!): CreatePreAuthUploadUrlPayload!
   CreateQuerySystemUser(input: CreateQuerySystemUserInput!): CreateQueryResultType!
   CreateReportFromConversationDetailID(ConversationDetailID: String!): CreateReportResultType!
+  CreateVersionLabel(input: CreateVersionLabelInput!, sessionId: String): CreateLabelResultOutput!
   DeleteCommitteesActionItem(ID: String!, options___: DeleteOptionsInput!): CommitteesActionItem_!
   DeleteCommitteesAgendaItem(ID: String!, options___: DeleteOptionsInput!): CommitteesAgendaItem_!
+  DeleteCommitteesArtifact(ID: String!, options___: DeleteOptionsInput!): CommitteesArtifact_!
+  DeleteCommitteesArtifactType(ID: String!, options___: DeleteOptionsInput!): CommitteesArtifactType_!
   DeleteCommitteesAttendance(ID: String!, options___: DeleteOptionsInput!): CommitteesAttendance_!
   DeleteCommitteesCommittee(ID: String!, options___: DeleteOptionsInput!): CommitteesCommittee_!
-  DeleteCommitteesCommitteeArtifact(ID: String!, options___: DeleteOptionsInput!): CommitteesCommitteeArtifact_!
-  DeleteCommitteesCommitteeArtifactType(ID: String!, options___: DeleteOptionsInput!): CommitteesCommitteeArtifactType_!
   DeleteCommitteesMeeting(ID: String!, options___: DeleteOptionsInput!): CommitteesMeeting_!
   DeleteCommitteesMembership(ID: String!, options___: DeleteOptionsInput!): CommitteesMembership_!
   DeleteCommitteesMinute(ID: String!, options___: DeleteOptionsInput!): CommitteesMinute_!
@@ -15144,6 +16017,16 @@ type Mutation {
   DeleteMJListDetail(ID: String!, options___: DeleteOptionsInput!): MJListDetail_!
   DeleteMJListInvitation(ID: String!, options___: DeleteOptionsInput!): MJListInvitation_!
   DeleteMJListShare(ID: String!, options___: DeleteOptionsInput!): MJListShare_!
+  DeleteMJMCPServer(ID: String!, options___: DeleteOptionsInput!): MJMCPServer_!
+  DeleteMJMCPServerConnection(ID: String!, options___: DeleteOptionsInput!): MJMCPServerConnection_!
+  DeleteMJMCPServerConnectionPermission(ID: String!, options___: DeleteOptionsInput!): MJMCPServerConnectionPermission_!
+  DeleteMJMCPServerConnectionTool(ID: String!, options___: DeleteOptionsInput!): MJMCPServerConnectionTool_!
+  DeleteMJMCPServerTool(ID: String!, options___: DeleteOptionsInput!): MJMCPServerTool_!
+  DeleteMJMCPToolExecutionLog(ID: String!, options___: DeleteOptionsInput!): MJMCPToolExecutionLog_!
+  DeleteMJOAuthAuthServerMetadataCache(ID: String!, options___: DeleteOptionsInput!): MJOAuthAuthServerMetadataCache_!
+  DeleteMJOAuthAuthorizationState(ID: String!, options___: DeleteOptionsInput!): MJOAuthAuthorizationState_!
+  DeleteMJOAuthClientRegistration(ID: String!, options___: DeleteOptionsInput!): MJOAuthClientRegistration_!
+  DeleteMJOAuthToken(ID: String!, options___: DeleteOptionsInput!): MJOAuthToken_!
   DeleteMJOutputDeliveryType(ID: String!, options___: DeleteOptionsInput!): MJOutputDeliveryType_!
   DeleteMJOutputFormatType(ID: String!, options___: DeleteOptionsInput!): MJOutputFormatType_!
   DeleteMJOutputTriggerType(ID: String!, options___: DeleteOptionsInput!): MJOutputTriggerType_!
@@ -15219,6 +16102,9 @@ type Mutation {
   DeleteMJVectorDatabase(ID: String!, options___: DeleteOptionsInput!): MJVectorDatabase_!
   DeleteMJVectorIndex(ID: String!, options___: DeleteOptionsInput!): MJVectorIndex_!
   DeleteMJVersionInstallation(ID: String!, options___: DeleteOptionsInput!): MJVersionInstallation_!
+  DeleteMJVersionLabel(ID: String!, options___: DeleteOptionsInput!): MJVersionLabel_!
+  DeleteMJVersionLabelItem(ID: String!, options___: DeleteOptionsInput!): MJVersionLabelItem_!
+  DeleteMJVersionLabelRestore(ID: String!, options___: DeleteOptionsInput!): MJVersionLabelRestore_!
   DeleteMJWorkflow(ID: String!, options___: DeleteOptionsInput!): MJWorkflow_!
   DeleteMJWorkflowEngine(ID: String!, options___: DeleteOptionsInput!): MJWorkflowEngine_!
   DeleteMJWorkflowRun(ID: String!, options___: DeleteOptionsInput!): MJWorkflowRun_!
@@ -15227,12 +16113,16 @@ type Mutation {
   DeleteQuerySystemResolver(ID: String!, options: DeleteOptionsInput): DeleteQueryResultType!
   DeleteStorageObject(input: DeleteStorageObjectInput!): Boolean!
   EmbedText(modelSize: String!, textToEmbed: [String!]!): EmbedTextResult!
+  ExecuteMCPTool(input: ExecuteMCPToolInput!): ExecuteMCPToolResult!
   ExecuteSimplePrompt(messages: String, modelPower: String, preferredModels: [String!], responseFormat: String, systemPrompt: String!): SimplePromptResult!
   ExecuteTaskGraph(conversationDetailId: String!, createNotifications: Boolean, environmentId: String!, sessionId: String!, taskGraphJson: String!): ExecuteTaskGraphResult!
   ExecuteTransactionGroup(group: TransactionInputType!): TransactionOutputType!
+  InitiateMCPOAuth(input: InitiateMCPOAuthInput!): InitiateMCPOAuthResult!
   MergeRecords(request: RecordMergeRequest!): RecordMergeResult!
   MoveStorageObject(input: MoveStorageObjectInput!): Boolean!
+  RefreshMCPOAuthToken(input: RefreshMCPOAuthTokenInput!): RefreshMCPOAuthTokenResult!
   RevokeAPIKey(apiKeyId: String!): RevokeAPIKeyResult!
+  RevokeMCPOAuth(input: RevokeMCPOAuthInput!): RevokeMCPOAuthResult!
   RunAIAgent(agentId: String!, autoPopulateLastRunPayload: Boolean, configurationId: String, conversationDetailId: String, createArtifacts: Boolean, createNotification: Boolean, data: String, lastRunId: String, messages: String!, payload: String, sessionId: String!, sourceArtifactId: String, sourceArtifactVersionId: String, templateData: String): AIAgentRunResult!
   RunAIAgentFromConversationDetail(agentId: String!, autoPopulateLastRunPayload: Boolean, configurationId: String, conversationDetailId: String!, createArtifacts: Boolean, createNotification: Boolean, data: String, lastRunId: String, maxHistoryMessages: Int, payload: String, sessionId: String!, sourceArtifactId: String, sourceArtifactVersionId: String): AIAgentRunResult!
   RunAIPrompt(configurationId: String, data: String, frequencyPenalty: Float, includeLogProbs: Boolean, messages: String, minP: Float, overrideModelId: String, overrideVendorId: String, presencePenalty: Float, promptId: String!, rerunFromPromptRunID: String, responseFormat: String, seed: Int, skipValidation: Boolean, stopSequences: [String!], systemPromptOverride: String, temperature: Float, templateData: String, topK: Int, topLogProbs: Int, topP: Float): AIPromptRunResult!
@@ -15244,15 +16134,16 @@ type Mutation {
   SendComponentFeedback(feedback: ComponentFeedbackInput!): ComponentFeedbackResponse!
   SetRecordFavoriteStatus(params: UserFavoriteSetParams!): UserFavoriteResult!
   SyncData(items: [ActionItemInputType!]!): SyncDataResultType!
+  SyncMCPTools(input: SyncMCPToolsInput!): SyncMCPToolsResult!
   SyncRoles(roles: [RoleInputType!]!): SyncRolesAndUsersResultType!
   SyncRolesAndUsers(data: RolesAndUsersInputType!): SyncRolesAndUsersResultType!
   SyncUsers(users: [UserInputType!]!): SyncRolesAndUsersResultType!
   UpdateCommitteesActionItem(input: UpdateCommitteesActionItemInput!): CommitteesActionItem_!
   UpdateCommitteesAgendaItem(input: UpdateCommitteesAgendaItemInput!): CommitteesAgendaItem_!
+  UpdateCommitteesArtifact(input: UpdateCommitteesArtifactInput!): CommitteesArtifact_!
+  UpdateCommitteesArtifactType(input: UpdateCommitteesArtifactTypeInput!): CommitteesArtifactType_!
   UpdateCommitteesAttendance(input: UpdateCommitteesAttendanceInput!): CommitteesAttendance_!
   UpdateCommitteesCommittee(input: UpdateCommitteesCommitteeInput!): CommitteesCommittee_!
-  UpdateCommitteesCommitteeArtifact(input: UpdateCommitteesCommitteeArtifactInput!): CommitteesCommitteeArtifact_!
-  UpdateCommitteesCommitteeArtifactType(input: UpdateCommitteesCommitteeArtifactTypeInput!): CommitteesCommitteeArtifactType_!
   UpdateCommitteesMeeting(input: UpdateCommitteesMeetingInput!): CommitteesMeeting_!
   UpdateCommitteesMembership(input: UpdateCommitteesMembershipInput!): CommitteesMembership_!
   UpdateCommitteesMinute(input: UpdateCommitteesMinuteInput!): CommitteesMinute_!
@@ -15441,6 +16332,16 @@ type Mutation {
   UpdateMJListDetail(input: UpdateMJListDetailInput!): MJListDetail_!
   UpdateMJListInvitation(input: UpdateMJListInvitationInput!): MJListInvitation_!
   UpdateMJListShare(input: UpdateMJListShareInput!): MJListShare_!
+  UpdateMJMCPServer(input: UpdateMJMCPServerInput!): MJMCPServer_!
+  UpdateMJMCPServerConnection(input: UpdateMJMCPServerConnectionInput!): MJMCPServerConnection_!
+  UpdateMJMCPServerConnectionPermission(input: UpdateMJMCPServerConnectionPermissionInput!): MJMCPServerConnectionPermission_!
+  UpdateMJMCPServerConnectionTool(input: UpdateMJMCPServerConnectionToolInput!): MJMCPServerConnectionTool_!
+  UpdateMJMCPServerTool(input: UpdateMJMCPServerToolInput!): MJMCPServerTool_!
+  UpdateMJMCPToolExecutionLog(input: UpdateMJMCPToolExecutionLogInput!): MJMCPToolExecutionLog_!
+  UpdateMJOAuthAuthServerMetadataCache(input: UpdateMJOAuthAuthServerMetadataCacheInput!): MJOAuthAuthServerMetadataCache_!
+  UpdateMJOAuthAuthorizationState(input: UpdateMJOAuthAuthorizationStateInput!): MJOAuthAuthorizationState_!
+  UpdateMJOAuthClientRegistration(input: UpdateMJOAuthClientRegistrationInput!): MJOAuthClientRegistration_!
+  UpdateMJOAuthToken(input: UpdateMJOAuthTokenInput!): MJOAuthToken_!
   UpdateMJOutputDeliveryType(input: UpdateMJOutputDeliveryTypeInput!): MJOutputDeliveryType_!
   UpdateMJOutputFormatType(input: UpdateMJOutputFormatTypeInput!): MJOutputFormatType_!
   UpdateMJOutputTriggerType(input: UpdateMJOutputTriggerTypeInput!): MJOutputTriggerType_!
@@ -15516,6 +16417,9 @@ type Mutation {
   UpdateMJVectorDatabase(input: UpdateMJVectorDatabaseInput!): MJVectorDatabase_!
   UpdateMJVectorIndex(input: UpdateMJVectorIndexInput!): MJVectorIndex_!
   UpdateMJVersionInstallation(input: UpdateMJVersionInstallationInput!): MJVersionInstallation_!
+  UpdateMJVersionLabel(input: UpdateMJVersionLabelInput!): MJVersionLabel_!
+  UpdateMJVersionLabelItem(input: UpdateMJVersionLabelItemInput!): MJVersionLabelItem_!
+  UpdateMJVersionLabelRestore(input: UpdateMJVersionLabelRestoreInput!): MJVersionLabelRestore_!
   UpdateMJWorkflow(input: UpdateMJWorkflowInput!): MJWorkflow_!
   UpdateMJWorkflowEngine(input: UpdateMJWorkflowEngineInput!): MJWorkflowEngine_!
   UpdateMJWorkflowRun(input: UpdateMJWorkflowRunInput!): MJWorkflowRun_!
@@ -15587,10 +16491,10 @@ type Query {
   AllUsers: [MJUser_!]!
   CommitteesActionItem(ID: String!): CommitteesActionItem_
   CommitteesAgendaItem(ID: String!): CommitteesAgendaItem_
+  CommitteesArtifact(ID: String!): CommitteesArtifact_
+  CommitteesArtifactType(ID: String!): CommitteesArtifactType_
   CommitteesAttendance(ID: String!): CommitteesAttendance_
   CommitteesCommittee(ID: String!): CommitteesCommittee_
-  CommitteesCommitteeArtifact(ID: String!): CommitteesCommitteeArtifact_
-  CommitteesCommitteeArtifactType(ID: String!): CommitteesCommitteeArtifactType_
   CommitteesMeeting(ID: String!): CommitteesMeeting_
   CommitteesMembership(ID: String!): CommitteesMembership_
   CommitteesMinute(ID: String!): CommitteesMinute_
@@ -15606,10 +16510,8 @@ type Query {
   DefaultViewByUserAndEntity(EntityID: Int!, UserID: Int!): [MJUserView_!]!
   EmbedTextSystemUser(modelSize: String!, textToEmbed: [String!]!): EmbedTextResult!
   EntitiesBySchemas(ExcludeSchemas: [String!], IncludeSchemas: [String!]): [MJEntity_!]!
-  ExecuteAskSkipAnalysisQuery(ConversationId: String!, DataContextId: String, ForceEntityRefresh: Boolean, StartTime: Timestamp, UserQuestion: String!): AskSkipResultType!
-  ExecuteAskSkipRecordChat(CompositeKey: CompositeKeyInputType!, ConversationId: String!, EntityName: String!, UserQuestion: String!): AskSkipResultType!
-  ExecuteAskSkipRunScript(DataContextId: String!, ScriptText: String!): AskSkipResultType!
   ExecuteSimplePromptSystemUser(messages: String, modelPower: String, preferredModels: [String!], responseFormat: String, systemPrompt: String!): SimplePromptResult!
+  FindISAChildEntity(EntityName: String!, RecordID: String!): ISAChildEntityResult!
   GetAllEntities: SimpleEntityResultType!
   GetData(input: GetDataInputType!): GetDataOutputType!
   GetDataContextData(DataContextID: String!): GetDataContextDataOutputType!
@@ -15619,6 +16521,8 @@ type Query {
   GetEntityDependencies(entityName: String!): [EntityDependencyResult!]!
   GetEntityRecordName(CompositeKey: CompositeKeyInputType!, EntityName: String!): EntityRecordNameResult!
   GetEntityRecordNames(info: [EntityRecordNameInput!]!): [EntityRecordNameResult!]!
+  GetMCPOAuthConnectionStatus(ConnectionID: String!): MCPOAuthConnectionStatus!
+  GetMCPOAuthStatus(input: GetMCPOAuthStatusInput!): MCPOAuthStatusResult!
   GetQueryData(AuditLogDescription: String, CategoryID: String, CategoryPath: String, ForceAuditLog: Boolean, MaxRows: Int, Parameters: JSONObject, QueryID: String!, StartRow: Int): RunQueryResultType!
   GetQueryDataByName(AuditLogDescription: String, CategoryID: String, CategoryPath: String, ForceAuditLog: Boolean, MaxRows: Int, Parameters: JSONObject, QueryName: String!, StartRow: Int): RunQueryResultType!
   GetQueryDataByNameSystemUser(AuditLogDescription: String, CategoryID: String, CategoryPath: String, ForceAuditLog: Boolean, MaxRows: Int, Parameters: JSONObject, QueryName: String!, StartRow: Int): RunQueryResultType!
@@ -15635,7 +16539,7 @@ type Query {
   GetServerTelemetryPatterns(filter: TelemetryPatternFilterInput): [TelemetryPatternGQL!]!
   GetServerTelemetrySettings: TelemetrySettingsGQL!
   GetServerTelemetryStats: TelemetryStatsGQL!
-  Info: Info!
+  Info: ServerInfo!
   IsTestRunning(testId: String!): Boolean!
   ListStorageObjects(input: ListStorageObjectsInput!): StorageListResult!
   MJAIAction(ID: String!): MJAIAction_
@@ -15817,6 +16721,16 @@ type Query {
   MJListDetail(ID: String!): MJListDetail_
   MJListInvitation(ID: String!): MJListInvitation_
   MJListShare(ID: String!): MJListShare_
+  MJMCPServer(ID: String!): MJMCPServer_
+  MJMCPServerConnection(ID: String!): MJMCPServerConnection_
+  MJMCPServerConnectionPermission(ID: String!): MJMCPServerConnectionPermission_
+  MJMCPServerConnectionTool(ID: String!): MJMCPServerConnectionTool_
+  MJMCPServerTool(ID: String!): MJMCPServerTool_
+  MJMCPToolExecutionLog(ID: String!): MJMCPToolExecutionLog_
+  MJOAuthAuthServerMetadataCache(ID: String!): MJOAuthAuthServerMetadataCache_
+  MJOAuthAuthorizationState(ID: String!): MJOAuthAuthorizationState_
+  MJOAuthClientRegistration(ID: String!): MJOAuthClientRegistration_
+  MJOAuthToken(ID: String!): MJOAuthToken_
   MJOutputDeliveryType(ID: String!): MJOutputDeliveryType_
   MJOutputFormatType(ID: String!): MJOutputFormatType_
   MJOutputTriggerType(ID: String!): MJOutputTriggerType_
@@ -15892,12 +16806,14 @@ type Query {
   MJVectorDatabase(ID: String!): MJVectorDatabase_
   MJVectorIndex(ID: String!): MJVectorIndex_
   MJVersionInstallation(ID: String!): MJVersionInstallation_
+  MJVersionLabel(ID: String!): MJVersionLabel_
+  MJVersionLabelItem(ID: String!): MJVersionLabelItem_
+  MJVersionLabelRestore(ID: String!): MJVersionLabelRestore_
   MJWorkflow(ID: String!): MJWorkflow_
   MJWorkflowEngine(ID: String!): MJWorkflowEngine_
   MJWorkflowRun(ID: String!): MJWorkflowRun_
   MJWorkspace(ID: String!): MJWorkspace_
   MJWorkspaceItem(ID: String!): MJWorkspaceItem_
-  ReattachToProcessingConversation(ConversationId: String!): ReattachConversationResponse!
   ResolveComponentDependencies(componentId: String!, registryName: String!): ComponentDependencyTreeType
   RunAIAgentSystemUser(agentId: String!, autoPopulateLastRunPayload: Boolean, configurationId: String, conversationDetailId: String, createArtifacts: Boolean, createNotification: Boolean, data: String, lastRunId: String, messages: String!, payload: String, sessionId: String!, sourceArtifactId: String, sourceArtifactVersionId: String, templateData: String): AIAgentRunResult!
   RunAIPromptSystemUser(configurationId: String, data: String, frequencyPenalty: Float, includeLogProbs: Boolean, messages: String, minP: Float, overrideModelId: String, overrideVendorId: String, presencePenalty: Float, promptId: String!, rerunFromPromptRunID: String, responseFormat: String, seed: Int, skipValidation: Boolean, stopSequences: [String!], systemPromptOverride: String, temperature: Float, templateData: String, topK: Int, topLogProbs: Int, topP: Float): AIPromptRunResult!
@@ -15907,15 +16823,15 @@ type Query {
   RunCommitteesAgendaItemDynamicView(input: RunDynamicViewInput!): RunCommitteesAgendaItemViewResult!
   RunCommitteesAgendaItemViewByID(input: RunViewByIDInput!): RunCommitteesAgendaItemViewResult!
   RunCommitteesAgendaItemViewByName(input: RunViewByNameInput!): RunCommitteesAgendaItemViewResult!
+  RunCommitteesArtifactDynamicView(input: RunDynamicViewInput!): RunCommitteesArtifactViewResult!
+  RunCommitteesArtifactTypeDynamicView(input: RunDynamicViewInput!): RunCommitteesArtifactTypeViewResult!
+  RunCommitteesArtifactTypeViewByID(input: RunViewByIDInput!): RunCommitteesArtifactTypeViewResult!
+  RunCommitteesArtifactTypeViewByName(input: RunViewByNameInput!): RunCommitteesArtifactTypeViewResult!
+  RunCommitteesArtifactViewByID(input: RunViewByIDInput!): RunCommitteesArtifactViewResult!
+  RunCommitteesArtifactViewByName(input: RunViewByNameInput!): RunCommitteesArtifactViewResult!
   RunCommitteesAttendanceDynamicView(input: RunDynamicViewInput!): RunCommitteesAttendanceViewResult!
   RunCommitteesAttendanceViewByID(input: RunViewByIDInput!): RunCommitteesAttendanceViewResult!
   RunCommitteesAttendanceViewByName(input: RunViewByNameInput!): RunCommitteesAttendanceViewResult!
-  RunCommitteesCommitteeArtifactDynamicView(input: RunDynamicViewInput!): RunCommitteesCommitteeArtifactViewResult!
-  RunCommitteesCommitteeArtifactTypeDynamicView(input: RunDynamicViewInput!): RunCommitteesCommitteeArtifactTypeViewResult!
-  RunCommitteesCommitteeArtifactTypeViewByID(input: RunViewByIDInput!): RunCommitteesCommitteeArtifactTypeViewResult!
-  RunCommitteesCommitteeArtifactTypeViewByName(input: RunViewByNameInput!): RunCommitteesCommitteeArtifactTypeViewResult!
-  RunCommitteesCommitteeArtifactViewByID(input: RunViewByIDInput!): RunCommitteesCommitteeArtifactViewResult!
-  RunCommitteesCommitteeArtifactViewByName(input: RunViewByNameInput!): RunCommitteesCommitteeArtifactViewResult!
   RunCommitteesCommitteeDynamicView(input: RunDynamicViewInput!): RunCommitteesCommitteeViewResult!
   RunCommitteesCommitteeViewByID(input: RunViewByIDInput!): RunCommitteesCommitteeViewResult!
   RunCommitteesCommitteeViewByName(input: RunViewByNameInput!): RunCommitteesCommitteeViewResult!
@@ -16483,6 +17399,36 @@ type Query {
   RunMJListShareViewByName(input: RunViewByNameInput!): RunMJListShareViewResult!
   RunMJListViewByID(input: RunViewByIDInput!): RunMJListViewResult!
   RunMJListViewByName(input: RunViewByNameInput!): RunMJListViewResult!
+  RunMJMCPServerConnectionDynamicView(input: RunDynamicViewInput!): RunMJMCPServerConnectionViewResult!
+  RunMJMCPServerConnectionPermissionDynamicView(input: RunDynamicViewInput!): RunMJMCPServerConnectionPermissionViewResult!
+  RunMJMCPServerConnectionPermissionViewByID(input: RunViewByIDInput!): RunMJMCPServerConnectionPermissionViewResult!
+  RunMJMCPServerConnectionPermissionViewByName(input: RunViewByNameInput!): RunMJMCPServerConnectionPermissionViewResult!
+  RunMJMCPServerConnectionToolDynamicView(input: RunDynamicViewInput!): RunMJMCPServerConnectionToolViewResult!
+  RunMJMCPServerConnectionToolViewByID(input: RunViewByIDInput!): RunMJMCPServerConnectionToolViewResult!
+  RunMJMCPServerConnectionToolViewByName(input: RunViewByNameInput!): RunMJMCPServerConnectionToolViewResult!
+  RunMJMCPServerConnectionViewByID(input: RunViewByIDInput!): RunMJMCPServerConnectionViewResult!
+  RunMJMCPServerConnectionViewByName(input: RunViewByNameInput!): RunMJMCPServerConnectionViewResult!
+  RunMJMCPServerDynamicView(input: RunDynamicViewInput!): RunMJMCPServerViewResult!
+  RunMJMCPServerToolDynamicView(input: RunDynamicViewInput!): RunMJMCPServerToolViewResult!
+  RunMJMCPServerToolViewByID(input: RunViewByIDInput!): RunMJMCPServerToolViewResult!
+  RunMJMCPServerToolViewByName(input: RunViewByNameInput!): RunMJMCPServerToolViewResult!
+  RunMJMCPServerViewByID(input: RunViewByIDInput!): RunMJMCPServerViewResult!
+  RunMJMCPServerViewByName(input: RunViewByNameInput!): RunMJMCPServerViewResult!
+  RunMJMCPToolExecutionLogDynamicView(input: RunDynamicViewInput!): RunMJMCPToolExecutionLogViewResult!
+  RunMJMCPToolExecutionLogViewByID(input: RunViewByIDInput!): RunMJMCPToolExecutionLogViewResult!
+  RunMJMCPToolExecutionLogViewByName(input: RunViewByNameInput!): RunMJMCPToolExecutionLogViewResult!
+  RunMJOAuthAuthServerMetadataCacheDynamicView(input: RunDynamicViewInput!): RunMJOAuthAuthServerMetadataCacheViewResult!
+  RunMJOAuthAuthServerMetadataCacheViewByID(input: RunViewByIDInput!): RunMJOAuthAuthServerMetadataCacheViewResult!
+  RunMJOAuthAuthServerMetadataCacheViewByName(input: RunViewByNameInput!): RunMJOAuthAuthServerMetadataCacheViewResult!
+  RunMJOAuthAuthorizationStateDynamicView(input: RunDynamicViewInput!): RunMJOAuthAuthorizationStateViewResult!
+  RunMJOAuthAuthorizationStateViewByID(input: RunViewByIDInput!): RunMJOAuthAuthorizationStateViewResult!
+  RunMJOAuthAuthorizationStateViewByName(input: RunViewByNameInput!): RunMJOAuthAuthorizationStateViewResult!
+  RunMJOAuthClientRegistrationDynamicView(input: RunDynamicViewInput!): RunMJOAuthClientRegistrationViewResult!
+  RunMJOAuthClientRegistrationViewByID(input: RunViewByIDInput!): RunMJOAuthClientRegistrationViewResult!
+  RunMJOAuthClientRegistrationViewByName(input: RunViewByNameInput!): RunMJOAuthClientRegistrationViewResult!
+  RunMJOAuthTokenDynamicView(input: RunDynamicViewInput!): RunMJOAuthTokenViewResult!
+  RunMJOAuthTokenViewByID(input: RunViewByIDInput!): RunMJOAuthTokenViewResult!
+  RunMJOAuthTokenViewByName(input: RunViewByNameInput!): RunMJOAuthTokenViewResult!
   RunMJOutputDeliveryTypeDynamicView(input: RunDynamicViewInput!): RunMJOutputDeliveryTypeViewResult!
   RunMJOutputDeliveryTypeViewByID(input: RunViewByIDInput!): RunMJOutputDeliveryTypeViewResult!
   RunMJOutputDeliveryTypeViewByName(input: RunViewByNameInput!): RunMJOutputDeliveryTypeViewResult!
@@ -16708,6 +17654,15 @@ type Query {
   RunMJVersionInstallationDynamicView(input: RunDynamicViewInput!): RunMJVersionInstallationViewResult!
   RunMJVersionInstallationViewByID(input: RunViewByIDInput!): RunMJVersionInstallationViewResult!
   RunMJVersionInstallationViewByName(input: RunViewByNameInput!): RunMJVersionInstallationViewResult!
+  RunMJVersionLabelDynamicView(input: RunDynamicViewInput!): RunMJVersionLabelViewResult!
+  RunMJVersionLabelItemDynamicView(input: RunDynamicViewInput!): RunMJVersionLabelItemViewResult!
+  RunMJVersionLabelItemViewByID(input: RunViewByIDInput!): RunMJVersionLabelItemViewResult!
+  RunMJVersionLabelItemViewByName(input: RunViewByNameInput!): RunMJVersionLabelItemViewResult!
+  RunMJVersionLabelRestoreDynamicView(input: RunDynamicViewInput!): RunMJVersionLabelRestoreViewResult!
+  RunMJVersionLabelRestoreViewByID(input: RunViewByIDInput!): RunMJVersionLabelRestoreViewResult!
+  RunMJVersionLabelRestoreViewByName(input: RunViewByNameInput!): RunMJVersionLabelRestoreViewResult!
+  RunMJVersionLabelViewByID(input: RunViewByIDInput!): RunMJVersionLabelViewResult!
+  RunMJVersionLabelViewByName(input: RunViewByNameInput!): RunMJVersionLabelViewResult!
   RunMJWorkflowDynamicView(input: RunDynamicViewInput!): RunMJWorkflowViewResult!
   RunMJWorkflowEngineDynamicView(input: RunDynamicViewInput!): RunMJWorkflowEngineViewResult!
   RunMJWorkflowEngineViewByID(input: RunViewByIDInput!): RunMJWorkflowEngineViewResult!
@@ -16805,11 +17760,6 @@ enum QueryStatus {
   Rejected
 }
 
-type ReattachConversationResponse {
-  lastStatusMessage: String
-  startTime: Timestamp
-}
-
 type RecordDependencyResult {
   CompositeKey: CompositeKeyOutputType!
   EntityName: String!
@@ -16846,6 +17796,17 @@ type RecordMergeResult {
   Success: Boolean!
 }
 
+input RefreshMCPOAuthTokenInput {
+  ConnectionID: String!
+}
+
+type RefreshMCPOAuthTokenResult {
+  ErrorMessage: String
+  ExpiresAt: Timestamp
+  RequiresReauthorization: Boolean
+  Success: Boolean!
+}
+
 type RegistryComponentSearchResultType {
   components: [String!]!
   limit: Float!
@@ -16855,6 +17816,17 @@ type RegistryComponentSearchResultType {
 
 type RevokeAPIKeyResult {
   Error: String
+  Success: Boolean!
+}
+
+input RevokeMCPOAuthInput {
+  ConnectionID: String!
+  Reason: String
+}
+
+type RevokeMCPOAuthResult {
+  ConnectionID: String
+  ErrorMessage: String
   Success: Boolean!
 }
 
@@ -16895,30 +17867,30 @@ type RunCommitteesAgendaItemViewResult {
   UserViewRunID: String
 }
 
+type RunCommitteesArtifactTypeViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [CommitteesArtifactType_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunCommitteesArtifactViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [CommitteesArtifact_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
 type RunCommitteesAttendanceViewResult {
   ErrorMessage: String
   ExecutionTime: Int
   Results: [CommitteesAttendance_!]!
-  RowCount: Int
-  Success: Boolean!
-  TotalRowCount: Int
-  UserViewRunID: String
-}
-
-type RunCommitteesCommitteeArtifactTypeViewResult {
-  ErrorMessage: String
-  ExecutionTime: Int
-  Results: [CommitteesCommitteeArtifactType_!]!
-  RowCount: Int
-  Success: Boolean!
-  TotalRowCount: Int
-  UserViewRunID: String
-}
-
-type RunCommitteesCommitteeArtifactViewResult {
-  ErrorMessage: String
-  ExecutionTime: Int
-  Results: [CommitteesCommitteeArtifact_!]!
   RowCount: Int
   Success: Boolean!
   TotalRowCount: Int
@@ -18875,6 +19847,106 @@ type RunMJListViewResult {
   UserViewRunID: String
 }
 
+type RunMJMCPServerConnectionPermissionViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPServerConnectionPermission_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJMCPServerConnectionToolViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPServerConnectionTool_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJMCPServerConnectionViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPServerConnection_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJMCPServerToolViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPServerTool_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJMCPServerViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPServer_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJMCPToolExecutionLogViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJMCPToolExecutionLog_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJOAuthAuthServerMetadataCacheViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJOAuthAuthServerMetadataCache_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJOAuthAuthorizationStateViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJOAuthAuthorizationState_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJOAuthClientRegistrationViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJOAuthClientRegistration_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJOAuthTokenViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJOAuthToken_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
 type RunMJOutputDeliveryTypeViewResult {
   ErrorMessage: String
   ExecutionTime: Int
@@ -19625,6 +20697,36 @@ type RunMJVersionInstallationViewResult {
   UserViewRunID: String
 }
 
+type RunMJVersionLabelItemViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJVersionLabelItem_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJVersionLabelRestoreViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJVersionLabelRestore_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
+type RunMJVersionLabelViewResult {
+  ErrorMessage: String
+  ExecutionTime: Int
+  Results: [MJVersionLabel_!]!
+  RowCount: Int
+  Success: Boolean!
+  TotalRowCount: Int
+  UserViewRunID: String
+}
+
 type RunMJWorkflowEngineViewResult {
   ErrorMessage: String
   ExecutionTime: Int
@@ -20136,6 +21238,15 @@ input SearchRegistryComponentsInput {
   type: String
 }
 
+type ServerInfo {
+  Arch: String!
+  CpuModel: String!
+  Hostname: String!
+  IsSystemUser: Boolean!
+  Platform: String!
+  Version: String!
+}
+
 type SimpleEntityFieldOutputType {
   AllowsNull: Boolean!
   Description: String
@@ -20170,15 +21281,6 @@ type SimplePromptResult {
   result: String
   resultObject: String
   success: Boolean!
-}
-
-"""
-The phase of the respons: clarifying_question, data_request, or analysis_complete
-"""
-enum SkipResponsePhase {
-  AnalysisComplete
-  ClarifyingQuestion
-  DataRequest
 }
 
 type SqlLoggingConfig {
@@ -20258,6 +21360,7 @@ type StorageObjectMetadata {
 
 type Subscription {
   colorSubscription: ColorNotification!
+  onMCPOAuthEvent: MCPOAuthEventNotification!
   statusUpdates(sessionId: String!): PushStatusNotification!
 }
 
@@ -20275,6 +21378,27 @@ enum SyncDataActionType {
 type SyncDataResultType {
   Results: [ActionItemOutputType!]!
   Success: Boolean!
+}
+
+input SyncMCPToolsInput {
+  ConnectionID: String!
+  ForceSync: Boolean
+}
+
+type SyncMCPToolsResult {
+  Added: Float!
+  AuthorizationUrl: String
+  ConnectionName: String
+  Deprecated: Float!
+  ErrorMessage: String
+  ReauthorizationReason: String
+  RequiresOAuth: Boolean
+  RequiresReauthorization: Boolean
+  ServerName: String
+  StateParameter: String
+  Success: Boolean!
+  Total: Float!
+  Updated: Float!
 }
 
 type SyncRolesAndUsersResultType {
@@ -20485,21 +21609,10 @@ input UpdateCommitteesAgendaItemInput {
   Title: String
 }
 
-input UpdateCommitteesAttendanceInput {
-  AttendanceStatus: String
-  ID: String!
-  JoinedAt: Timestamp
-  LeftAt: Timestamp
-  MeetingID: String
-  Notes: String
-  OldValues___: [KeyValuePairInput!]
-  UserID: String
-}
-
-input UpdateCommitteesCommitteeArtifactInput {
+input UpdateCommitteesArtifactInput {
   ActionItemID: String
   AgendaItemID: String
-  CommitteeArtifactTypeID: String
+  ArtifactTypeID: String
   CommitteeID: String
   Description: String
   ExternalID: String
@@ -20514,13 +21627,24 @@ input UpdateCommitteesCommitteeArtifactInput {
   UploadedByUserID: String
 }
 
-input UpdateCommitteesCommitteeArtifactTypeInput {
+input UpdateCommitteesArtifactTypeInput {
   Description: String
   ExtendedEntityID: String
   ID: String!
   IconClass: String
   Name: String
   OldValues___: [KeyValuePairInput!]
+}
+
+input UpdateCommitteesAttendanceInput {
+  AttendanceStatus: String
+  ID: String!
+  JoinedAt: Timestamp
+  LeftAt: Timestamp
+  MeetingID: String
+  Notes: String
+  OldValues___: [KeyValuePairInput!]
+  UserID: String
 }
 
 input UpdateCommitteesCommitteeInput {
@@ -21157,10 +22281,14 @@ input UpdateMJAIModelCostInput {
 
 input UpdateMJAIModelInput {
   AIModelTypeID: String
+  APIName: String
   CostRank: Int
   Description: String
+  DriverClass: String
+  DriverImportPath: String
   ID: String!
   InheritTypeModalities: Boolean
+  InputTokenLimit: Int
   IsActive: Boolean
   ModelSelectionInsights: String
   Name: String
@@ -21168,6 +22296,9 @@ input UpdateMJAIModelInput {
   PowerRank: Int
   PriorVersionID: String
   SpeedRank: Int
+  SupportedResponseFormats: String
+  SupportsEffortLevel: Boolean
+  Vendor: String
 }
 
 input UpdateMJAIModelModalityInput {
@@ -21536,6 +22667,7 @@ input UpdateMJAPIScopeInput {
   OldValues___: [KeyValuePairInput!]
   ParentID: String
   ResourceType: String
+  UIConfig: String
 }
 
 input UpdateMJAccessControlRuleInput {
@@ -22697,11 +23829,14 @@ input UpdateMJEntityFieldInput {
   IncludeRelatedEntityNameFieldInBaseView: Boolean
   IsNameField: Boolean
   IsPrimaryKey: Boolean
+  IsSoftForeignKey: Boolean
+  IsSoftPrimaryKey: Boolean
   IsUnique: Boolean
   OldValues___: [KeyValuePairInput!]
   RelatedEntityDisplayType: String
   RelatedEntityFieldName: String
   RelatedEntityID: String
+  RelatedEntityJoinFields: String
   RelatedEntityNameFieldMap: String
   ScopeDefault: String
   SendEncryptedValue: Boolean
@@ -23050,6 +24185,181 @@ input UpdateMJListShareInput {
   Role: String
   Status: String
   UserID: String
+}
+
+input UpdateMJMCPServerConnectionInput {
+  AutoGenerateActions: Boolean
+  AutoSyncTools: Boolean
+  CompanyID: String
+  CredentialID: String
+  CustomHeaderName: String
+  Description: String
+  EnvironmentVars: String
+  ID: String!
+  LastConnectedAt: Timestamp
+  LastErrorMessage: String
+  LogInputParameters: Boolean
+  LogOutputContent: Boolean
+  LogToolCalls: Boolean
+  MCPServerID: String
+  MaxOutputLogSize: Int
+  Name: String
+  OldValues___: [KeyValuePairInput!]
+  Status: String
+}
+
+input UpdateMJMCPServerConnectionPermissionInput {
+  CanExecute: Boolean
+  CanModify: Boolean
+  CanViewCredentials: Boolean
+  ID: String!
+  MCPServerConnectionID: String
+  OldValues___: [KeyValuePairInput!]
+  RoleID: String
+  UserID: String
+}
+
+input UpdateMJMCPServerConnectionToolInput {
+  DefaultInputValues: String
+  ID: String!
+  IsEnabled: Boolean
+  MCPServerConnectionID: String
+  MCPServerToolID: String
+  MaxCallsPerMinute: Int
+  OldValues___: [KeyValuePairInput!]
+}
+
+input UpdateMJMCPServerInput {
+  Command: String
+  CommandArgs: String
+  ConnectionTimeoutMs: Int
+  CredentialTypeID: String
+  DefaultAuthType: String
+  Description: String
+  DocumentationURL: String
+  ID: String!
+  IconClass: String
+  LastSyncAt: Timestamp
+  Name: String
+  OAuthClientID: String
+  OAuthClientSecretEncrypted: String
+  OAuthIssuerURL: String
+  OAuthMetadataCacheTTLMinutes: Int
+  OAuthRequirePKCE: Boolean
+  OAuthScopes: String
+  OldValues___: [KeyValuePairInput!]
+  RateLimitPerHour: Int
+  RateLimitPerMinute: Int
+  RequestTimeoutMs: Int
+  ServerURL: String
+  Status: String
+  TransportType: String
+}
+
+input UpdateMJMCPServerToolInput {
+  Annotations: String
+  DiscoveredAt: Timestamp
+  GeneratedActionCategoryID: String
+  GeneratedActionID: String
+  ID: String!
+  InputSchema: String
+  LastSeenAt: Timestamp
+  MCPServerID: String
+  OldValues___: [KeyValuePairInput!]
+  OutputSchema: String
+  Status: String
+  ToolDescription: String
+  ToolName: String
+  ToolTitle: String
+}
+
+input UpdateMJMCPToolExecutionLogInput {
+  DurationMs: Int
+  EndedAt: Timestamp
+  ErrorMessage: String
+  ID: String!
+  InputParameters: String
+  MCPServerConnectionID: String
+  MCPServerToolID: String
+  OldValues___: [KeyValuePairInput!]
+  OutputContent: String
+  OutputTruncated: Boolean
+  StartedAt: Timestamp
+  Success: Boolean
+  ToolName: String
+  UserID: String
+}
+
+input UpdateMJOAuthAuthServerMetadataCacheInput {
+  AuthorizationEndpoint: String
+  CachedAt: Timestamp
+  CodeChallengeMethodsSupported: String
+  ExpiresAt: Timestamp
+  GrantTypesSupported: String
+  ID: String!
+  IssuerURL: String
+  JwksURI: String
+  MetadataJSON: String
+  OldValues___: [KeyValuePairInput!]
+  RegistrationEndpoint: String
+  ResponseTypesSupported: String
+  RevocationEndpoint: String
+  ScopesSupported: String
+  TokenEndpoint: String
+  TokenEndpointAuthMethods: String
+}
+
+input UpdateMJOAuthAuthorizationStateInput {
+  AuthorizationURL: String
+  CodeChallenge: String
+  CodeVerifier: String
+  CompletedAt: Timestamp
+  ErrorCode: String
+  ErrorDescription: String
+  ExpiresAt: Timestamp
+  FrontendReturnURL: String
+  ID: String!
+  InitiatedAt: Timestamp
+  MCPServerConnectionID: String
+  OldValues___: [KeyValuePairInput!]
+  RedirectURI: String
+  RequestedScopes: String
+  StateParameter: String
+  Status: String
+  UserID: String
+}
+
+input UpdateMJOAuthClientRegistrationInput {
+  ClientID: String
+  ClientIDIssuedAt: Timestamp
+  ClientSecretEncrypted: String
+  ClientSecretExpiresAt: Timestamp
+  GrantTypes: String
+  ID: String!
+  IssuerURL: String
+  MCPServerConnectionID: String
+  MCPServerID: String
+  OldValues___: [KeyValuePairInput!]
+  RedirectURIs: String
+  RegistrationAccessToken: String
+  RegistrationClientURI: String
+  RegistrationResponse: String
+  ResponseTypes: String
+  Scope: String
+  Status: String
+}
+
+input UpdateMJOAuthTokenInput {
+  CredentialID: String
+  ExpiresAt: Timestamp
+  ID: String!
+  IssuerURL: String
+  LastRefreshAt: Timestamp
+  MCPServerConnectionID: String
+  OldValues___: [KeyValuePairInput!]
+  RefreshCount: Int
+  Scope: String
+  TokenType: String
 }
 
 input UpdateMJOutputDeliveryTypeInput {
@@ -23529,6 +24839,8 @@ input UpdateMJSchemaInfoInput {
   Description: String
   EntityIDMax: Int
   EntityIDMin: Int
+  EntityNamePrefix: String
+  EntityNameSuffix: String
   ID: String!
   OldValues___: [KeyValuePairInput!]
   SchemaName: String
@@ -23981,6 +25293,46 @@ input UpdateMJVersionInstallationInput {
   PatchVersion: Int
   Status: String
   Type: String
+}
+
+input UpdateMJVersionLabelInput {
+  CreatedByUserID: String
+  CreationDurationMS: Int
+  Description: String
+  EntityID: String
+  ExternalSystemID: String
+  ID: String!
+  ItemCount: Int
+  Name: String
+  OldValues___: [KeyValuePairInput!]
+  ParentID: String
+  RecordID: String
+  Scope: String
+  Status: String
+}
+
+input UpdateMJVersionLabelItemInput {
+  EntityID: String
+  ID: String!
+  OldValues___: [KeyValuePairInput!]
+  RecordChangeID: String
+  RecordID: String
+  VersionLabelID: String
+}
+
+input UpdateMJVersionLabelRestoreInput {
+  CompletedItems: Int
+  EndedAt: Timestamp
+  ErrorLog: String
+  FailedItems: Int
+  ID: String!
+  OldValues___: [KeyValuePairInput!]
+  PreRestoreLabelID: String
+  StartedAt: Timestamp
+  Status: String
+  TotalItems: Int
+  UserID: String
+  VersionLabelID: String
 }
 
 input UpdateMJWorkflowEngineInput {

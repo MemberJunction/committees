@@ -1,7 +1,7 @@
 export const environment = {
-    GRAPHQL_URI: 'http://localhost:4001/',
-    GRAPHQL_WS_URI: 'ws://localhost:4001/',
-    REDIRECT_URI: 'http://localhost:4201/',
+    GRAPHQL_URI: 'http://localhost:4101/',
+    GRAPHQL_WS_URI: 'ws://localhost:4101/',
+    REDIRECT_URI: 'http://localhost:4301/',
     CLIENT_ID: '7e6e6ecf-66ff-4733-9c60-1e6def949897',
     TENANT_ID: 'ff10ade7-5d03-40a9-be28-cb7ab99670b1',
     CLIENT_AUTHORITY: 'https://login.microsoftonline.com/ff10ade7-5d03-40a9-be28-cb7ab99670b1',
