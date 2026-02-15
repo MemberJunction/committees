@@ -16,10 +16,9 @@ export class CommitteeFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'identityClassification', sectionName: 'Identity & Classification', isExpanded: true },
-            { sectionKey: 'structureHierarchy', sectionName: 'Structure & Hierarchy', isExpanded: true },
-            { sectionKey: 'governance', sectionName: 'Governance', isExpanded: false },
-            { sectionKey: 'lifecycle', sectionName: 'Lifecycle', isExpanded: false },
+            { sectionKey: 'committeeOverview', sectionName: 'Committee Overview', isExpanded: true },
+            { sectionKey: 'classificationHierarchy', sectionName: 'Classification & Hierarchy', isExpanded: true },
+            { sectionKey: 'lifecycleStatus', sectionName: 'Lifecycle & Status', isExpanded: false },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesActionItems', sectionName: 'Committees: Action Items', isExpanded: false },
             { sectionKey: 'committeesArtifacts', sectionName: 'Committees: Artifacts', isExpanded: false },

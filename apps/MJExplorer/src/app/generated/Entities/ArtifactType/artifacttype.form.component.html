@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Artifact Type Definition Section -->
+    <!-- Artifact Type Details Section -->
     <mj-collapsible-panel
-        SectionKey="artifactTypeDefinition"
-        SectionName="Artifact Type Definition"
-        Icon="fa fa-file-alt"
+        SectionKey="artifactTypeDetails"
+        SectionName="Artifact Type Details"
+        Icon="fa fa-tag"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -34,29 +34,19 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="IconClass"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Extension Configuration Section -->
-    <mj-collapsible-panel
-        SectionKey="extensionConfiguration"
-        SectionName="Extension Configuration"
-        Icon="fa fa-puzzle-piece"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="false"
             FieldName="ExtendedEntityID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
             LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="IconClass"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
         ></mj-form-field>
 
     </mj-collapsible-panel>
@@ -95,7 +85,7 @@
     <mj-collapsible-panel
         SectionKey="committeesArtifacts"
         SectionName="Committees: Artifacts"
-        Icon="fa fa-file"
+        Icon="fa fa-paperclip"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

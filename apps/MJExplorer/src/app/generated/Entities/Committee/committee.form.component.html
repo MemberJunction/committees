@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Identity & Classification Section -->
+    <!-- Committee Overview Section -->
     <mj-collapsible-panel
-        SectionKey="identityClassification"
-        SectionName="Identity & Classification"
-        Icon="fa fa-id-badge"
+        SectionKey="committeeOverview"
+        SectionName="Committee Overview"
+        Icon="fa fa-info-circle"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -34,26 +34,60 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="TypeID"
+            FieldName="CharterDocumentURL"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
-            LinkType="Record"
+            LinkType="URL"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="MissionStatement"
+            Type="textarea"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="IsPublic"
+            Type="checkbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
         ></mj-form-field>
 
     </mj-collapsible-panel>
 
-    <!-- Structure & Hierarchy Section -->
+    <!-- Classification & Hierarchy Section -->
     <mj-collapsible-panel
-        SectionKey="structureHierarchy"
-        SectionName="Structure & Hierarchy"
+        SectionKey="classificationHierarchy"
+        SectionName="Classification & Hierarchy"
         Icon="fa fa-sitemap"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
+            FieldName="TypeID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+            LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
             FieldName="ParentCommitteeID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+            LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="OrganizationID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
@@ -70,45 +104,10 @@
 
     </mj-collapsible-panel>
 
-    <!-- Governance Section -->
+    <!-- Lifecycle & Status Section -->
     <mj-collapsible-panel
-        SectionKey="governance"
-        SectionName="Governance"
-        Icon="fa fa-file-contract"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="OrganizationID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="CharterDocumentURL"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-            LinkType="URL"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="MissionStatement"
-            Type="textarea"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Lifecycle Section -->
-    <mj-collapsible-panel
-        SectionKey="lifecycle"
-        SectionName="Lifecycle"
+        SectionKey="lifecycleStatus"
+        SectionName="Lifecycle & Status"
         Icon="fa fa-calendar-alt"
         [Form]="this"
         [FormContext]="formContext">
@@ -117,14 +116,6 @@
             [ShowLabel]="true"
             FieldName="Status"
             Type="select"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="IsPublic"
-            Type="checkbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
@@ -181,7 +172,7 @@
     <mj-collapsible-panel
         SectionKey="committeesActionItems"
         SectionName="Committees: Action Items"
-        Icon="fa fa-tasks"
+        Icon="fa fa-clipboard-list"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -206,7 +197,7 @@
     <mj-collapsible-panel
         SectionKey="committeesArtifacts"
         SectionName="Committees: Artifacts"
-        Icon="fa fa-file"
+        Icon="fa fa-paperclip"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -256,7 +247,7 @@
     <mj-collapsible-panel
         SectionKey="committeesMeetings"
         SectionName="Committees: Meetings"
-        Icon="fa fa-calendar-check"
+        Icon="fa fa-calendar-alt"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

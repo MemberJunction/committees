@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Membership Core Section -->
+    <!-- Committee Assignment Section -->
     <mj-collapsible-panel
-        SectionKey="membershipCore"
-        SectionName="Membership Core"
-        Icon="fa fa-link"
+        SectionKey="committeeAssignment"
+        SectionName="Committee Assignment"
+        Icon="fa fa-users"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -27,7 +27,7 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="UserID"
+            FieldName="PersonID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
@@ -54,11 +54,11 @@
 
     </mj-collapsible-panel>
 
-    <!-- Schedule & Status Section -->
+    <!-- Membership Timeline Section -->
     <mj-collapsible-panel
-        SectionKey="scheduleStatus"
-        SectionName="Schedule & Status"
-        Icon="fa fa-calendar"
+        SectionKey="membershipTimeline"
+        SectionName="Membership Timeline"
+        Icon="fa fa-calendar-alt"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -93,19 +93,9 @@
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Descriptive Details Section -->
-    <mj-collapsible-panel
-        SectionKey="descriptiveDetails"
-        SectionName="Descriptive Details"
-        Icon="fa fa-info-circle"
-        [Form]="this"
-        [FormContext]="formContext">
         <mj-form-field 
             [Record]="record"
-            [ShowLabel]="false"
+            [ShowLabel]="true"
             FieldName="Notes"
             Type="textarea"
             [EditMode]="EditMode"
@@ -144,11 +134,36 @@
          RELATED ENTITY PANELS
          ======================================== -->
 
+    <!-- Committees: Motions Section -->
+    <mj-collapsible-panel
+        SectionKey="committeesMotions"
+        SectionName="Committees: Motions"
+        Icon="fa fa-gavel"
+        Variant="related-entity"
+        [Form]="this"
+        [FormContext]="formContext"
+        [BadgeCount]="GetSectionRowCount('committeesMotions')"
+        [DefaultExpanded]="false">
+        @if (record.IsSaved) {
+        <div>
+            <mj-explorer-entity-data-grid
+                [Params]="BuildRelationshipViewParamsByEntityName('Committees: Motions','MovedByMembershipID')"
+                [NewRecordValues]="NewRecordValues('Committees: Motions')"
+                [AllowLoad]="IsSectionExpanded('committeesMotions')"
+                [ShowToolbar]="false"
+                (Navigate)="OnFormNavigate($event)"
+                (AfterDataLoad)="SetSectionRowCount('committeesMotions', $event.totalRowCount)"
+                >
+            </mj-explorer-entity-data-grid>
+        </div>
+        }
+    </mj-collapsible-panel>
+
     <!-- Committees: Votes Section -->
     <mj-collapsible-panel
         SectionKey="committeesVotes"
         SectionName="Committees: Votes"
-        Icon="fa fa-gavel"
+        Icon="fa fa-balance-scale"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -183,31 +198,6 @@
         <div>
             <mj-explorer-entity-data-grid
                 [Params]="BuildRelationshipViewParamsByEntityName('Committees: Motions','SecondedByMembershipID')"
-                [NewRecordValues]="NewRecordValues('Committees: Motions')"
-                [AllowLoad]="IsSectionExpanded('committeesMotions')"
-                [ShowToolbar]="false"
-                (Navigate)="OnFormNavigate($event)"
-                (AfterDataLoad)="SetSectionRowCount('committeesMotions', $event.totalRowCount)"
-                >
-            </mj-explorer-entity-data-grid>
-        </div>
-        }
-    </mj-collapsible-panel>
-
-    <!-- Committees: Motions Section -->
-    <mj-collapsible-panel
-        SectionKey="committeesMotions"
-        SectionName="Committees: Motions"
-        Icon="fa fa-gavel"
-        Variant="related-entity"
-        [Form]="this"
-        [FormContext]="formContext"
-        [BadgeCount]="GetSectionRowCount('committeesMotions')"
-        [DefaultExpanded]="false">
-        @if (record.IsSaved) {
-        <div>
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Committees: Motions','MovedByMembershipID')"
                 [NewRecordValues]="NewRecordValues('Committees: Motions')"
                 [AllowLoad]="IsSectionExpanded('committeesMotions')"
                 [ShowToolbar]="false"

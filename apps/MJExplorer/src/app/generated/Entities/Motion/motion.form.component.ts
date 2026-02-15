@@ -16,9 +16,9 @@ export class MotionFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'agendaParticipants', sectionName: 'Agenda & Participants', isExpanded: true },
+            { sectionKey: 'motionContext', sectionName: 'Motion Context', isExpanded: true },
             { sectionKey: 'motionDetails', sectionName: 'Motion Details', isExpanded: true },
-            { sectionKey: 'votingOutcome', sectionName: 'Voting Outcome', isExpanded: false },
+            { sectionKey: 'votingResults', sectionName: 'Voting Results', isExpanded: false },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesVotes', sectionName: 'Committees: Votes', isExpanded: false }
         ]);

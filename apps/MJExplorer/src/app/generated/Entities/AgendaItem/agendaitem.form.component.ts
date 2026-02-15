@@ -16,9 +16,9 @@ export class AgendaItemFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'assignmentContext', sectionName: 'Assignment & Context', isExpanded: true },
-            { sectionKey: 'itemHierarchy', sectionName: 'Item Hierarchy', isExpanded: true },
-            { sectionKey: 'agendaItemDetails', sectionName: 'Agenda Item Details', isExpanded: false },
+            { sectionKey: 'agendaHierarchy', sectionName: 'Agenda Hierarchy', isExpanded: true },
+            { sectionKey: 'itemContent', sectionName: 'Item Content', isExpanded: true },
+            { sectionKey: 'presentationAttachments', sectionName: 'Presentation & Attachments', isExpanded: false },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesMotions', sectionName: 'Committees: Motions', isExpanded: false },
             { sectionKey: 'committeesAgendaItems', sectionName: 'Committees: Agenda Items', isExpanded: false },

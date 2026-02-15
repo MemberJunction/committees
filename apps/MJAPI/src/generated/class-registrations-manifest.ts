@@ -11,18 +11,28 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-// mj_generatedentities (14 classes)
+// mj_generatedentities (24 classes)
 import {
     ActionItemEntity,
+    AddressEntity,
+    AddressLinkEntity,
+    AddressTypeEntity,
     AgendaItemEntity,
     ArtifactEntity,
     ArtifactTypeEntity,
     AttendanceEntity,
     CommitteeEntity,
+    ContactMethodEntity,
+    ContactTypeEntity,
     MeetingEntity,
     MembershipEntity,
     MinuteEntity,
     MotionEntity,
+    OrganizationEntity,
+    OrganizationTypeEntity,
+    PersonEntity,
+    RelationshipEntity,
+    RelationshipTypeEntity,
     RoleEntity,
     TermEntity,
     TypeEntity,
@@ -36,15 +46,25 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CLASS_REGISTRATIONS: any[] = [
     ActionItemEntity,
+    AddressEntity,
+    AddressLinkEntity,
+    AddressTypeEntity,
     AgendaItemEntity,
     ArtifactEntity,
     ArtifactTypeEntity,
     AttendanceEntity,
     CommitteeEntity,
+    ContactMethodEntity,
+    ContactTypeEntity,
     MeetingEntity,
     MembershipEntity,
     MinuteEntity,
     MotionEntity,
+    OrganizationEntity,
+    OrganizationTypeEntity,
+    PersonEntity,
+    RelationshipEntity,
+    RelationshipTypeEntity,
     RoleEntity,
     TermEntity,
     TypeEntity,
@@ -55,7 +75,7 @@ export const CLASS_REGISTRATIONS: any[] = [
 export const CLASS_REGISTRATIONS_MANIFEST_LOADED = true;
 
 /** Total @RegisterClass decorated classes discovered in dependency tree */
-export const CLASS_REGISTRATIONS_COUNT = 14;
+export const CLASS_REGISTRATIONS_COUNT = 24;
 
 /** Packages imported by this manifest */
 export const CLASS_REGISTRATIONS_PACKAGES = [
