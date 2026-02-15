@@ -701,6 +701,38 @@
       "operation": "migrate",
       "exception": null,
       "licenseFailed": false
+    },
+    {
+      "initialSchemaVersion": "202602111335",
+      "targetSchemaVersion": "202602121700",
+      "schemaName": "__mj",
+      "migrations": [
+        {
+          "category": "Versioned",
+          "version": "202602121700",
+          "description": "v4.4.x  Metadata Sync",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Ts28vn3/migrations/v4/V202602121700__v4.4.x__Metadata_Sync.sql",
+          "executionTime": 138
+        },
+        {
+          "category": "Repeatable",
+          "version": "",
+          "description": "RefreshMetadata",
+          "type": "SQL",
+          "filepath": "/var/folders/xx/x0bydxb92wv84897b07yrsp80000gn/Ts28vn3/migrations/R__RefreshMetadata.sql",
+          "executionTime": 23313
+        }
+      ],
+      "migrationsExecuted": 2,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "Committees",
+      "warnings": [],
+      "timestamp": "2026-02-15T13:37:20.190941",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
     }
   ]
 }
