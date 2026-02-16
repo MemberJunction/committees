@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Card-Based Dashboard - Committee Health Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .top-bar h1 {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .time-range {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .summary-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value.good { color: #28a745; }
+        .stat-value.warning { color: #ffc107; }
+        .stat-value.danger { color: #dc3545; }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .stat-trend.up { color: #28a745; }
+        .stat-trend.down { color: #dc3545; }
+
+        .filters-bar {
+            background: white;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .filter-select {
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .committee-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .committee-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+        .committee-card.health-good {
+            border-top: 4px solid #28a745;
+        }
+
+        .committee-card.health-warning {
+            border-top: 4px solid #ffc107;
+        }
+
+        .committee-card.health-danger {
+            border-top: 4px solid #dc3545;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title h3 {
+            font-size: 1.125rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .health-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .health-badge.good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .health-badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .health-badge.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .health-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.813rem;
+            color: #666;
+        }
+
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .risk-indicators {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .risk-badge {
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .risk-badge.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-badge.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .card-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.813rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .card-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Committee Health Dashboard</h1>
+        <div class="top-bar-actions">
+            <select class="time-range" id="timeRange">
+                <option value="30">Last 30 Days</option>
+                <option value="60">Last 60 Days</option>
+                <option value="90" selected>Last 90 Days</option>
+                <option value="180">Last 6 Months</option>
+                <option value="365">Last Year</option>
+            </select>
+            <button class="btn btn-secondary" onclick="exportData()">Export Data</button>
+            <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+        </div>
+    </div>
+
+    <div class="summary-bar">
+        <div class="summary-stats">
+            <div class="stat">
+                <div class="stat-value good">12</div>
+                <div class="stat-label">Healthy Committees</div>
+                <div class="stat-trend up">↑ 2 from last period</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value warning">5</div>
+                <div class="stat-label">Need Attention</div>
+                <div class="stat-trend down">↓ 1 from last period</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value danger">3</div>
+                <div class="stat-label">Critical Status</div>
+                <div class="stat-trend">→ No change</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">78%</div>
+                <div class="stat-label">Avg Health Score</div>
+                <div class="stat-trend up">↑ 5% from last period</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">82%</div>
+                <div class="stat-label">Avg Attendance</div>
+                <div class="stat-trend up">↑ 3% from last period</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters-bar">
+        <div class="filter-group">
+            <label>Type:</label>
+            <select class="filter-select" id="filterType">
+                <option value="">All Types</option>
+                <option value="standing">Standing</option>
+                <option value="ad-hoc">Ad-Hoc</option>
+                <option value="steering">Steering</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Department:</label>
+            <select class="filter-select" id="filterDept">
+                <option value="">All Departments</option>
+                <option value="it">IT</option>
+                <option value="hr">Human Resources</option>
+                <option value="finance">Finance</option>
+                <option value="operations">Operations</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Status:</label>
+            <select class="filter-select" id="filterStatus">
+                <option value="">All Status</option>
+                <option value="good">Healthy (80-100)</option>
+                <option value="warning">Warning (60-79)</option>
+                <option value="danger">Critical (<60)</option>
+            </select>
+        </div>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search committees..." id="searchInput">
+        </div>
+        <div class="view-toggle">
+            <button class="view-btn active" onclick="setView('grid')">Grid</button>
+            <button class="view-btn" onclick="setView('list')">List</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="cards-grid" id="cardsContainer">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Committee Details</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample committee data
+        const committees = [
+            {
+                id: 1,
+                name: "IT Steering Committee",
+                type: "Steering",
+                department: "IT",
+                healthScore: 92,
+                attendance: 95,
+                completion: 88,
+                engagement: 94,
+                members: 12,
+                activeMeetings: 8,
+                risks: [],
+                trend: [75, 78, 82, 85, 88, 90, 92]
+            },
+            {
+                id: 2,
+                name: "Budget Review Committee",
+                type: "Standing",
+                department: "Finance",
+                healthScore: 85,
+                attendance: 88,
+                completion: 82,
+                engagement: 86,
+                members: 8,
+                activeMeetings: 12,
+                risks: [],
+                trend: [82, 83, 84, 85, 85, 86, 85]
+            },
+            {
+                id: 3,
+                name: "Employee Wellness Committee",
+                type: "Standing",
+                department: "HR",
+                healthScore: 78,
+                attendance: 75,
+                completion: 80,
+                engagement: 82,
+                members: 10,
+                activeMeetings: 6,
+                risks: ["Low Attendance"],
+                trend: [85, 83, 82, 80, 79, 78, 78]
+            },
+            {
+                id: 4,
+                name: "Safety & Compliance Committee",
+                type: "Standing",
+                department: "Operations",
+                healthScore: 88,
+                attendance: 92,
+                completion: 85,
+                engagement: 87,
+                members: 15,
+                activeMeetings: 10,
+                risks: [],
+                trend: [80, 82, 84, 85, 86, 87, 88]
+            },
+            {
+                id: 5,
+                name: "Digital Transformation Task Force",
+                type: "Ad-Hoc",
+                department: "IT",
+                healthScore: 72,
+                attendance: 70,
+                completion: 68,
+                engagement: 78,
+                members: 9,
+                activeMeetings: 5,
+                risks: ["Low Completion Rate", "Below Target Attendance"],
+                trend: [78, 76, 75, 74, 73, 72, 72]
+            },
+            {
+                id: 6,
+                name: "Diversity & Inclusion Committee",
+                type: "Standing",
+                department: "HR",
+                healthScore: 90,
+                attendance: 93,
+                completion: 88,
+                engagement: 89,
+                members: 11,
+                activeMeetings: 7,
+                risks: [],
+                trend: [85, 86, 87, 88, 89, 89, 90]
+            },
+            {
+                id: 7,
+                name: "Audit Committee",
+                type: "Standing",
+                department: "Finance",
+                healthScore: 95,
+                attendance: 98,
+                completion: 92,
+                engagement: 96,
+                members: 7,
+                activeMeetings: 15,
+                risks: [],
+                trend: [92, 93, 93, 94, 94, 95, 95]
+            },
+            {
+                id: 8,
+                name: "Customer Experience Committee",
+                type: "Standing",
+                department: "Operations",
+                healthScore: 68,
+                attendance: 65,
+                completion: 70,
+                engagement: 72,
+                members: 12,
+                activeMeetings: 4,
+                risks: ["Low Attendance", "Declining Engagement"],
+                trend: [75, 73, 72, 70, 69, 68, 68]
+            },
+            {
+                id: 9,
+                name: "Innovation Lab Committee",
+                type: "Ad-Hoc",
+                department: "IT",
+                healthScore: 55,
+                attendance: 58,
+                completion: 52,
+                engagement: 55,
+                members: 10,
+                activeMeetings: 3,
+                risks: ["Critical - Multiple Issues", "Low Completion", "Poor Attendance"],
+                trend: [68, 65, 62, 60, 58, 56, 55]
+            },
+            {
+                id: 10,
+                name: "Compensation Committee",
+                type: "Standing",
+                department: "HR",
+                healthScore: 82,
+                attendance: 85,
+                completion: 80,
+                engagement: 81,
+                members: 6,
+                activeMeetings: 9,
+                risks: [],
+                trend: [80, 80, 81, 81, 82, 82, 82]
+            },
+            {
+                id: 11,
+                name: "Risk Management Committee",
+                type: "Standing",
+                department: "Finance",
+                healthScore: 87,
+                attendance: 90,
+                completion: 85,
+                engagement: 86,
+                members: 9,
+                activeMeetings: 11,
+                risks: [],
+                trend: [83, 84, 85, 85, 86, 87, 87]
+            },
+            {
+                id: 12,
+                name: "Facilities Planning Committee",
+                type: "Ad-Hoc",
+                department: "Operations",
+                healthScore: 58,
+                attendance: 60,
+                completion: 55,
+                engagement: 60,
+                members: 8,
+                activeMeetings: 2,
+                risks: ["Low Activity", "Poor Completion"],
+                trend: [70, 68, 65, 63, 61, 59, 58]
+            }
+        ];
+
+        let filteredCommittees = [...committees];
+        const chartInstances = {};
+
+        function getHealthStatus(score) {
+            if (score >= 80) return 'good';
+            if (score >= 60) return 'warning';
+            return 'danger';
+        }
+
+        function getHealthLabel(score) {
+            if (score >= 80) return 'Healthy';
+            if (score >= 60) return 'Needs Attention';
+            return 'Critical';
+        }
+
+        function createCard(committee) {
+            const status = getHealthStatus(committee.healthScore);
+            const label = getHealthLabel(committee.healthScore);
+
+            return `
+                <div class="committee-card health-${status}" onclick="showDetails(${committee.id})">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3>${committee.name}</h3>
+                            <div class="health-badge ${status}">
+                                <span class="health-score">${committee.healthScore}</span>
+                                ${label}
+                            </div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                <span>📋</span>
+                                <span>${committee.type}</span>
+                            </div>
+                            <div class="card-meta-item">
+                                <span>🏢</span>
+                                <span>${committee.department}</span>
+                            </div>
+                            <div class="card-meta-item">
+                                <span>👥</span>
+                                <span>${committee.members} members</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="metrics-row">
+                            <div class="metric">
+                                <div class="metric-value">${committee.attendance}%</div>
+                                <div class="metric-label">Attendance</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${committee.completion}%</div>
+                                <div class="metric-label">Completion</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${committee.engagement}%</div>
+                                <div class="metric-label">Engagement</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-${committee.id}"></canvas>
+                        </div>
+                        ${committee.risks.length > 0 ? `
+                            <div class="risk-indicators">
+                                ${committee.risks.map(risk => `
+                                    <span class="risk-badge ${committee.healthScore < 60 ? 'high' : 'medium'}">
+                                        ⚠ ${risk}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="card-actions">
+                            <button class="card-btn" onclick="event.stopPropagation(); viewMeetings(${committee.id})">
+                                📅 Meetings
+                            </button>
+                            <button class="card-btn" onclick="event.stopPropagation(); viewActions(${committee.id})">
+                                ✓ Actions
+                            </button>
+                            <button class="card-btn" onclick="event.stopPropagation(); viewMembers(${committee.id})">
+                                👥 Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+
+            if (filteredCommittees.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No committees found</h3>
+                        <p>Try adjusting your filters or search criteria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredCommittees.map(c => createCard(c)).join('');
+
+            // Create charts after cards are rendered
+            setTimeout(() => {
+                filteredCommittees.forEach(committee => {
+                    createTrendChart(committee);
+                });
+            }, 100);
+        }
+
+        function createTrendChart(committee) {
+            const canvas = document.getElementById(`chart-${committee.id}`);
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+
+            // Destroy existing chart if it exists
+            if (chartInstances[committee.id]) {
+                chartInstances[committee.id].destroy();
+            }
+
+            const status = getHealthStatus(committee.healthScore);
+            const color = status === 'good' ? '#28a745' : status === 'warning' ? '#ffc107' : '#dc3545';
+
+            chartInstances[committee.id] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['6w ago', '5w ago', '4w ago', '3w ago', '2w ago', '1w ago', 'Now'],
+                    datasets: [{
+                        label: 'Health Score Trend',
+                        data: committee.trend,
+                        borderColor: color,
+                        backgroundColor: color + '20',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false,
+                            min: 0,
+                            max: 100
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('filterType').value;
+            const deptFilter = document.getElementById('filterDept').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+
+            filteredCommittees = committees.filter(c => {
+                const matchesSearch = c.name.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || c.type.toLowerCase() === typeFilter;
+                const matchesDept = !deptFilter || c.department.toLowerCase() === deptFilter;
+                const matchesStatus = !statusFilter || getHealthStatus(c.healthScore) === statusFilter;
+
+                return matchesSearch && matchesType && matchesDept && matchesStatus;
+            });
+
+            renderCards();
+        }
+
+        function showDetails(committeeId) {
+            const committee = committees.find(c => c.id === committeeId);
+            if (!committee) return;
+
+            const modal = document.getElementById('detailModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = committee.name;
+
+            const status = getHealthStatus(committee.healthScore);
+            const label = getHealthLabel(committee.healthScore);
+
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="health-badge ${status}" style="display: inline-flex;">
+                        <span class="health-score">${committee.healthScore}</span>
+                        ${label}
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <strong>Type:</strong> ${committee.type}
+                    </div>
+                    <div>
+                        <strong>Department:</strong> ${committee.department}
+                    </div>
+                    <div>
+                        <strong>Members:</strong> ${committee.members}
+                    </div>
+                    <div>
+                        <strong>Active Meetings:</strong> ${committee.activeMeetings}
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Performance Metrics</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric">
+                        <div class="metric-value">${committee.attendance}%</div>
+                        <div class="metric-label">Attendance Rate</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">${committee.completion}%</div>
+                        <div class="metric-label">Action Completion</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">${committee.engagement}%</div>
+                        <div class="metric-label">Member Engagement</div>
+                    </div>
+                </div>
+                ${committee.risks.length > 0 ? `
+                    <h3 style="margin-bottom: 1rem;">Risk Indicators</h3>
+                    <div style="margin-bottom: 1.5rem;">
+                        ${committee.risks.map(risk => `
+                            <div class="risk-badge ${committee.healthScore < 60 ? 'high' : 'medium'}"
+                                 style="display: inline-block; margin-right: 0.5rem; margin-bottom: 0.5rem;">
+                                ⚠ ${risk}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="alert('Navigate to full committee details')">
+                        View Full Details
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="alert('Generate committee report')">
+                        Generate Report
+                    </button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function setView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            // In a real app, this would change the layout
+            alert(`Switched to ${view} view`);
+        }
+
+        function exportData() {
+            alert('Exporting dashboard data to CSV...');
+        }
+
+        function generateReport() {
+            alert('Generating comprehensive committee health report...');
+        }
+
+        function viewMeetings(id) {
+            alert(`Viewing meetings for committee ${id}`);
+        }
+
+        function viewActions(id) {
+            alert(`Viewing action items for committee ${id}`);
+        }
+
+        function viewMembers(id) {
+            alert(`Viewing members for committee ${id}`);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('filterType').addEventListener('change', applyFilters);
+        document.getElementById('filterDept').addEventListener('change', applyFilters);
+        document.getElementById('filterStatus').addEventListener('change', applyFilters);
+        document.getElementById('timeRange').addEventListener('change', () => {
+            alert('Time range changed - data would refresh');
+        });
+
+        // Close modal on outside click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') {
+                closeModal();
+            }
+        });
+
+        // Initial render
+        renderCards();
+    </script>
+</body>
+</html>

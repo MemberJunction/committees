@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Timeline-Based View - Election Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .app-header {
+            background: white;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .election-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .election-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .election-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+
+        .election-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .timeline-header h2 {
+            color: #1e293b;
+            font-size: 1.6em;
+            margin-bottom: 10px;
+        }
+
+        .timeline-header p {
+            color: #64748b;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-track {
+            position: relative;
+            height: 4px;
+            background: #e2e8f0;
+            margin: 50px 0;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #667eea 100%);
+            transition: width 0.5s ease;
+        }
+
+        .timeline-phases {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-top: -54px;
+        }
+
+        .phase-marker {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .phase-marker:hover {
+            transform: translateY(-5px);
+        }
+
+        .phase-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .phase-marker.completed .phase-dot {
+            background: #10b981;
+            width: 20px;
+            height: 20px;
+        }
+
+        .phase-marker.active .phase-dot {
+            background: #667eea;
+            width: 24px;
+            height: 24px;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .phase-marker.upcoming .phase-dot {
+            background: #cbd5e0;
+        }
+
+        .phase-label {
+            font-size: 0.85em;
+            color: #64748b;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .phase-marker.active .phase-label {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .phase-date {
+            font-size: 0.75em;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .phase-panels {
+            margin-top: 40px;
+        }
+
+        .phase-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .phase-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h3 {
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .panel-body {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 30px;
+        }
+
+        .phase-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .info-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.3em;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .info-value.success {
+            color: #10b981;
+        }
+
+        .info-value.warning {
+            color: #f59e0b;
+        }
+
+        .info-detail {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .progress-bar-container {
+            background: #f1f5f9;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-card.alert {
+            border-color: #fbbf24;
+            background: #fefce8;
+        }
+
+        .action-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .action-card-title {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.1em;
+        }
+
+        .action-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .action-badge.warning {
+            background: #f59e0b;
+        }
+
+        .action-card-content {
+            color: #64748b;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .action-card-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .data-table thead {
+            background: #f8f9ff;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-badge.accepted {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.declined {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.active {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.upcoming {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .candidate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .candidate-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .candidate-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .candidate-position {
+            font-size: 0.85em;
+            color: #64748b;
+        }
+
+        .alert-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-box.info {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert-box.warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-box.success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="app-title">
+            <i class="fas fa-vote-yea"></i> Election Management
+        </div>
+        <a href="../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Options
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="election-header">
+            <h1>2026 Annual Officer Election</h1>
+            <div class="election-meta">
+                <div class="election-meta-item">
+                    <i class="fas fa-users"></i>
+                    <span>Technology Committee</span>
+                </div>
+                <div class="election-meta-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>3 Positions</span>
+                </div>
+                <div class="election-meta-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>4 Confirmed Candidates</span>
+                </div>
+                <div class="election-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Created Jan 10, 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h2>Election Timeline</h2>
+                <p>Track progress through each phase of your election</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-track">
+                    <div class="timeline-progress" style="width: 35%;"></div>
+                </div>
+
+                <div class="timeline-phases">
+                    <div class="phase-marker completed" data-phase="setup">
+                        <div class="phase-dot"></div>
+                        <div class="phase-label">Setup</div>
+                        <div class="phase-date">Complete</div>
+                    </div>
+
+                    <div class="phase-marker active" data-phase="nominations">
+                        <div class="phase-dot"></div>
+                        <div class="phase-label">Nominations</div>
+                        <div class="phase-date">Jan 15-29</div>
+                    </div>
+
+                    <div class="phase-marker upcoming" data-phase="ballot">
+                        <div class="phase-dot"></div>
+                        <div class="phase-label">Ballot Config</div>
+                        <div class="phase-date">Jan 30</div>
+                    </div>
+
+                    <div class="phase-marker upcoming" data-phase="voting">
+                        <div class="phase-dot"></div>
+                        <div class="phase-label">Voting</div>
+                        <div class="phase-date">Feb 1-15</div>
+                    </div>
+
+                    <div class="phase-marker upcoming" data-phase="results">
+                        <div class="phase-dot"></div>
+                        <div class="phase-label">Results</div>
+                        <div class="phase-date">Feb 15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-panels">
+                <!-- Setup Phase -->
+                <div class="phase-panel" data-phase="setup">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-cog"></i> Election Setup</h3>
+                        <div class="panel-status">Completed</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert-box success">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Setup Complete:</strong> All election details configured and saved on Jan 10, 2026</span>
+                        </div>
+
+                        <h4 style="margin-bottom: 15px; color: #1e293b;">Election Configuration</h4>
+                        <div class="phase-info">
+                            <div class="info-card">
+                                <div class="info-label">Election Name</div>
+                                <div class="info-value" style="font-size: 1em;">2026 Annual Officer Election</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Committee</div>
+                                <div class="info-value" style="font-size: 1em;">Technology Committee</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Positions</div>
+                                <div class="info-value">3</div>
+                                <div class="info-detail">President, VP, Secretary</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Eligible Voters</div>
+                                <div class="info-value">48</div>
+                                <div class="info-detail">Active committee members</div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">Positions Details</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Term Length</th>
+                                    <th>Openings</th>
+                                    <th>Voting Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>President</strong></td>
+                                    <td>2 years</td>
+                                    <td>1</td>
+                                    <td>Single Choice</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Vice President</strong></td>
+                                    <td>2 years</td>
+                                    <td>1</td>
+                                    <td>Single Choice</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Secretary</strong></td>
+                                    <td>1 year</td>
+                                    <td>1</td>
+                                    <td>Single Choice</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-edit"></i> Edit Configuration
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Nominations Phase -->
+                <div class="phase-panel active" data-phase="nominations">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-user-plus"></i> Nomination Period</h3>
+                        <div class="panel-status">Active - Day 8 of 14</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="phase-info">
+                            <div class="info-card">
+                                <div class="info-label">Start Date</div>
+                                <div class="info-value" style="font-size: 1em;">Jan 15, 2026</div>
+                                <div class="info-detail">9:00 AM</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">End Date</div>
+                                <div class="info-value" style="font-size: 1em;">Jan 29, 2026</div>
+                                <div class="info-detail">5:00 PM (7 days left)</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Total Nominations</div>
+                                <div class="info-value class="success">12</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Acceptance Status</div>
+                                <div class="info-value class="warning">1 Pending</div>
+                                <div class="info-detail">4 accepted, 1 declined</div>
+                            </div>
+                        </div>
+
+                        <div class="alert-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span><strong>Action Required:</strong> 1 nomination pending acceptance (Robert Davis for Vice President)</span>
+                        </div>
+
+                        <div class="action-cards">
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Confirmed Candidates</div>
+                                    <div class="action-badge">4</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Candidates who have accepted their nomination and submitted statements
+                                </div>
+                                <div class="action-card-footer">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-eye"></i> View All
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="action-card alert">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Pending Acceptance</div>
+                                    <div class="action-badge warning">1</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Robert Davis (Vice President) - Nominated 6 days ago
+                                </div>
+                                <div class="action-card-footer">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-envelope"></i> Send Reminder
+                                    </button>
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Withdraw
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Nominations by Position</div>
+                                </div>
+                                <div class="action-card-content">
+                                    President: 2 candidates<br>
+                                    Vice President: 1 (+1 pending)<br>
+                                    Secretary: 1 candidate
+                                </div>
+                                <div class="action-card-footer">
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-chart-bar"></i> View Breakdown
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">Confirmed Candidates</h4>
+                        <div class="candidate-grid">
+                            <div class="candidate-card">
+                                <div class="candidate-avatar">JS</div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">John Smith</div>
+                                    <div class="candidate-position">President</div>
+                                </div>
+                            </div>
+                            <div class="candidate-card">
+                                <div class="candidate-avatar">AC</div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Amy Chen</div>
+                                    <div class="candidate-position">President</div>
+                                </div>
+                            </div>
+                            <div class="candidate-card">
+                                <div class="candidate-avatar">LM</div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Lisa Martinez</div>
+                                    <div class="candidate-position">Vice President</div>
+                                </div>
+                            </div>
+                            <div class="candidate-card">
+                                <div class="candidate-avatar">EW</div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Emily Wilson</div>
+                                    <div class="candidate-position">Secretary</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">All Nominations</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Nominee</th>
+                                    <th>Nominated By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>President</td>
+                                    <td>John Smith</td>
+                                    <td>Sarah Johnson</td>
+                                    <td>Jan 16</td>
+                                    <td><span class="status-badge accepted">Accepted</span></td>
+                                    <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>President</td>
+                                    <td>Amy Chen</td>
+                                    <td>Self</td>
+                                    <td>Jan 18</td>
+                                    <td><span class="status-badge accepted">Accepted</span></td>
+                                    <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Vice President</td>
+                                    <td>Robert Davis</td>
+                                    <td>John Smith</td>
+                                    <td>Jan 17</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                    <td><button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85em;">Remind</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Vice President</td>
+                                    <td>Lisa Martinez</td>
+                                    <td>Amy Chen</td>
+                                    <td>Jan 19</td>
+                                    <td><span class="status-badge accepted">Accepted</span></td>
+                                    <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Secretary</td>
+                                    <td>Michael Brown</td>
+                                    <td>Self</td>
+                                    <td>Jan 20</td>
+                                    <td><span class="status-badge declined">Declined</span></td>
+                                    <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;">Archive</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Secretary</td>
+                                    <td>Emily Wilson</td>
+                                    <td>Lisa Martinez</td>
+                                    <td>Jan 21</td>
+                                    <td><span class="status-badge accepted">Accepted</span></td>
+                                    <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Add Nomination
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-envelope"></i> Send Reminders
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Export List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ballot Configuration Phase -->
+                <div class="phase-panel" data-phase="ballot">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-ballot"></i> Ballot Configuration</h3>
+                        <div class="panel-status">Not Started</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Ballot configuration will be available after the nomination period closes on Jan 29, 2026</span>
+                        </div>
+
+                        <div class="phase-info">
+                            <div class="info-card">
+                                <div class="info-label">Available Date</div>
+                                <div class="info-value" style="font-size: 1em;">Jan 30, 2026</div>
+                                <div class="info-detail">After nominations close</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Positions to Configure</div>
+                                <div class="info-value">3</div>
+                                <div class="info-detail">President, VP, Secretary</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Expected Candidates</div>
+                                <div class="info-value">4+</div>
+                                <div class="info-detail">Based on current acceptances</div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">Configuration Preview</h4>
+                        <p style="color: #64748b; margin-bottom: 20px;">
+                            Configure voting method, candidate order, and ballot layout for each position.
+                        </p>
+
+                        <div class="action-cards">
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Voting Methods</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Choose from single choice, ranked choice, approval voting, or score voting
+                                </div>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Candidate Order</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Randomize, alphabetize, or set custom order for each position
+                                </div>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Ballot Preview</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Review ballot layout before opening voting period
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Configuration Locked (Available Jan 30)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Voting Phase -->
+                <div class="phase-panel" data-phase="voting">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-vote-yea"></i> Voting Period</h3>
+                        <div class="panel-status">Scheduled</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Voting will open on Feb 1, 2026 at 9:00 AM and close on Feb 15, 2026 at 5:00 PM</span>
+                        </div>
+
+                        <div class="phase-info">
+                            <div class="info-card">
+                                <div class="info-label">Voting Opens</div>
+                                <div class="info-value" style="font-size: 1em;">Feb 1, 2026</div>
+                                <div class="info-detail">9:00 AM</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Voting Closes</div>
+                                <div class="info-value" style="font-size: 1em;">Feb 15, 2026</div>
+                                <div class="info-detail">5:00 PM (14 day period)</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Eligible Voters</div>
+                                <div class="info-value">48</div>
+                                <div class="info-detail">Active members</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Voting Method</div>
+                                <div class="info-value" style="font-size: 0.9em;">Anonymous</div>
+                                <div class="info-detail">Participation tracked</div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">Reminders & Notifications</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Notification</th>
+                                    <th>Recipients</th>
+                                    <th>Schedule</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Voting Opens</td>
+                                    <td>All eligible voters</td>
+                                    <td>Feb 1 at 9:00 AM</td>
+                                    <td><span class="status-badge upcoming">Scheduled</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3-Day Reminder</td>
+                                    <td>Non-voters</td>
+                                    <td>Feb 12 at 9:00 AM</td>
+                                    <td><span class="status-badge upcoming">Scheduled</span></td>
+                                </tr>
+                                <tr>
+                                    <td>1-Day Reminder</td>
+                                    <td>Non-voters</td>
+                                    <td>Feb 14 at 9:00 AM</td>
+                                    <td><span class="status-badge upcoming">Scheduled</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Voting Closes</td>
+                                    <td>All eligible voters</td>
+                                    <td>Feb 15 at 5:00 PM</td>
+                                    <td><span class="status-badge upcoming">Scheduled</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Results Phase -->
+                <div class="phase-panel" data-phase="results">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-trophy"></i> Results & Announcement</h3>
+                        <div class="panel-status">Scheduled</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Results will be available for review after voting closes on Feb 15, 2026 at 5:00 PM</span>
+                        </div>
+
+                        <div class="phase-info">
+                            <div class="info-card">
+                                <div class="info-label">Results Available</div>
+                                <div class="info-value" style="font-size: 1em;">Feb 15, 2026</div>
+                                <div class="info-detail">Immediately after close</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Review Period</div>
+                                <div class="info-value" style="font-size: 1em;">Feb 15-17</div>
+                                <div class="info-detail">Before announcement</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Announcement</div>
+                                <div class="info-value" style="font-size: 1em;">Feb 18, 2026</div>
+                                <div class="info-detail">Planned date</div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: #1e293b;">Post-Election Actions</h4>
+                        <div class="action-cards">
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Review Results</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Verify vote counts and winner determination before announcement
+                                </div>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Announce Winners</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Send announcement emails and update committee roster
+                                </div>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-card-header">
+                                    <div class="action-card-title">Archive Election</div>
+                                </div>
+                                <div class="action-card-content">
+                                    Complete audit trail and export final reports
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const phaseMarkers = document.querySelectorAll('.phase-marker');
+        const phasePanels = document.querySelectorAll('.phase-panel');
+
+        phaseMarkers.forEach(marker => {
+            marker.addEventListener('click', function() {
+                const phase = this.dataset.phase;
+
+                // Update markers
+                phaseMarkers.forEach(m => m.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Update panels
+                phasePanels.forEach(panel => {
+                    panel.classList.remove('active');
+                    if (panel.dataset.phase === phase) {
+                        panel.classList.add('active');
+                    }
+                });
+
+                // Smooth scroll to panel
+                setTimeout(() => {
+                    const activePanel = document.querySelector('.phase-panel.active');
+                    if (activePanel) {
+                        activePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

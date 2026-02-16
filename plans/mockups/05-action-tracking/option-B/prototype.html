@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Kanban Board - Action Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+
+        .view-toggle button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .view-toggle button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .kanban-container {
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .kanban-board {
+            display: flex;
+            gap: 1.5rem;
+            min-width: max-content;
+            padding-bottom: 1rem;
+        }
+
+        .kanban-column {
+            background: #f9fafb;
+            border-radius: 12px;
+            width: 380px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 240px);
+        }
+
+        .column-header {
+            padding: 1.25rem;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .column-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .column-count {
+            background: #e0e0e0;
+            color: #666;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .column-not-started .column-count {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .column-in-progress .column-count {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .column-blocked .column-count {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .column-complete .column-count {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .column-body {
+            padding: 1rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 200px;
+        }
+
+        .kanban-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            cursor: grab;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .kanban-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .kanban-card.priority-high {
+            border-left-color: #f44336;
+        }
+
+        .kanban-card.priority-medium {
+            border-left-color: #ff9800;
+        }
+
+        .kanban-card.priority-low {
+            border-left-color: #4caf50;
+        }
+
+        .kanban-card.overdue {
+            background: #fff3f3;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-priority {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-committee {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-due-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-due-date.overdue {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .card-due-date.due-soon {
+            color: #ff9800;
+            font-weight: 500;
+        }
+
+        .card-progress {
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #667eea;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .card-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        .drop-zone {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: #999;
+            margin: 1rem;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: #f8f9ff;
+            color: #667eea;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item input,
+        .detail-item select,
+        .detail-item textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .detail-item textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .notes-list {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .note-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .note-content {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .add-note-form {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .add-note-form textarea {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .kanban-board {
+                flex-direction: column;
+                min-width: 100%;
+            }
+
+            .kanban-column {
+                width: 100%;
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>My Action Items - Kanban Board</h1>
+        <div class="header-right">
+            <div class="view-toggle">
+                <button>List</button>
+                <button class="active">Board</button>
+                <button>Timeline</button>
+            </div>
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Comparison
+            </a>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search action items..." id="searchInput">
+        </div>
+        <div class="filter-group">
+            <select class="filter-select" id="committeeFilter">
+                <option value="">All Committees</option>
+                <option value="finance">Finance Committee</option>
+                <option value="governance">Governance</option>
+                <option value="operations">Operations</option>
+            </select>
+            <select class="filter-select" id="priorityFilter">
+                <option value="">All Priorities</option>
+                <option value="high">High Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="low">Low Priority</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="kanban-container">
+        <div class="kanban-board">
+            <!-- Not Started Column -->
+            <div class="kanban-column column-not-started" data-status="not-started">
+                <div class="column-header">
+                    <div class="column-title">
+                        <i class="fas fa-circle"></i>
+                        Not Started
+                    </div>
+                    <span class="column-count">2</span>
+                </div>
+                <div class="column-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="kanban-card priority-medium" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card3')">
+                        <div class="card-header">
+                            <span class="card-priority priority-medium">Medium</span>
+                        </div>
+                        <div class="card-title">Schedule vendor presentations for Q2</div>
+                        <div class="card-meta">From Operations Meeting - Feb 5, 2026</div>
+                        <span class="card-committee">Operations</span>
+                        <div class="card-due-date">
+                            <i class="fas fa-calendar"></i>
+                            Feb 28, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">0% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>0</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card priority-low" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card7')">
+                        <div class="card-header">
+                            <span class="card-priority priority-low">Low</span>
+                        </div>
+                        <div class="card-title">Create Q1 committee meeting schedule</div>
+                        <div class="card-meta">From Governance Meeting - Feb 8, 2026</div>
+                        <span class="card-committee">Governance</span>
+                        <div class="card-due-date">
+                            <i class="fas fa-calendar"></i>
+                            Mar 1, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">0% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>1</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In Progress Column -->
+            <div class="kanban-column column-in-progress" data-status="in-progress">
+                <div class="column-header">
+                    <div class="column-title">
+                        <i class="fas fa-spinner"></i>
+                        In Progress
+                    </div>
+                    <span class="column-count">4</span>
+                </div>
+                <div class="column-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="kanban-card priority-high overdue" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card1')">
+                        <div class="card-header">
+                            <span class="card-priority priority-high">High</span>
+                        </div>
+                        <div class="card-title">Review Q4 budget variance report</div>
+                        <div class="card-meta">From Finance Meeting - Dec 15, 2025</div>
+                        <span class="card-committee">Finance Committee</span>
+                        <div class="card-due-date overdue">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Feb 10, 2026 (Overdue)
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 45%"></div>
+                            </div>
+                            <div class="progress-text">45% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>2</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>2</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card priority-high" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card2')">
+                        <div class="card-header">
+                            <span class="card-priority priority-high">High</span>
+                        </div>
+                        <div class="card-title">Update governance charter with new policies</div>
+                        <div class="card-meta">From Governance Meeting - Jan 20, 2026</div>
+                        <span class="card-committee">Governance</span>
+                        <div class="card-due-date due-soon">
+                            <i class="fas fa-clock"></i>
+                            Feb 17, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 60%"></div>
+                            </div>
+                            <div class="progress-text">60% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>4</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card priority-medium" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card5')">
+                        <div class="card-header">
+                            <span class="card-priority priority-medium">Medium</span>
+                        </div>
+                        <div class="card-title">Research new committee management software options</div>
+                        <div class="card-meta">From Operations Meeting - Jan 28, 2026</div>
+                        <span class="card-committee">Operations</span>
+                        <div class="card-due-date">
+                            <i class="fas fa-calendar"></i>
+                            Mar 5, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 25%"></div>
+                            </div>
+                            <div class="progress-text">25% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>3</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card priority-low" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card6')">
+                        <div class="card-header">
+                            <span class="card-priority priority-low">Low</span>
+                        </div>
+                        <div class="card-title">Review and approve meeting minutes from last session</div>
+                        <div class="card-meta">From Governance Meeting - Feb 1, 2026</div>
+                        <span class="card-committee">Governance</span>
+                        <div class="card-due-date due-soon">
+                            <i class="fas fa-clock"></i>
+                            Feb 18, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 80%"></div>
+                            </div>
+                            <div class="progress-text">80% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>1</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blocked Column -->
+            <div class="kanban-column column-blocked" data-status="blocked">
+                <div class="column-header">
+                    <div class="column-title">
+                        <i class="fas fa-hand-paper"></i>
+                        Blocked
+                    </div>
+                    <span class="column-count">1</span>
+                </div>
+                <div class="column-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="kanban-card priority-high overdue" draggable="true" ondragstart="drag(event)" onclick="openCardModal('card4')">
+                        <div class="card-header">
+                            <span class="card-priority priority-high">High</span>
+                        </div>
+                        <div class="card-title">Prepare annual financial statement summary</div>
+                        <div class="card-meta">From Finance Meeting - Jan 10, 2026</div>
+                        <span class="card-committee">Finance Committee</span>
+                        <div class="card-due-date overdue">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Feb 12, 2026 (Overdue)
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 30%"></div>
+                            </div>
+                            <div class="progress-text">30% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>5</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Column -->
+            <div class="kanban-column column-complete" data-status="complete">
+                <div class="column-header">
+                    <div class="column-title">
+                        <i class="fas fa-check-circle"></i>
+                        Complete
+                    </div>
+                    <span class="column-count">3</span>
+                </div>
+                <div class="column-body" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="kanban-card priority-high" draggable="true" ondragstart="drag(event)">
+                        <div class="card-header">
+                            <span class="card-priority priority-high">High</span>
+                        </div>
+                        <div class="card-title">Review vendor contract renewal terms</div>
+                        <div class="card-meta">From Operations Meeting - Jan 15, 2026</div>
+                        <span class="card-committee">Operations</span>
+                        <div class="card-due-date" style="color: #388e3c;">
+                            <i class="fas fa-check"></i>
+                            Completed Feb 10, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 100%; background: #4caf50;"></div>
+                            </div>
+                            <div class="progress-text" style="color: #388e3c;">100% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>6</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card priority-medium" draggable="true" ondragstart="drag(event)">
+                        <div class="card-header">
+                            <span class="card-priority priority-medium">Medium</span>
+                        </div>
+                        <div class="card-title">Compile member attendance records Q4</div>
+                        <div class="card-meta">From Governance Meeting - Jan 5, 2026</div>
+                        <span class="card-committee">Governance</span>
+                        <div class="card-due-date" style="color: #388e3c;">
+                            <i class="fas fa-check"></i>
+                            Completed Feb 8, 2026
+                        </div>
+                        <div class="card-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 100%; background: #4caf50;"></div>
+                            </div>
+                            <div class="progress-text" style="color: #388e3c;">100% complete</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-icons">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                    <span>2</span>
+                                </div>
+                                <div class="card-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn" onclick="event.stopPropagation()">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <h2>Review Q4 budget variance report</h2>
+                    <div class="card-meta">From Finance Meeting - Dec 15, 2025</div>
+                </div>
+                <button class="modal-close" onclick="closeCardModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h3><i class="fas fa-info-circle"></i> Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Status</label>
+                            <select>
+                                <option value="not-started">Not Started</option>
+                                <option value="in-progress" selected>In Progress</option>
+                                <option value="blocked">Blocked</option>
+                                <option value="complete">Complete</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Priority</label>
+                            <select>
+                                <option value="high" selected>High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Due Date</label>
+                            <input type="date" value="2026-02-10">
+                        </div>
+                        <div class="detail-item">
+                            <label>Progress</label>
+                            <input type="number" min="0" max="100" value="45">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3><i class="fas fa-align-left"></i> Description</h3>
+                    <div class="detail-item">
+                        <textarea readonly>Analyze the Q4 budget variance report and identify key areas where actuals deviated from planned budget. Prepare a summary highlighting major discrepancies and recommend corrective actions for the upcoming quarter.</textarea>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3><i class="fas fa-comments"></i> Activity</h3>
+                    <div class="notes-list">
+                        <div class="note-item">
+                            <div class="note-header">
+                                <span class="note-author">Sarah Johnson (You)</span>
+                                <span class="note-date">Feb 13, 2026 at 2:30 PM</span>
+                            </div>
+                            <div class="note-content">
+                                Completed initial analysis of revenue variances. Capital expenditure section still needs review.
+                            </div>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-header">
+                                <span class="note-author">Sarah Johnson (You)</span>
+                                <span class="note-date">Feb 10, 2026 at 10:15 AM</span>
+                            </div>
+                            <div class="note-content">
+                                Started reviewing the variance report. Identified 3 major areas of concern.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-note-form">
+                        <textarea placeholder="Add a comment..."></textarea>
+                        <button class="btn btn-primary">Comment</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCardModal()">Close</button>
+                <button class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let draggedCard = null;
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function drag(ev) {
+            draggedCard = ev.target;
+            ev.target.classList.add('dragging');
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+
+            if (draggedCard && ev.currentTarget.classList.contains('column-body')) {
+                ev.currentTarget.appendChild(draggedCard);
+                draggedCard.classList.remove('dragging');
+
+                // Update column counts
+                document.querySelectorAll('.kanban-column').forEach(column => {
+                    const count = column.querySelectorAll('.kanban-card').length;
+                    column.querySelector('.column-count').textContent = count;
+                });
+
+                draggedCard = null;
+            }
+        }
+
+        // Remove drag-over class when drag leaves
+        document.querySelectorAll('.column-body').forEach(body => {
+            body.addEventListener('dragleave', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('drag-over');
+                }
+            });
+
+            body.addEventListener('dragend', function() {
+                this.classList.remove('drag-over');
+            });
+        });
+
+        function openCardModal(cardId) {
+            document.getElementById('cardModal').classList.add('active');
+        }
+
+        function closeCardModal() {
+            document.getElementById('cardModal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('cardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCardModal();
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.kanban-card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+
+            // Update column counts
+            document.querySelectorAll('.kanban-column').forEach(column => {
+                const visibleCards = column.querySelectorAll('.kanban-card[style="display: block;"], .kanban-card:not([style*="display"])');
+                column.querySelector('.column-count').textContent = visibleCards.length;
+            });
+        });
+    </script>
+</body>
+</html>

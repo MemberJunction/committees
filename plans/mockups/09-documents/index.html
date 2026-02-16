@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 9: Document Collaboration - Design Comparison</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .journey-description {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .journey-description h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .journey-description p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-tag {
+            background: #f7fafc;
+            border-left: 3px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+
+        .feature-tag i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .option-preview {
+            width: 100%;
+            height: 300px;
+            background: #f7fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .option-preview .icon-placeholder {
+            font-size: 4rem;
+            color: #667eea;
+            opacity: 0.3;
+        }
+
+        .option-content {
+            padding: 25px;
+        }
+
+        .option-letter {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .option-content h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .option-content p {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .strengths {
+            margin: 20px 0;
+        }
+
+        .strengths h4 {
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .strengths ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .strengths li {
+            padding: 6px 0;
+            color: #4a5568;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: start;
+        }
+
+        .strengths li i {
+            color: #48bb78;
+            margin-right: 8px;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .cta-button:hover {
+            background: #5a67d8;
+        }
+
+        .comparison-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .comparison-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .comparison-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .comparison-button i {
+            margin-left: 8px;
+        }
+
+        /* Option A Preview Illustration */
+        .preview-a {
+            background: linear-gradient(to bottom, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+        }
+
+        .preview-a-content {
+            display: grid;
+            grid-template-columns: 200px 1fr 250px;
+            gap: 10px;
+            height: 260px;
+        }
+
+        .tree-panel {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tree-item {
+            padding: 6px;
+            font-size: 0.75rem;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+        }
+
+        .tree-item i {
+            margin-right: 6px;
+            font-size: 0.7rem;
+        }
+
+        .list-panel {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .list-header {
+            background: #f7fafc;
+            padding: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2d3748;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .list-row {
+            padding: 6px;
+            font-size: 0.7rem;
+            color: #4a5568;
+            border-bottom: 1px solid #f7fafc;
+        }
+
+        .preview-panel {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-doc {
+            flex: 1;
+            background: #f7fafc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #cbd5e0;
+        }
+
+        /* Option B Preview Illustration */
+        .preview-b {
+            background: linear-gradient(to bottom, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+        }
+
+        .preview-b-content {
+            height: 260px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .breadcrumb-bar {
+            background: white;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            color: #4a5568;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            flex: 1;
+        }
+
+        .grid-item {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid-icon {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .grid-label {
+            font-size: 0.65rem;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        /* Option C Preview Illustration */
+        .preview-c {
+            background: linear-gradient(to bottom, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+        }
+
+        .preview-c-content {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 10px;
+            height: 260px;
+        }
+
+        .timeline-panel {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f7fafc;
+        }
+
+        .timeline-time {
+            font-size: 0.65rem;
+            color: #a0aec0;
+            width: 50px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: 0.75rem;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 0.65rem;
+            color: #718096;
+        }
+
+        .sidebar-panel {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-item {
+            padding: 6px;
+            font-size: 0.7rem;
+            color: #4a5568;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            background: #f7fafc;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .preview-a-content,
+            .preview-c-content {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-folder-open"></i> Journey 9: Document Collaboration</h1>
+            <p>Compare Three Design Approaches</p>
+        </div>
+
+        <div class="journey-description">
+            <h2>User Journey Overview</h2>
+            <p>
+                <strong>Scenario:</strong> A committee member needs to access shared meeting folders, review and comment on the agenda document,
+                upload supporting materials for discussion, track changes made to documents over time, and receive notifications when
+                other members update or comment on documents.
+            </p>
+            <p>
+                This journey focuses on seamless document collaboration within the committee workflow, ensuring all members can efficiently
+                prepare for meetings, contribute materials, and stay synchronized with document updates.
+            </p>
+
+            <div class="features">
+                <div class="feature-tag">
+                    <i class="fas fa-folder-tree"></i> Folder Navigation
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-upload"></i> Document Upload/Download
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-clock-rotate-left"></i> Version History
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-comments"></i> Inline Commenting
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-eye"></i> Document Preview
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-share-nodes"></i> Sharing Permissions
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-bell"></i> Activity Notifications
+                </div>
+                <div class="feature-tag">
+                    <i class="fas fa-cloud"></i> Cloud Integration
+                </div>
+            </div>
+        </div>
+
+        <div class="options-grid">
+            <div class="option-card">
+                <div class="option-preview preview-a">
+                    <div class="preview-a-content">
+                        <div class="tree-panel">
+                            <div class="tree-item"><i class="fas fa-folder"></i> Meeting Folders</div>
+                            <div class="tree-item"><i class="fas fa-folder-open"></i> Q1 Board Review</div>
+                            <div class="tree-item" style="margin-left: 15px;"><i class="fas fa-file"></i> Agenda</div>
+                            <div class="tree-item" style="margin-left: 15px;"><i class="fas fa-file"></i> Reports</div>
+                            <div class="tree-item"><i class="fas fa-folder"></i> Finance Committee</div>
+                        </div>
+                        <div class="list-panel">
+                            <div class="list-header">Documents</div>
+                            <div class="list-row">Meeting Agenda.pdf</div>
+                            <div class="list-row">Financial Report.xlsx</div>
+                            <div class="list-row">Strategic Plan.docx</div>
+                            <div class="list-row">Budget 2026.xlsx</div>
+                        </div>
+                        <div class="preview-panel">
+                            <div class="preview-doc">
+                                <i class="far fa-file-pdf"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="option-letter">A</div>
+                    <h3>Folder Tree View</h3>
+                    <p>
+                        Traditional three-pane file explorer with persistent folder tree, document list, and preview panel.
+                        Familiar interface pattern optimized for efficient navigation and quick document access.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Key Strengths</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Familiar desktop-like interface</li>
+                            <li><i class="fas fa-check-circle"></i> Always-visible folder structure</li>
+                            <li><i class="fas fa-check-circle"></i> Efficient use of screen space</li>
+                            <li><i class="fas fa-check-circle"></i> Quick navigation between folders</li>
+                            <li><i class="fas fa-check-circle"></i> Simultaneous preview and browsing</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-A/prototype.html" class="cta-button">
+                        View Interactive Prototype <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-preview preview-b">
+                    <div class="preview-b-content">
+                        <div class="breadcrumb-bar">
+                            <i class="fas fa-home"></i> / Meetings / Q1 Board Review
+                        </div>
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-pdf"></i></div>
+                                <div class="grid-label">Meeting Agenda.pdf</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-excel"></i></div>
+                                <div class="grid-label">Financial Report.xlsx</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-word"></i></div>
+                                <div class="grid-label">Strategic Plan.docx</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-excel"></i></div>
+                                <div class="grid-label">Budget 2026.xlsx</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-powerpoint"></i></div>
+                                <div class="grid-label">Presentation.pptx</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-icon"><i class="far fa-file-image"></i></div>
+                                <div class="grid-label">Chart.png</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="option-letter">B</div>
+                    <h3>Grid/List View</h3>
+                    <p>
+                        Modern cloud storage interface with flexible grid and list views, breadcrumb navigation, and modal-based
+                        previews. Inspired by Google Drive for intuitive document browsing.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Key Strengths</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Clean, uncluttered interface</li>
+                            <li><i class="fas fa-check-circle"></i> Flexible viewing options</li>
+                            <li><i class="fas fa-check-circle"></i> Visual document thumbnails</li>
+                            <li><i class="fas fa-check-circle"></i> Familiar to cloud storage users</li>
+                            <li><i class="fas fa-check-circle"></i> Easy drag-and-drop uploads</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-B/prototype.html" class="cta-button">
+                        View Interactive Prototype <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-preview preview-c">
+                    <div class="preview-c-content">
+                        <div class="timeline-panel">
+                            <div class="timeline-item">
+                                <div class="timeline-time">2:30 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title"><i class="fas fa-upload"></i> Sarah Chen uploaded Budget 2026.xlsx</div>
+                                    <div class="timeline-desc">Added to Q1 Board Review folder</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-time">1:15 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title"><i class="fas fa-comment"></i> Michael Rodriguez commented</div>
+                                    <div class="timeline-desc">On Meeting Agenda.pdf: "Need to discuss..."</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-time">11:45 AM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title"><i class="fas fa-clock-rotate-left"></i> New version uploaded</div>
+                                    <div class="timeline-desc">Strategic Plan.docx updated by Jennifer Lee</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sidebar-panel">
+                            <div class="sidebar-title">Quick Access</div>
+                            <div class="sidebar-item"><i class="fas fa-folder"></i> Q1 Board Review</div>
+                            <div class="sidebar-item"><i class="fas fa-folder"></i> Finance Committee</div>
+                            <div class="sidebar-item"><i class="fas fa-folder"></i> Audit Reports</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="option-letter">C</div>
+                    <h3>Timeline Activity View</h3>
+                    <p>
+                        Activity-centric interface with chronological feed of document updates, comments, and uploads.
+                        Emphasizes collaboration and recent changes with inline previews.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Key Strengths</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Highlights recent activity</li>
+                            <li><i class="fas fa-check-circle"></i> Integrated collaboration view</li>
+                            <li><i class="fas fa-check-circle"></i> Real-time updates visible</li>
+                            <li><i class="fas fa-check-circle"></i> Reduces need to check multiple places</li>
+                            <li><i class="fas fa-check-circle"></i> Good for active projects</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-C/prototype.html" class="cta-button">
+                        View Interactive Prototype <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-link">
+            <a href="COMPARISON.md" class="comparison-button">
+                <i class="fas fa-table-columns"></i> View Detailed Comparison <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Folder Tree View - Document Collaboration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-title i {
+            color: #667eea;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            background: #f7fafc;
+        }
+
+        .breadcrumb-separator {
+            color: #cbd5e0;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 35px 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 250px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .action-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #5a67d8;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #718096;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f7fafc;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar - Folder Tree */
+        .folder-tree-panel {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .tree-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tree-content {
+            padding: 8px 0;
+        }
+
+        .tree-item {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .tree-item:hover {
+            background: #f7fafc;
+        }
+
+        .tree-item.active {
+            background: #edf2f7;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .tree-item.nested {
+            padding-left: 40px;
+        }
+
+        .tree-item.nested-2 {
+            padding-left: 56px;
+        }
+
+        .tree-icon {
+            width: 20px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        .tree-item.active .tree-icon {
+            color: #667eea;
+        }
+
+        .expand-icon {
+            width: 16px;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        /* Center Panel - Document List */
+        .document-list-panel {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .view-toggle-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            color: #718096;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #4a5568;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        .list-toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .list-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list-table thead {
+            background: #f7fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .list-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .list-table th:hover {
+            background: #edf2f7;
+        }
+
+        .list-table th i {
+            margin-left: 4px;
+            color: #a0aec0;
+            font-size: 0.75rem;
+        }
+
+        .list-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f7fafc;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .list-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .list-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .list-table tbody tr.selected {
+            background: #edf2f7;
+        }
+
+        .doc-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-icon {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .doc-icon.pdf { color: #e53e3e; }
+        .doc-icon.excel { color: #38a169; }
+        .doc-icon.word { color: #3182ce; }
+        .doc-icon.ppt { color: #dd6b20; }
+        .doc-icon.image { color: #805ad5; }
+
+        .doc-info {
+            flex: 1;
+        }
+
+        .doc-name {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .doc-meta {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .integration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .integration-badge.gdrive {
+            background: #fef5e7;
+            color: #d68910;
+        }
+
+        .integration-badge.sharepoint {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .integration-badge.box {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .comment-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #f7fafc;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .version-badge {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        /* Right Panel - Preview */
+        .preview-panel {
+            width: 400px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .preview-panel.hidden {
+            display: none;
+        }
+
+        .preview-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .preview-document {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-document i {
+            font-size: 4rem;
+            color: #cbd5e0;
+        }
+
+        .preview-section {
+            margin-bottom: 24px;
+        }
+
+        .preview-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-info-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .preview-label {
+            color: #718096;
+        }
+
+        .preview-value {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .comment-section {
+            margin-top: 24px;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .comment-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .comment-send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .comment-send-btn:hover {
+            background: #5a67d8;
+        }
+
+        .comment {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comment-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .comment-author-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .comment-text {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .version-history {
+            margin-top: 16px;
+        }
+
+        .version-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .version-item:hover {
+            background: #f7fafc;
+        }
+
+        .version-item.current {
+            background: #edf2f7;
+            border: 1px solid #667eea;
+        }
+
+        .version-number {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .version-item.current .version-number {
+            background: #48bb78;
+        }
+
+        .version-info {
+            flex: 1;
+        }
+
+        .version-meta {
+            font-size: 0.85rem;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .version-details {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(102, 126, 234, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .upload-zone.active {
+            display: flex;
+        }
+
+        .upload-zone-content {
+            text-align: center;
+            color: white;
+        }
+
+        .upload-zone-content i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .notification-toast.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            color: #48bb78;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .preview-panel {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .folder-tree-panel {
+                width: 240px;
+            }
+
+            .preview-panel {
+                position: fixed;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 400px;
+                z-index: 100;
+                box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-left">
+            <div class="app-title">
+                <i class="fas fa-folder-open"></i>
+                Documents
+            </div>
+            <div class="breadcrumb">
+                <div class="breadcrumb-item">
+                    <i class="fas fa-home"></i>
+                    <span>Committees</span>
+                </div>
+                <span class="breadcrumb-separator">/</span>
+                <div class="breadcrumb-item">
+                    <span>Board of Directors</span>
+                </div>
+                <span class="breadcrumb-separator">/</span>
+                <div class="breadcrumb-item">
+                    <span>Q1 2026 Review</span>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Search documents...">
+                <i class="fas fa-search"></i>
+            </div>
+            <button class="action-btn" onclick="showUploadNotification()">
+                <i class="fas fa-upload"></i>
+                Upload
+            </button>
+            <button class="icon-btn">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-btn">
+                <i class="fas fa-user-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Folder Tree Panel -->
+        <div class="folder-tree-panel">
+            <div class="tree-header">
+                <span>Folders</span>
+                <button class="icon-btn" style="padding: 4px;">
+                    <i class="fas fa-ellipsis-vertical"></i>
+                </button>
+            </div>
+            <div class="tree-content">
+                <div class="tree-item">
+                    <i class="expand-icon fas fa-chevron-right expanded"></i>
+                    <i class="tree-icon fas fa-folder-open"></i>
+                    <span>All Documents</span>
+                </div>
+                <div class="tree-item nested">
+                    <i class="expand-icon fas fa-chevron-right expanded"></i>
+                    <i class="tree-icon fas fa-folder-open"></i>
+                    <span>Board of Directors</span>
+                </div>
+                <div class="tree-item nested-2 active">
+                    <i class="expand-icon"></i>
+                    <i class="tree-icon fas fa-folder-open"></i>
+                    <span>Q1 2026 Review</span>
+                </div>
+                <div class="tree-item nested-2">
+                    <i class="expand-icon"></i>
+                    <i class="tree-icon fas fa-folder"></i>
+                    <span>Q4 2025 Review</span>
+                </div>
+                <div class="tree-item nested">
+                    <i class="expand-icon fas fa-chevron-right"></i>
+                    <i class="tree-icon fas fa-folder"></i>
+                    <span>Finance Committee</span>
+                </div>
+                <div class="tree-item nested">
+                    <i class="expand-icon fas fa-chevron-right"></i>
+                    <i class="tree-icon fas fa-folder"></i>
+                    <span>Audit Committee</span>
+                </div>
+                <div class="tree-item">
+                    <i class="expand-icon fas fa-chevron-right"></i>
+                    <i class="tree-icon fas fa-folder"></i>
+                    <span>Executive Committee</span>
+                </div>
+                <div class="tree-item">
+                    <i class="expand-icon"></i>
+                    <i class="tree-icon fas fa-star" style="color: #f6ad55;"></i>
+                    <span>Starred</span>
+                </div>
+                <div class="tree-item">
+                    <i class="expand-icon"></i>
+                    <i class="tree-icon fas fa-clock"></i>
+                    <span>Recent</span>
+                </div>
+                <div class="tree-item">
+                    <i class="expand-icon"></i>
+                    <i class="tree-icon fas fa-share-nodes"></i>
+                    <span>Shared with me</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document List Panel -->
+        <div class="document-list-panel">
+            <div class="list-toolbar">
+                <div class="list-toolbar-left">
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active">
+                            <i class="fas fa-list"></i> List
+                        </button>
+                        <button class="view-toggle-btn">
+                            <i class="fas fa-grid"></i> Grid
+                        </button>
+                    </div>
+                    <button class="filter-btn">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                    <button class="filter-btn">
+                        <i class="fas fa-sort"></i>
+                        Sort
+                    </button>
+                </div>
+                <div class="list-toolbar-right">
+                    <span>8 items</span>
+                </div>
+            </div>
+
+            <div class="list-container">
+                <table class="list-table">
+                    <thead>
+                        <tr>
+                            <th>Name <i class="fas fa-sort"></i></th>
+                            <th>Modified <i class="fas fa-sort"></i></th>
+                            <th>Owner <i class="fas fa-sort"></i></th>
+                            <th>Size <i class="fas fa-sort"></i></th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected" onclick="selectDocument(this, 'agenda')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon pdf far fa-file-pdf"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Meeting Agenda.pdf</div>
+                                        <div class="doc-meta">
+                                            <span class="comment-count"><i class="fas fa-comment"></i> 3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Today, 2:30 PM</td>
+                            <td>Sarah Chen</td>
+                            <td>245 KB</td>
+                            <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'financial')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon excel far fa-file-excel"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Financial Report Q1.xlsx</div>
+                                        <div class="doc-meta">
+                                            <span class="comment-count"><i class="fas fa-comment"></i> 5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Today, 11:45 AM</td>
+                            <td>Michael Rodriguez</td>
+                            <td>1.2 MB</td>
+                            <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'strategic')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon word far fa-file-word"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Strategic Plan 2026.docx</div>
+                                        <div class="doc-meta">
+                                            <span class="comment-count"><i class="fas fa-comment"></i> 8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Yesterday, 4:15 PM</td>
+                            <td>Jennifer Lee</td>
+                            <td>532 KB</td>
+                            <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'budget')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon excel far fa-file-excel"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Budget 2026.xlsx</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mar 10, 2026</td>
+                            <td>David Kim</td>
+                            <td>890 KB</td>
+                            <td><span class="integration-badge box"><i class="fas fa-box"></i> Box</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'presentation')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon ppt far fa-file-powerpoint"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Q1 Board Presentation.pptx</div>
+                                        <div class="doc-meta">
+                                            <span class="comment-count"><i class="fas fa-comment"></i> 2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mar 8, 2026</td>
+                            <td>Sarah Chen</td>
+                            <td>3.4 MB</td>
+                            <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'chart')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon image far fa-file-image"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Revenue Chart.png</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mar 7, 2026</td>
+                            <td>Michael Rodriguez</td>
+                            <td>156 KB</td>
+                            <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'minutes')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon pdf far fa-file-pdf"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Previous Meeting Minutes.pdf</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Feb 28, 2026</td>
+                            <td>Jennifer Lee</td>
+                            <td>189 KB</td>
+                            <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                        </tr>
+                        <tr onclick="selectDocument(this, 'analysis')">
+                            <td>
+                                <div class="doc-name-cell">
+                                    <i class="doc-icon excel far fa-file-excel"></i>
+                                    <div class="doc-info">
+                                        <div class="doc-name">Market Analysis.xlsx</div>
+                                        <div class="doc-meta">
+                                            <span class="comment-count"><i class="fas fa-comment"></i> 1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Feb 25, 2026</td>
+                            <td>David Kim</td>
+                            <td>678 KB</td>
+                            <td><span class="integration-badge box"><i class="fas fa-box"></i> Box</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel" id="previewPanel">
+            <div class="preview-header">
+                <span class="preview-title">Document Preview</span>
+                <div class="preview-actions">
+                    <button class="icon-btn" onclick="showVersionHistory()">
+                        <i class="fas fa-clock-rotate-left"></i>
+                    </button>
+                    <button class="icon-btn">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="icon-btn">
+                        <i class="fas fa-share-nodes"></i>
+                    </button>
+                    <button class="icon-btn" onclick="togglePreview()">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-content" id="previewContent">
+                <div class="preview-document">
+                    <i class="far fa-file-pdf"></i>
+                </div>
+
+                <div class="preview-section">
+                    <div class="preview-section-title">Details</div>
+                    <div class="preview-info-grid">
+                        <div class="preview-label">Name:</div>
+                        <div class="preview-value">Meeting Agenda.pdf</div>
+                        <div class="preview-label">Type:</div>
+                        <div class="preview-value">PDF Document</div>
+                        <div class="preview-label">Size:</div>
+                        <div class="preview-value">245 KB</div>
+                        <div class="preview-label">Owner:</div>
+                        <div class="preview-value">Sarah Chen</div>
+                        <div class="preview-label">Modified:</div>
+                        <div class="preview-value">Today, 2:30 PM</div>
+                        <div class="preview-label">Source:</div>
+                        <div class="preview-value">
+                            <span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    <div class="preview-section-title">Comments (3)</div>
+
+                    <div class="comment-input">
+                        <input type="text" placeholder="Add a comment...">
+                        <button class="comment-send-btn" onclick="addComment()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="comment-avatar">MR</div>
+                                <span class="comment-author-name">Michael Rodriguez</span>
+                            </div>
+                            <span class="comment-time">1 hour ago</span>
+                        </div>
+                        <div class="comment-text">
+                            Should we add the new initiative discussion to item 4? I think it's important for the board to review.
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="comment-avatar" style="background: #48bb78;">JL</div>
+                                <span class="comment-author-name">Jennifer Lee</span>
+                            </div>
+                            <span class="comment-time">2 hours ago</span>
+                        </div>
+                        <div class="comment-text">
+                            Great agenda! Can we allocate more time for the strategic planning section?
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="comment-avatar" style="background: #f56565;">DK</div>
+                                <span class="comment-author-name">David Kim</span>
+                            </div>
+                            <span class="comment-time">3 hours ago</span>
+                        </div>
+                        <div class="comment-text">
+                            Please include the financial projections we discussed last week.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone">
+        <div class="upload-zone-content">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <h3>Drop files here to upload</h3>
+            <p>Supported formats: PDF, Word, Excel, PowerPoint, Images</p>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast">
+        <i class="notification-icon fas fa-check-circle"></i>
+        <div class="notification-content">
+            <div class="notification-title">Success</div>
+            <div class="notification-message">Document uploaded successfully</div>
+        </div>
+    </div>
+
+    <script>
+        function selectDocument(row, docType) {
+            document.querySelectorAll('.list-table tbody tr').forEach(tr => {
+                tr.classList.remove('selected');
+            });
+            row.classList.add('selected');
+            document.getElementById('previewPanel').classList.remove('hidden');
+        }
+
+        function togglePreview() {
+            document.getElementById('previewPanel').classList.toggle('hidden');
+        }
+
+        function showVersionHistory() {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = `
+                <div class="preview-section">
+                    <div class="preview-section-title">Version History</div>
+                    <div class="version-history">
+                        <div class="version-item current">
+                            <div class="version-number">v3</div>
+                            <div class="version-info">
+                                <div class="version-meta">Current Version</div>
+                                <div class="version-details">Sarah Chen • Today, 2:30 PM • 245 KB</div>
+                            </div>
+                        </div>
+                        <div class="version-item">
+                            <div class="version-number">v2</div>
+                            <div class="version-info">
+                                <div class="version-meta">Previous Version</div>
+                                <div class="version-details">Jennifer Lee • Yesterday, 4:15 PM • 238 KB</div>
+                            </div>
+                        </div>
+                        <div class="version-item">
+                            <div class="version-number">v1</div>
+                            <div class="version-info">
+                                <div class="version-meta">Initial Version</div>
+                                <div class="version-details">Sarah Chen • Mar 10, 2026 • 220 KB</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-section">
+                    <button class="action-btn" style="width: 100%;" onclick="location.reload()">
+                        <i class="fas fa-rotate-left"></i>
+                        Restore Version
+                    </button>
+                </div>
+            `;
+        }
+
+        function addComment() {
+            showNotification('Comment Added', 'Your comment has been posted successfully');
+        }
+
+        function showUploadNotification() {
+            showNotification('Upload Started', 'Your document is being uploaded...');
+        }
+
+        function showNotification(title, message) {
+            const toast = document.getElementById('notificationToast');
+            toast.querySelector('.notification-title').textContent = title;
+            toast.querySelector('.notification-message').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Drag and drop
+        let dragCounter = 0;
+
+        document.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            dragCounter++;
+            document.getElementById('uploadZone').classList.add('active');
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
+                document.getElementById('uploadZone').classList.remove('active');
+            }
+        });
+
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragCounter = 0;
+            document.getElementById('uploadZone').classList.remove('active');
+            showNotification('Upload Started', `Uploading ${e.dataTransfer.files.length} file(s)...`);
+        });
+    </script>
+</body>
+</html>

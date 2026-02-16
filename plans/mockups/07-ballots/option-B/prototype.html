@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Comment Management Dashboard - Standards Ballot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .header-btn.primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .header-btn.primary:hover {
+            background: #f0f0f0;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Panel - Comment Table */
+        .comments-panel {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        /* Control Bar */
+        .control-bar {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .bulk-action-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .bulk-action-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .bulk-action-btn.danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .bulk-action-btn.success {
+            color: #28a745;
+            border-color: #28a745;
+        }
+
+        /* Comment Table */
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .comments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comments-table thead {
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .comments-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e0e0e0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .comments-table th:hover {
+            background: #e9ecef;
+        }
+
+        .comments-table th::after {
+            content: ' ↕';
+            opacity: 0.3;
+        }
+
+        .comments-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .comments-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .comments-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .comments-table tbody tr.selected {
+            background: #e7f3ff;
+        }
+
+        .checkbox-cell {
+            width: 40px;
+        }
+
+        .comment-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .line-cell {
+            width: 80px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .type-badge.technical {
+            background: #fee;
+            color: #dc3545;
+        }
+
+        .type-badge.editorial {
+            background: #e7f3ff;
+            color: #0066cc;
+        }
+
+        .type-badge.general {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.accepted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.modified {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .priority-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .priority-high {
+            background: #dc3545;
+        }
+
+        .priority-medium {
+            background: #ffc107;
+        }
+
+        .priority-low {
+            background: #28a745;
+        }
+
+        .comment-preview {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #333;
+        }
+
+        .assignee-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        /* Right Panel - Preview & Details */
+        .preview-panel {
+            width: 500px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .preview-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .comment-detail {
+            margin-bottom: 25px;
+        }
+
+        .detail-section {
+            margin: 20px 0;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .comment-text-full {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            line-height: 1.6;
+            border-left: 4px solid #667eea;
+        }
+
+        .suggestion-box {
+            background: white;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .suggestion-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .suggestion-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .document-context {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .context-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .context-line {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 5px 0;
+        }
+
+        .context-line.highlighted {
+            background: #fff3cd;
+            padding: 5px 10px;
+            margin: 0 -10px;
+            border-radius: 4px;
+        }
+
+        .resolution-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .resolution-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .resolution-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .resolution-btn.accept {
+            background: #28a745;
+            color: white;
+        }
+
+        .resolution-btn.accept:hover {
+            background: #218838;
+        }
+
+        .resolution-btn.reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .resolution-btn.reject:hover {
+            background: #c82333;
+        }
+
+        .resolution-btn.modify {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .resolution-btn.modify:hover {
+            background: #138496;
+        }
+
+        /* Analytics Panel */
+        .analytics-view {
+            padding: 20px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: width 0.3s;
+        }
+
+        .progress-resolved {
+            background: #28a745;
+            color: white;
+        }
+
+        .category-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .category-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="../index.html" class="back-button">←</a>
+                <div class="header-title">
+                    <h1>Ballot #2024-08: IoT Security Standard v2.0</h1>
+                    <div class="header-subtitle">Working Group: IoT Security • Chair: Sarah Chen</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn">Export Report</button>
+                <button class="header-btn">Import Comments</button>
+                <button class="header-btn primary">+ Add Comment</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Panel - Comments Table -->
+            <div class="comments-panel">
+                <!-- Control Bar -->
+                <div class="control-bar">
+                    <!-- Stats Row -->
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-value">68</div>
+                            <div class="stat-label">Total Comments</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Resolved</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">66%</div>
+                            <div class="stat-label">Complete</div>
+                        </div>
+                    </div>
+
+                    <!-- Filters Row -->
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <span class="filter-label">Type:</span>
+                            <select class="filter-select" onchange="filterByType(this.value)">
+                                <option value="all">All Types</option>
+                                <option value="technical">Technical</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Status:</span>
+                            <select class="filter-select" onchange="filterByStatus(this.value)">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="modified">Modified</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Assignee:</span>
+                            <select class="filter-select" onchange="filterByAssignee(this.value)">
+                                <option value="all">All Assignees</option>
+                                <option value="me">Assigned to Me</option>
+                                <option value="unassigned">Unassigned</option>
+                            </select>
+                        </div>
+                        <input type="text" class="search-box" placeholder="Search comments..." onkeyup="searchComments(this.value)">
+                    </div>
+
+                    <!-- Actions Row -->
+                    <div class="actions-row">
+                        <button class="bulk-action-btn success" onclick="bulkAccept()">✓ Accept Selected</button>
+                        <button class="bulk-action-btn danger" onclick="bulkReject()">✗ Reject Selected</button>
+                        <button class="bulk-action-btn" onclick="bulkAssign()">Assign Selected</button>
+                        <button class="bulk-action-btn" onclick="exportSelected()">Export Selected</button>
+                        <span style="margin-left: auto; font-size: 0.9rem; color: #666;">
+                            <span id="selectedCount">0</span> selected
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Comments Table -->
+                <div class="table-container">
+                    <table class="comments-table">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onchange="toggleSelectAll(this.checked)">
+                                </th>
+                                <th class="line-cell">Line</th>
+                                <th>Type</th>
+                                <th>Comment</th>
+                                <th>Author</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Assignee</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="selectComment(1, this)" class="selected">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">3</td>
+                                <td><span class="type-badge technical">Technical</span></td>
+                                <td class="comment-preview">The phrase "sensitive data" is too broad. We need to define what constitutes sensitive data...</td>
+                                <td>Michael Torres</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-high"></span>High</td>
+                                <td><span class="assignee-avatar">SC</span>Sarah Chen</td>
+                                <td>Feb 3</td>
+                            </tr>
+                            <tr onclick="selectComment(2, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">8</td>
+                                <td><span class="type-badge editorial">Editorial</span></td>
+                                <td class="comment-preview">Consider adding "HVAC and environmental controls" as a specific example...</td>
+                                <td>Lisa Park</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-low"></span>Low</td>
+                                <td><span class="assignee-avatar">DK</span>David Kim</td>
+                                <td>Feb 3</td>
+                            </tr>
+                            <tr onclick="selectComment(3, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">10</td>
+                                <td><span class="type-badge editorial">Editorial</span></td>
+                                <td class="comment-preview">"Network infrastructure" is too broad and overlaps with traditional IT security...</td>
+                                <td>David Kim</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td><span class="priority-indicator priority-medium"></span>Medium</td>
+                                <td><span class="assignee-avatar">SC</span>Sarah Chen</td>
+                                <td>Feb 3</td>
+                            </tr>
+                            <tr onclick="selectComment(4, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">14</td>
+                                <td><span class="type-badge technical">Technical</span></td>
+                                <td class="comment-preview">MFA requirement may not be practical for all IoT device types...</td>
+                                <td>Jennifer Wong</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-high"></span>High</td>
+                                <td><span class="assignee-avatar">MT</span>Michael Torres</td>
+                                <td>Feb 4</td>
+                            </tr>
+                            <tr onclick="selectComment(5, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">16</td>
+                                <td><span class="type-badge editorial">Editorial</span></td>
+                                <td class="comment-preview">Good addition. Suggest also mentioning key rotation requirements...</td>
+                                <td>Robert Martinez</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-medium"></span>Medium</td>
+                                <td><span class="assignee-avatar">LP</span>Lisa Park</td>
+                                <td>Feb 4</td>
+                            </tr>
+                            <tr onclick="selectComment(6, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">20</td>
+                                <td><span class="type-badge technical">Technical</span></td>
+                                <td class="comment-preview">SHOULD is too weak for data at rest encryption. Many IoT devices handle sensitive...</td>
+                                <td>Amanda Foster</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-high"></span>High</td>
+                                <td><span class="assignee-avatar">SC</span>Sarah Chen</td>
+                                <td>Feb 5</td>
+                            </tr>
+                            <tr onclick="selectComment(7, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">24</td>
+                                <td><span class="type-badge editorial">Editorial</span></td>
+                                <td class="comment-preview">Annual audits may be too frequent and costly. Consider biennial audits...</td>
+                                <td>Thomas Anderson</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-medium"></span>Medium</td>
+                                <td>Unassigned</td>
+                                <td>Feb 5</td>
+                            </tr>
+                            <tr onclick="selectComment(8, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">28</td>
+                                <td><span class="type-badge technical">Technical</span></td>
+                                <td class="comment-preview">Firmware update mechanism should mandate cryptographic verification...</td>
+                                <td>Rachel Green</td>
+                                <td><span class="status-badge modified">Modified</span></td>
+                                <td><span class="priority-indicator priority-high"></span>High</td>
+                                <td><span class="assignee-avatar">DK</span>David Kim</td>
+                                <td>Feb 6</td>
+                            </tr>
+                            <tr onclick="selectComment(9, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">32</td>
+                                <td><span class="type-badge general">General</span></td>
+                                <td class="comment-preview">Section 3.3 seems light on implementation guidance. Consider adding examples...</td>
+                                <td>Mark Johnson</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-low"></span>Low</td>
+                                <td><span class="assignee-avatar">LP</span>Lisa Park</td>
+                                <td>Feb 6</td>
+                            </tr>
+                            <tr onclick="selectComment(10, this)">
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" class="comment-checkbox" onclick="event.stopPropagation()">
+                                </td>
+                                <td class="line-cell">35</td>
+                                <td><span class="type-badge technical">Technical</span></td>
+                                <td class="comment-preview">Logging requirements need to address privacy concerns with GDPR compliance...</td>
+                                <td>Emma Watson</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><span class="priority-indicator priority-high"></span>High</td>
+                                <td>Unassigned</td>
+                                <td>Feb 7</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Panel - Preview & Details -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>Comment Details</h3>
+                    <div class="preview-tabs">
+                        <button class="preview-tab active" onclick="switchPreviewTab('details')">Details</button>
+                        <button class="preview-tab" onclick="switchPreviewTab('document')">Document Context</button>
+                        <button class="preview-tab" onclick="switchPreviewTab('analytics')">Analytics</button>
+                    </div>
+                </div>
+
+                <div class="preview-content" id="detailsTab">
+                    <div class="comment-detail">
+                        <div class="detail-section">
+                            <div class="detail-label">Comment ID</div>
+                            <div class="detail-value">#2024-08-001</div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">Line 3, Section 1: Introduction</div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">Author</div>
+                            <div class="detail-value">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span class="assignee-avatar" style="width: 32px; height: 32px;">MT</span>
+                                    <div>
+                                        <div style="font-weight: 600;">Michael Torres</div>
+                                        <div style="font-size: 0.85rem; color: #666;">Security Architect, TechCorp</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">Type & Priority</div>
+                            <div class="detail-value">
+                                <span class="type-badge technical">Technical</span>
+                                <span class="priority-indicator priority-high"></span>
+                                <span style="font-weight: 600; color: #dc3545;">High Priority</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">Comment</div>
+                            <div class="comment-text-full">
+                                The phrase "sensitive data" is too broad and subject to interpretation. We need to define what constitutes sensitive data in the context of IoT devices to ensure consistent implementation across different organizations and device types. Without a clear definition, vendors may apply different standards, leading to security gaps.
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="suggestion-box">
+                                <div class="suggestion-header">Suggested Text Change</div>
+                                <div class="suggestion-text">
+                                    "...that collect, process, or transmit data classified as Confidential or higher per the organization's data classification policy, or data subject to regulatory protection requirements (e.g., PII, PHI, financial data)."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">Document Context</div>
+                            <div class="document-context">
+                                <div class="context-line">Line 1: 1. Introduction</div>
+                                <div class="context-line">Line 2: This standard establishes security requirements for Internet of Things (IoT) devices deployed in enterprise environments.</div>
+                                <div class="context-line highlighted">Line 3: It applies to all connected devices that collect, process, or transmit sensitive data.</div>
+                                <div class="context-line">Line 4: </div>
+                            </div>
+                        </div>
+
+                        <div class="resolution-form">
+                            <h4 style="margin-bottom: 15px;">Resolve Comment</h4>
+
+                            <div class="form-group">
+                                <label class="form-label">Resolution Decision</label>
+                                <select class="form-select" id="resolutionDecision">
+                                    <option value="">Select decision...</option>
+                                    <option value="accept">Accept as Suggested</option>
+                                    <option value="accept-modified">Accept with Modifications</option>
+                                    <option value="reject">Reject</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Resolution Notes</label>
+                                <textarea class="form-textarea" placeholder="Explain the resolution decision and any modifications made..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Assign to Reviewer</label>
+                                <select class="form-select">
+                                    <option>Sarah Chen (Chair)</option>
+                                    <option>David Kim</option>
+                                    <option>Lisa Park</option>
+                                    <option>Michael Torres</option>
+                                </select>
+                            </div>
+
+                            <div class="resolution-actions">
+                                <button class="resolution-btn accept" onclick="resolveComment('accept')">Accept</button>
+                                <button class="resolution-btn modify" onclick="resolveComment('modify')">Modify</button>
+                                <button class="resolution-btn reject" onclick="resolveComment('reject')">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Context Tab -->
+                <div class="preview-content" id="documentTab" style="display: none;">
+                    <div style="padding: 20px;">
+                        <h4>Document Preview - Line 3</h4>
+                        <div class="document-context" style="margin-top: 20px;">
+                            <div class="context-line"><strong>Section 1: Introduction</strong></div>
+                            <div class="context-line" style="margin-top: 15px;">Line 1: 1. Introduction</div>
+                            <div class="context-line">Line 2: This standard establishes security requirements for Internet of Things (IoT) devices deployed in enterprise environments.</div>
+                            <div class="context-line highlighted">Line 3: It applies to all connected devices that collect, process, or transmit sensitive data.</div>
+                            <div class="context-line">Line 4: </div>
+                            <div class="context-line">Line 5: 2. Scope</div>
+                        </div>
+                        <button class="header-btn primary" style="margin-top: 20px; width: 100%;">View Full Document</button>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="preview-content" id="analyticsTab" style="display: none;">
+                    <div class="analytics-view">
+                        <div class="chart-container">
+                            <div class="chart-title">Resolution Progress</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar progress-resolved" style="width: 66%;">
+                                    45 of 68 Resolved (66%)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-title">Comments by Type</div>
+                            <div class="category-breakdown">
+                                <div class="category-item">
+                                    <span class="category-name">Technical</span>
+                                    <span class="category-count">32</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">Editorial</span>
+                                    <span class="category-count">28</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">General</span>
+                                    <span class="category-count">8</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">High Priority</span>
+                                    <span class="category-count">15</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-title">Comments by Status</div>
+                            <div class="category-breakdown">
+                                <div class="category-item">
+                                    <span class="category-name">Pending</span>
+                                    <span class="category-count">23</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">Accepted</span>
+                                    <span class="category-count">35</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">Modified</span>
+                                    <span class="category-count">8</span>
+                                </div>
+                                <div class="category-item">
+                                    <span class="category-name">Rejected</span>
+                                    <span class="category-count">2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-title">Top Contributors</div>
+                            <div class="detail-section" style="margin: 10px 0;">
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                    <span>Michael Torres</span>
+                                    <strong>12 comments</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                    <span>Lisa Park</span>
+                                    <strong>9 comments</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                    <span>David Kim</span>
+                                    <strong>8 comments</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCount = 0;
+
+        function selectComment(id, row) {
+            const rows = document.querySelectorAll('.comments-table tbody tr');
+            rows.forEach(r => r.classList.remove('selected'));
+            row.classList.add('selected');
+        }
+
+        function toggleSelectAll(checked) {
+            const checkboxes = document.querySelectorAll('.comments-table tbody .comment-checkbox');
+            checkboxes.forEach(cb => cb.checked = checked);
+            selectedCount = checked ? checkboxes.length : 0;
+            document.getElementById('selectedCount').textContent = selectedCount;
+        }
+
+        function filterByType(type) {
+            alert('Filtering by type: ' + type);
+        }
+
+        function filterByStatus(status) {
+            alert('Filtering by status: ' + status);
+        }
+
+        function filterByAssignee(assignee) {
+            alert('Filtering by assignee: ' + assignee);
+        }
+
+        function searchComments(query) {
+            console.log('Searching: ' + query);
+        }
+
+        function bulkAccept() {
+            alert('Accepting selected comments');
+        }
+
+        function bulkReject() {
+            alert('Rejecting selected comments');
+        }
+
+        function bulkAssign() {
+            alert('Assigning selected comments');
+        }
+
+        function exportSelected() {
+            alert('Exporting selected comments');
+        }
+
+        function resolveComment(action) {
+            const decision = document.getElementById('resolutionDecision').value;
+            if (!decision) {
+                alert('Please select a resolution decision');
+                return;
+            }
+            alert('Comment resolved: ' + action);
+        }
+
+        function switchPreviewTab(tab) {
+            const tabs = document.querySelectorAll('.preview-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('detailsTab').style.display = tab === 'details' ? 'block' : 'none';
+            document.getElementById('documentTab').style.display = tab === 'document' ? 'block' : 'none';
+            document.getElementById('analyticsTab').style.display = tab === 'analytics' ? 'block' : 'none';
+        }
+
+        // Track checkbox selections
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('comment-checkbox') && !e.target.parentElement.classList.contains('checkbox-cell')) {
+                return;
+            }
+            const checkboxes = document.querySelectorAll('.comments-table tbody .comment-checkbox:checked');
+            selectedCount = checkboxes.length;
+            document.getElementById('selectedCount').textContent = selectedCount;
+        });
+    </script>
+</body>
+</html>

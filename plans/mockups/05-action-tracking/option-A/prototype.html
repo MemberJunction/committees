@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: List View - Action Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #ccc;
+        }
+
+        .stat-card.overdue {
+            border-left-color: #f44336;
+        }
+
+        .stat-card.due-soon {
+            border-left-color: #ff9800;
+        }
+
+        .stat-card.in-progress {
+            border-left-color: #2196f3;
+        }
+
+        .stat-card.complete {
+            border-left-color: #4caf50;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .toolbar-top {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+
+        .active-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            background: #e8eaf6;
+            color: #667eea;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tag i {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .filter-tag i:hover {
+            opacity: 1;
+        }
+
+        .action-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 40px 2fr 1fr 120px 100px 120px 100px 80px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: #f9fafb;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .list-header div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .list-header div:hover {
+            color: #667eea;
+        }
+
+        .action-row {
+            display: grid;
+            grid-template-columns: 40px 2fr 1fr 120px 100px 120px 100px 80px;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .action-row:hover {
+            background: #f9fafb;
+        }
+
+        .action-row.overdue {
+            background: #fff3f3;
+        }
+
+        .action-row.overdue:hover {
+            background: #ffe8e8;
+        }
+
+        .priority-indicator {
+            width: 8px;
+            height: 40px;
+            border-radius: 4px;
+        }
+
+        .priority-high {
+            background: #f44336;
+        }
+
+        .priority-medium {
+            background: #ff9800;
+        }
+
+        .priority-low {
+            background: #4caf50;
+        }
+
+        .action-title {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .action-meta {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .committee-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .due-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .due-date.overdue {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .due-date.due-soon {
+            color: #ff9800;
+            font-weight: 500;
+        }
+
+        .status-select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: white;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-not-started {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .status-in-progress {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-blocked {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-complete {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #667eea;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item input,
+        .detail-item select,
+        .detail-item textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .detail-item textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .progress-input-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-input-group input[type="range"] {
+            flex: 1;
+        }
+
+        .progress-input-group input[type="number"] {
+            width: 80px;
+        }
+
+        .notes-list {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .note-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .note-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .note-content {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .add-note-form {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .add-note-form textarea {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .attachments-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .attachment-icon {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        .attachment-info {
+            flex: 1;
+        }
+
+        .attachment-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .attachment-meta {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 1200px) {
+            .list-header,
+            .action-row {
+                grid-template-columns: 40px 2fr 1fr 100px 90px 100px 80px;
+            }
+
+            .due-date {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .list-header {
+                display: none;
+            }
+
+            .action-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>My Action Items</h1>
+        <div class="header-right">
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Comparison
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card overdue">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+            <div class="stat-card due-soon">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Due This Week</div>
+            </div>
+            <div class="stat-card in-progress">
+                <div class="stat-number">8</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card complete">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Completed This Month</div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-top">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search action items..." id="searchInput">
+                </div>
+                <div class="filter-group">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                    <select class="filter-select" id="committeeFilter">
+                        <option value="">All Committees</option>
+                        <option value="finance">Finance Committee</option>
+                        <option value="governance">Governance</option>
+                        <option value="operations">Operations</option>
+                    </select>
+                    <select class="filter-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="high">High Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                </div>
+            </div>
+            <div class="active-filters" id="activeFilters"></div>
+        </div>
+
+        <!-- Action List -->
+        <div class="action-list">
+            <div class="list-header">
+                <div></div>
+                <div>Action Item <i class="fas fa-sort"></i></div>
+                <div>Committee <i class="fas fa-sort"></i></div>
+                <div>Due Date <i class="fas fa-sort"></i></div>
+                <div>Status</div>
+                <div>Progress</div>
+                <div>Assigned</div>
+                <div>Actions</div>
+            </div>
+
+            <!-- Sample Action Rows -->
+            <div class="action-row overdue" onclick="openDetailModal('action1')">
+                <div class="priority-indicator priority-high"></div>
+                <div>
+                    <div class="action-title">Review Q4 budget variance report</div>
+                    <div class="action-meta">From Finance Meeting - Dec 15, 2025</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Finance Committee</span>
+                </div>
+                <div class="due-date overdue">
+                    <i class="fas fa-exclamation-circle"></i> Feb 10, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress" selected>In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 45%"></div>
+                    </div>
+                    <div class="progress-text">45%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">3 days ago</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+
+            <div class="action-row" onclick="openDetailModal('action2')">
+                <div class="priority-indicator priority-high"></div>
+                <div>
+                    <div class="action-title">Update governance charter with new policies</div>
+                    <div class="action-meta">From Governance Meeting - Jan 20, 2026</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Governance</span>
+                </div>
+                <div class="due-date due-soon">
+                    <i class="fas fa-clock"></i> Feb 17, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress" selected>In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 60%"></div>
+                    </div>
+                    <div class="progress-text">60%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">1 week ago</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+
+            <div class="action-row" onclick="openDetailModal('action3')">
+                <div class="priority-indicator priority-medium"></div>
+                <div>
+                    <div class="action-title">Schedule vendor presentations for Q2</div>
+                    <div class="action-meta">From Operations Meeting - Feb 5, 2026</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Operations</span>
+                </div>
+                <div class="due-date">
+                    Feb 28, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started" selected>Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text">0%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">Yesterday</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+
+            <div class="action-row overdue" onclick="openDetailModal('action4')">
+                <div class="priority-indicator priority-high"></div>
+                <div>
+                    <div class="action-title">Prepare annual financial statement summary</div>
+                    <div class="action-meta">From Finance Meeting - Jan 10, 2026</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Finance Committee</span>
+                </div>
+                <div class="due-date overdue">
+                    <i class="fas fa-exclamation-circle"></i> Feb 12, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="blocked" selected>Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 30%"></div>
+                    </div>
+                    <div class="progress-text">30%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">2 weeks ago</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+
+            <div class="action-row" onclick="openDetailModal('action5')">
+                <div class="priority-indicator priority-medium"></div>
+                <div>
+                    <div class="action-title">Research new committee management software options</div>
+                    <div class="action-meta">From Operations Meeting - Jan 28, 2026</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Operations</span>
+                </div>
+                <div class="due-date">
+                    Mar 5, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress" selected>In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 25%"></div>
+                    </div>
+                    <div class="progress-text">25%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">5 days ago</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+
+            <div class="action-row" onclick="openDetailModal('action6')">
+                <div class="priority-indicator priority-low"></div>
+                <div>
+                    <div class="action-title">Review and approve meeting minutes from last session</div>
+                    <div class="action-meta">From Governance Meeting - Feb 1, 2026</div>
+                </div>
+                <div>
+                    <span class="committee-tag">Governance</span>
+                </div>
+                <div class="due-date due-soon">
+                    <i class="fas fa-clock"></i> Feb 18, 2026
+                </div>
+                <div>
+                    <select class="status-select" onclick="event.stopPropagation()">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress" selected>In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 80%"></div>
+                    </div>
+                    <div class="progress-text">80%</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #666;">2 days ago</div>
+                <div class="action-buttons" onclick="event.stopPropagation()">
+                    <button class="icon-btn" title="Add note"><i class="fas fa-comment"></i></button>
+                    <button class="icon-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <h2>Review Q4 budget variance report</h2>
+                    <div class="action-meta">From Finance Meeting - Dec 15, 2025</div>
+                </div>
+                <button class="modal-close" onclick="closeDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Basic Info Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-info-circle"></i> Action Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Committee</label>
+                            <input type="text" value="Finance Committee" readonly>
+                        </div>
+                        <div class="detail-item">
+                            <label>Priority</label>
+                            <select>
+                                <option value="high" selected>High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Assigned Date</label>
+                            <input type="date" value="2025-12-15" readonly>
+                        </div>
+                        <div class="detail-item">
+                            <label>Due Date</label>
+                            <input type="date" value="2026-02-10">
+                        </div>
+                        <div class="detail-item">
+                            <label>Status</label>
+                            <select>
+                                <option value="not-started">Not Started</option>
+                                <option value="in-progress" selected>In Progress</option>
+                                <option value="blocked">Blocked</option>
+                                <option value="complete">Complete</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Assigned By</label>
+                            <input type="text" value="John Smith, Committee Chair" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-align-left"></i> Description</h3>
+                    <div class="detail-item">
+                        <textarea readonly>Analyze the Q4 budget variance report and identify key areas where actuals deviated from planned budget. Prepare a summary highlighting major discrepancies and recommend corrective actions for the upcoming quarter.</textarea>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-chart-line"></i> Progress</h3>
+                    <div class="detail-item">
+                        <label>Progress Percentage</label>
+                        <div class="progress-input-group">
+                            <input type="range" min="0" max="100" value="45" id="progressRange" oninput="updateProgress(this.value)">
+                            <input type="number" min="0" max="100" value="45" id="progressNumber" oninput="updateProgress(this.value)">
+                            <span>%</span>
+                        </div>
+                        <div class="progress-bar-container" style="margin-top: 1rem;">
+                            <div class="progress-bar" id="modalProgressBar" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-comments"></i> Notes & Updates</h3>
+                    <div class="notes-list">
+                        <div class="note-item">
+                            <div class="note-header">
+                                <span class="note-author">Sarah Johnson (You)</span>
+                                <span class="note-date">Feb 13, 2026 at 2:30 PM</span>
+                            </div>
+                            <div class="note-content">
+                                Completed initial analysis of revenue variances. Capital expenditure section still needs review. Waiting for clarification from accounting team on depreciation calculations.
+                            </div>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-header">
+                                <span class="note-author">Sarah Johnson (You)</span>
+                                <span class="note-date">Feb 10, 2026 at 10:15 AM</span>
+                            </div>
+                            <div class="note-content">
+                                Started reviewing the variance report. Identified 3 major areas of concern in operating expenses.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-note-form">
+                        <textarea placeholder="Add a new note or update..."></textarea>
+                        <button class="btn btn-primary">Add Note</button>
+                    </div>
+                </div>
+
+                <!-- Attachments Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-paperclip"></i> Attachments</h3>
+                    <div class="attachments-list">
+                        <div class="attachment-item">
+                            <i class="fas fa-file-pdf attachment-icon"></i>
+                            <div class="attachment-info">
+                                <div class="attachment-name">Q4_Budget_Variance_Report.pdf</div>
+                                <div class="attachment-meta">2.4 MB - Uploaded Feb 10, 2026</div>
+                            </div>
+                            <button class="icon-btn"><i class="fas fa-download"></i></button>
+                        </div>
+                        <div class="attachment-item">
+                            <i class="fas fa-file-excel attachment-icon"></i>
+                            <div class="attachment-info">
+                                <div class="attachment-name">Variance_Analysis_Working_File.xlsx</div>
+                                <div class="attachment-meta">1.8 MB - Uploaded Feb 13, 2026</div>
+                            </div>
+                            <button class="icon-btn"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    <div class="upload-area">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                        <div>Click to upload or drag and drop files here</div>
+                    </div>
+                </div>
+
+                <!-- Dependencies Section -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-project-diagram"></i> Dependencies</h3>
+                    <div style="color: #666; font-style: italic;">
+                        This action item has no dependencies.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDetailModal()">Cancel</button>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-check"></i> Save & Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open detail modal
+        function openDetailModal(actionId) {
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // Close detail modal
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // Update progress
+        function updateProgress(value) {
+            document.getElementById('progressRange').value = value;
+            document.getElementById('progressNumber').value = value;
+            document.getElementById('modalProgressBar').style.width = value + '%';
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.action-row');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? 'grid' : 'none';
+            });
+        });
+
+        // Filter functionality
+        function updateFilters() {
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            activeFiltersContainer.innerHTML = '';
+
+            const statusFilter = document.getElementById('statusFilter');
+            const committeeFilter = document.getElementById('committeeFilter');
+            const priorityFilter = document.getElementById('priorityFilter');
+
+            if (statusFilter.value) {
+                addFilterTag('Status: ' + statusFilter.options[statusFilter.selectedIndex].text, () => {
+                    statusFilter.value = '';
+                    updateFilters();
+                });
+            }
+
+            if (committeeFilter.value) {
+                addFilterTag('Committee: ' + committeeFilter.options[committeeFilter.selectedIndex].text, () => {
+                    committeeFilter.value = '';
+                    updateFilters();
+                });
+            }
+
+            if (priorityFilter.value) {
+                addFilterTag('Priority: ' + priorityFilter.options[priorityFilter.selectedIndex].text, () => {
+                    priorityFilter.value = '';
+                    updateFilters();
+                });
+            }
+        }
+
+        function addFilterTag(text, onRemove) {
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            const tag = document.createElement('div');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `${text} <i class="fas fa-times"></i>`;
+            tag.querySelector('i').addEventListener('click', onRemove);
+            activeFiltersContainer.appendChild(tag);
+        }
+
+        document.getElementById('statusFilter').addEventListener('change', updateFilters);
+        document.getElementById('committeeFilter').addEventListener('change', updateFilters);
+        document.getElementById('priorityFilter').addEventListener('change', updateFilters);
+
+        // Close modal on overlay click
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailModal();
+            }
+        });
+    </script>
+</body>
+</html>

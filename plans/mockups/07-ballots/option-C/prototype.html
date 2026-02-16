@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Side-by-Side Diff View - Standards Ballot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .header-btn.primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .header-btn.primary:hover {
+            background: #f0f0f0;
+        }
+
+        /* Version Timeline */
+        .version-timeline {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .timeline-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .timeline-track {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-point {
+            background: white;
+            border: 3px solid #e0e0e0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.1);
+        }
+
+        .timeline-point.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .timeline-point.completed {
+            border-color: #28a745;
+            background: #28a745;
+            color: white;
+        }
+
+        .timeline-label-text {
+            position: absolute;
+            top: 45px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            color: #666;
+        }
+
+        .comparison-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stats-badge {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .stats-badge.changes {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .stats-badge.comments {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+
+        .view-toggle-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Diff Panel */
+        .diff-panel {
+            flex: 1;
+            background: white;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .diff-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .diff-column:last-child {
+            border-right: none;
+        }
+
+        .diff-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: 600;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .diff-header.original {
+            border-bottom-color: #dc3545;
+        }
+
+        .diff-header.revised {
+            border-bottom-color: #28a745;
+        }
+
+        .version-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .version-badge.original {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .version-badge.revised {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .diff-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .diff-line {
+            padding: 4px 8px;
+            margin: 2px 0;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        .diff-line-number {
+            display: inline-block;
+            width: 40px;
+            color: #999;
+            user-select: none;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .diff-line.unchanged {
+            background: white;
+        }
+
+        .diff-line.added {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .diff-line.removed {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .diff-line.modified {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .inline-change {
+            background: #28a745;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .inline-removed {
+            background: #dc3545;
+            color: white;
+            text-decoration: line-through;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .comment-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: #ffc107;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .comment-indicator:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Changes Sidebar */
+        .changes-sidebar {
+            width: 350px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .sidebar-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .change-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .change-item:hover {
+            background: #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .change-item.added {
+            border-left-color: #28a745;
+        }
+
+        .change-item.removed {
+            border-left-color: #dc3545;
+        }
+
+        .change-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .change-location {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .change-type-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .change-type-badge.added {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .change-type-badge.removed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .change-type-badge.modified {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .change-description {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .change-preview {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .change-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .change-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .change-btn:hover {
+            background: #f8f9fa;
+        }
+
+        /* Voting Panel */
+        .voting-section {
+            background: white;
+            border-top: 2px solid #e0e0e0;
+            padding: 20px;
+        }
+
+        .voting-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: width 0.3s;
+        }
+
+        .progress-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .vote-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .vote-btn {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .vote-btn:hover {
+            border-color: #667eea;
+        }
+
+        .vote-btn.approve {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .vote-btn.approve:hover,
+        .vote-btn.approve.selected {
+            background: #28a745;
+            color: white;
+        }
+
+        .vote-btn.disapprove {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .vote-btn.disapprove:hover,
+        .vote-btn.disapprove.selected {
+            background: #dc3545;
+            color: white;
+        }
+
+        .vote-btn.abstain {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+        .vote-btn.abstain:hover,
+        .vote-btn.abstain.selected {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* Summary Panel */
+        .summary-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .section-changes {
+            margin-top: 20px;
+        }
+
+        .section-changes h4 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .section-item {
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-name {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .section-count {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="../index.html" class="back-button">←</a>
+                <div class="header-title">
+                    <h1>Ballot #2024-08: IoT Security Standard v2.0</h1>
+                    <div class="header-subtitle">Working Group: IoT Security • Chair: Sarah Chen</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn">Export Changes</button>
+                <button class="header-btn">Generate Report</button>
+                <button class="header-btn primary">Submit for Approval</button>
+            </div>
+        </div>
+
+        <!-- Version Timeline -->
+        <div class="version-timeline">
+            <div class="timeline-label">Version Timeline:</div>
+            <div class="timeline-track">
+                <div class="timeline-line"></div>
+                <div class="timeline-points">
+                    <div class="timeline-point completed" onclick="selectVersion(1)">
+                        <span>1</span>
+                        <div class="timeline-label-text">Draft 1<br>Jan 5</div>
+                    </div>
+                    <div class="timeline-point completed" onclick="selectVersion(2)">
+                        <span>2</span>
+                        <div class="timeline-label-text">Draft 2<br>Jan 20</div>
+                    </div>
+                    <div class="timeline-point active" onclick="selectVersion(3)">
+                        <span>3</span>
+                        <div class="timeline-label-text">Draft 3<br>Feb 8</div>
+                    </div>
+                    <div class="timeline-point" onclick="selectVersion(4)">
+                        <span>4</span>
+                        <div class="timeline-label-text">Final<br>TBD</div>
+                    </div>
+                </div>
+            </div>
+            <div class="comparison-controls">
+                <select class="control-select">
+                    <option>Compare: Draft 2 → Draft 3</option>
+                    <option>Compare: Draft 1 → Draft 3</option>
+                    <option>Compare: Draft 1 → Draft 2</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <span class="stats-badge changes">47 Changes</span>
+                <span class="stats-badge">23 Additions</span>
+                <span class="stats-badge">12 Deletions</span>
+                <span class="stats-badge">12 Modifications</span>
+                <span class="stats-badge comments">15 Comments</span>
+            </div>
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" onclick="toggleView('split')">Split View</button>
+                <button class="view-toggle-btn" onclick="toggleView('unified')">Unified View</button>
+                <button class="view-toggle-btn" onclick="toggleView('changes')">Changes Only</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Diff Panel -->
+            <div class="diff-panel">
+                <!-- Original Column -->
+                <div class="diff-column">
+                    <div class="diff-header original">
+                        <span>Draft 2 (Original)</span>
+                        <span class="version-badge original">v2.0-draft2</span>
+                    </div>
+                    <div class="diff-content">
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">1</span>
+                            1. Introduction
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">2</span>
+                            This standard establishes security requirements for Internet of Things (IoT) devices deployed in enterprise environments.
+                        </div>
+                        <div class="diff-line removed">
+                            <span class="diff-line-number">3</span>
+                            It applies to all connected devices that <span class="inline-removed">collect, process, or transmit sensitive data</span>.
+                            <span class="comment-indicator">1</span>
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">4</span>
+
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">5</span>
+                            2. Scope
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">6</span>
+                            This standard covers the following device categories:
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">7</span>
+                            • Industrial sensors and actuators
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">8</span>
+                            • Smart building systems
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">9</span>
+                            • Healthcare monitoring devices
+                        </div>
+                        <div class="diff-line removed">
+                            <span class="diff-line-number">10</span>
+                            • <span class="inline-removed">Network infrastructure</span>
+                            <span class="comment-indicator">2</span>
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">11</span>
+
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">12</span>
+                            3. Security Requirements
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">13</span>
+                            3.1 Authentication
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">14</span>
+                            All IoT devices SHALL implement multi-factor authentication for administrative access.
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">15</span>
+                            Default passwords MUST be changed during initial device setup.
+                        </div>
+                        <div class="diff-line removed">
+                            <span class="diff-line-number">16</span>
+
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">17</span>
+                            3.2 Encryption
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">18</span>
+                            Data in transit MUST be encrypted using TLS 1.3 or higher.
+                        </div>
+                        <div class="diff-line modified">
+                            <span class="diff-line-number">19</span>
+                            Data at rest <span class="inline-removed">SHOULD</span> be encrypted using AES-256 or equivalent.
+                            <span class="comment-indicator">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revised Column -->
+                <div class="diff-column">
+                    <div class="diff-header revised">
+                        <span>Draft 3 (Revised)</span>
+                        <span class="version-badge revised">v2.0-draft3</span>
+                    </div>
+                    <div class="diff-content">
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">1</span>
+                            1. Introduction
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">2</span>
+                            This standard establishes security requirements for Internet of Things (IoT) devices deployed in enterprise environments.
+                        </div>
+                        <div class="diff-line added">
+                            <span class="diff-line-number">3</span>
+                            It applies to all connected devices that <span class="inline-change">collect, process, or transmit data classified as Confidential or higher</span>.
+                            <span class="comment-indicator">1</span>
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">4</span>
+
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">5</span>
+                            2. Scope
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">6</span>
+                            This standard covers the following device categories:
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">7</span>
+                            • Industrial sensors and actuators
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">8</span>
+                            • Smart building systems
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">9</span>
+                            • Healthcare monitoring devices
+                        </div>
+                        <div class="diff-line added">
+                            <span class="diff-line-number">10</span>
+                            • <span class="inline-change">Edge computing devices</span>
+                            <span class="comment-indicator">2</span>
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">11</span>
+
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">12</span>
+                            3. Security Requirements
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">13</span>
+                            3.1 Authentication
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">14</span>
+                            All IoT devices SHALL implement multi-factor authentication for administrative access.
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">15</span>
+                            Default passwords MUST be changed during initial device setup.
+                        </div>
+                        <div class="diff-line added">
+                            <span class="diff-line-number">16</span>
+                            <span class="inline-change">Devices SHALL support certificate-based authentication for machine-to-machine communication.</span>
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">17</span>
+                            3.2 Encryption
+                        </div>
+                        <div class="diff-line unchanged">
+                            <span class="diff-line-number">18</span>
+                            Data in transit MUST be encrypted using TLS 1.3 or higher.
+                        </div>
+                        <div class="diff-line modified">
+                            <span class="diff-line-number">19</span>
+                            Data at rest <span class="inline-change">MUST</span> be encrypted using AES-256 or equivalent.
+                            <span class="comment-indicator">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Changes Sidebar -->
+            <div class="changes-sidebar">
+                <div class="sidebar-header">
+                    <h3>Changes & Comments</h3>
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active" onclick="switchSidebarTab('changes')">Changes (47)</button>
+                        <button class="sidebar-tab" onclick="switchSidebarTab('summary')">Summary</button>
+                        <button class="sidebar-tab" onclick="switchSidebarTab('voting')">Voting</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-content" id="changesTab">
+                    <!-- Change 1 -->
+                    <div class="change-item modified" onclick="scrollToChange(3)">
+                        <div class="change-header">
+                            <span class="change-location">Line 3 • Section 1</span>
+                            <span class="change-type-badge modified">Modified</span>
+                        </div>
+                        <div class="change-description">
+                            Clarified definition of "sensitive data" to reference data classification policy
+                        </div>
+                        <div class="change-preview">
+                            - sensitive data<br>
+                            + data classified as Confidential or higher
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <!-- Change 2 -->
+                    <div class="change-item modified" onclick="scrollToChange(10)">
+                        <div class="change-header">
+                            <span class="change-location">Line 10 • Section 2</span>
+                            <span class="change-type-badge modified">Modified</span>
+                        </div>
+                        <div class="change-description">
+                            Replaced "Network infrastructure" with "Edge computing devices" for IoT focus
+                        </div>
+                        <div class="change-preview">
+                            - Network infrastructure<br>
+                            + Edge computing devices
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <!-- Change 3 -->
+                    <div class="change-item added" onclick="scrollToChange(16)">
+                        <div class="change-header">
+                            <span class="change-location">Line 16 • Section 3.1</span>
+                            <span class="change-type-badge added">Added</span>
+                        </div>
+                        <div class="change-description">
+                            Added requirement for certificate-based authentication for M2M communication
+                        </div>
+                        <div class="change-preview">
+                            + Devices SHALL support certificate-based authentication for machine-to-machine communication.
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <!-- Change 4 -->
+                    <div class="change-item modified" onclick="scrollToChange(19)">
+                        <div class="change-header">
+                            <span class="change-location">Line 19 • Section 3.2</span>
+                            <span class="change-type-badge modified">Modified</span>
+                        </div>
+                        <div class="change-description">
+                            Strengthened encryption requirement from SHOULD to MUST
+                        </div>
+                        <div class="change-preview">
+                            - Data at rest SHOULD be encrypted<br>
+                            + Data at rest MUST be encrypted
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <!-- Additional placeholder changes -->
+                    <div class="change-item added">
+                        <div class="change-header">
+                            <span class="change-location">Line 24 • Section 4</span>
+                            <span class="change-type-badge added">Added</span>
+                        </div>
+                        <div class="change-description">
+                            Added security patch verification requirements
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <div class="change-item modified">
+                        <div class="change-header">
+                            <span class="change-location">Line 28 • Section 4.1</span>
+                            <span class="change-type-badge modified">Modified</span>
+                        </div>
+                        <div class="change-description">
+                            Updated audit frequency from annual to biennial
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+
+                    <div class="change-item added">
+                        <div class="change-header">
+                            <span class="change-location">Line 35 • Section 5</span>
+                            <span class="change-type-badge added">Added</span>
+                        </div>
+                        <div class="change-description">
+                            Added new section on logging and monitoring requirements
+                        </div>
+                        <div class="change-actions">
+                            <button class="change-btn">View Comment</button>
+                            <button class="change-btn">Jump to Line</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Tab -->
+                <div class="sidebar-content" id="summaryTab" style="display: none;">
+                    <div class="summary-item">
+                        <div class="summary-label">Total Changes</div>
+                        <div class="summary-value">47</div>
+                    </div>
+
+                    <div class="summary-item">
+                        <div class="summary-label">Lines Added</div>
+                        <div class="summary-value" style="color: #28a745;">+23</div>
+                    </div>
+
+                    <div class="summary-item">
+                        <div class="summary-label">Lines Removed</div>
+                        <div class="summary-value" style="color: #dc3545;">-12</div>
+                    </div>
+
+                    <div class="summary-item">
+                        <div class="summary-label">Lines Modified</div>
+                        <div class="summary-value" style="color: #ffc107;">~12</div>
+                    </div>
+
+                    <div class="section-changes">
+                        <h4>Changes by Section</h4>
+                        <div class="section-item">
+                            <span class="section-name">1. Introduction</span>
+                            <span class="section-count">3 changes</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-name">2. Scope</span>
+                            <span class="section-count">5 changes</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-name">3. Security Requirements</span>
+                            <span class="section-count">28 changes</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-name">4. Compliance</span>
+                            <span class="section-count">8 changes</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-name">5. Logging (New)</span>
+                            <span class="section-count">3 changes</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h4 style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">Resolution Status</h4>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar progress-approve" style="width: 66%;">
+                                66% Complete
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                            45 of 68 comments resolved
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voting Tab -->
+                <div class="sidebar-content" id="votingTab" style="display: none;">
+                    <div class="voting-section">
+                        <h4 style="margin-bottom: 15px;">Ballot Status</h4>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="font-size: 0.9rem; color: #666;">
+                                <strong>Comment Period:</strong> Feb 1-15, 2026<br>
+                                <strong>Voting Opens:</strong> Feb 16, 2026<br>
+                                <strong>Voting Closes:</strong> Feb 28, 2026
+                            </div>
+                        </div>
+
+                        <div class="voting-progress">
+                            <h4 style="margin-bottom: 10px;">Resolution Progress</h4>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar progress-approve" style="width: 66%;">
+                                    66% Resolved
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                                45 of 68 comments resolved • 23 pending
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 20px 0 15px;">Submit Your Vote</h4>
+                        <div class="vote-buttons">
+                            <div class="vote-btn approve" onclick="submitVote('approve')">
+                                <div style="font-size: 1.5rem; margin-bottom: 5px;">✓</div>
+                                Approve
+                            </div>
+                            <div class="vote-btn disapprove" onclick="submitVote('disapprove')">
+                                <div style="font-size: 1.5rem; margin-bottom: 5px;">✗</div>
+                                Disapprove
+                            </div>
+                            <div class="vote-btn abstain" onclick="submitVote('abstain')">
+                                <div style="font-size: 1.5rem; margin-bottom: 5px;">○</div>
+                                Abstain
+                            </div>
+                        </div>
+
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.85rem; color: #856404;">
+                            <strong>Note:</strong> Voting will open on February 16, 2026 after all comments are resolved.
+                        </div>
+
+                        <h4 style="margin: 30px 0 15px;">Voting Statistics</h4>
+                        <div class="summary-item">
+                            <div class="summary-label">Eligible Voters</div>
+                            <div class="summary-value">42</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Votes Received</div>
+                            <div class="summary-value">0</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Approval Threshold</div>
+                            <div class="summary-value">75%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectVersion(version) {
+            alert('Switching to version ' + version);
+        }
+
+        function toggleView(view) {
+            const buttons = document.querySelectorAll('.view-toggle-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            alert('Switched to ' + view + ' view');
+        }
+
+        function scrollToChange(line) {
+            alert('Scrolling to line ' + line);
+        }
+
+        function switchSidebarTab(tab) {
+            const tabs = document.querySelectorAll('.sidebar-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('changesTab').style.display = tab === 'changes' ? 'block' : 'none';
+            document.getElementById('summaryTab').style.display = tab === 'summary' ? 'block' : 'none';
+            document.getElementById('votingTab').style.display = tab === 'voting' ? 'block' : 'none';
+        }
+
+        function submitVote(vote) {
+            const buttons = document.querySelectorAll('.vote-btn');
+            buttons.forEach(b => b.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            alert('Vote submitted: ' + vote);
+        }
+    </script>
+</body>
+</html>

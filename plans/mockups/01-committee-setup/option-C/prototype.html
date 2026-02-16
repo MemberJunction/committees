@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Visual & Interactive Committee Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .setup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h2 {
+            font-size: 1.5em;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .card-title p {
+            color: #718096;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .required {
+            color: #e53e3e;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .pill-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pill-option {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .pill-option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .pill-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .meeting-builder {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .meeting-preview {
+            background: white;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .meeting-preview.active {
+            border-color: #667eea;
+            border-style: solid;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .meeting-preview-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .meeting-preview-text {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .member-pool-card {
+            grid-column: 1 / -1;
+        }
+
+        .member-pool {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            min-height: 150px;
+        }
+
+        .member-chip {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-chip:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-chip.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .member-chip.in-role {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95em;
+        }
+
+        .role-zones {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .role-zone {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-zone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .role-zone-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .role-badge.required {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .role-badge.optional {
+            background: #e6fffa;
+            color: #234e52;
+        }
+
+        .role-description {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone {
+            min-height: 100px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .drop-zone.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .role-member {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .role-member:last-child {
+            margin-bottom: 0;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .remove-btn:hover {
+            background: #c53030;
+        }
+
+        .action-bar {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .completion-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+        }
+
+        .status-icon.complete {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-icon.incomplete {
+            background: #cbd5e0;
+            color: #718096;
+        }
+
+        .status-text {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .btn {
+            padding: 14px 36px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #48bb78;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 3em;
+            color: white;
+        }
+
+        .success-title {
+            font-size: 2em;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #718096;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .committee-summary {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .committee-summary h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .summary-value {
+            color: #2d3748;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1200px) {
+            .setup-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .role-zones {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .completion-status {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .member-pool {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>🏛️ Create New Committee</h1>
+            <p>Build your committee visually with drag-and-drop</p>
+        </div>
+
+        <div class="setup-grid">
+            <!-- Basic Info Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">
+                        <h2>Basic Info</h2>
+                        <p>Essential committee details</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="committeeName">Committee Name <span class="required">*</span></label>
+                    <input type="text" id="committeeName" placeholder="e.g., Finance Committee">
+                </div>
+                <div class="form-group">
+                    <label for="committeePurpose">Purpose <span class="required">*</span></label>
+                    <textarea id="committeePurpose" placeholder="Describe the committee's mission..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Privacy Level</label>
+                    <div class="pill-group" id="privacyGroup">
+                        <div class="pill-option" data-value="Public">🌍 Public</div>
+                        <div class="pill-option selected" data-value="Members Only">👥 Members Only</div>
+                        <div class="pill-option" data-value="Board Only">🔒 Board Only</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meeting Config Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📅</div>
+                    <div class="card-title">
+                        <h2>Meetings</h2>
+                        <p>Configure meeting defaults</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Frequency <span class="required">*</span></label>
+                    <div class="pill-group" id="frequencyGroup">
+                        <div class="pill-option" data-value="Weekly">Weekly</div>
+                        <div class="pill-option selected" data-value="Monthly">Monthly</div>
+                        <div class="pill-option" data-value="Quarterly">Quarterly</div>
+                        <div class="pill-option" data-value="Ad-hoc">Ad-hoc</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Duration <span class="required">*</span></label>
+                    <div class="pill-group" id="durationGroup">
+                        <div class="pill-option" data-value="30 min">30 min</div>
+                        <div class="pill-option selected" data-value="1 hour">1 hour</div>
+                        <div class="pill-option" data-value="1.5 hours">1.5 hours</div>
+                        <div class="pill-option" data-value="2 hours">2 hours</div>
+                    </div>
+                </div>
+                <div class="meeting-preview active">
+                    <div class="meeting-preview-icon">📅</div>
+                    <div class="meeting-preview-text">
+                        <strong>Monthly</strong> meetings<br>
+                        <strong>1 hour</strong> duration
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Pool -->
+            <div class="card member-pool-card">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">
+                        <h2>Available Members</h2>
+                        <p>Drag members to assign roles below</p>
+                    </div>
+                </div>
+                <div class="member-pool" id="memberPool">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Role Assignment Zones -->
+            <div class="role-zones">
+                <div class="role-zone">
+                    <div class="role-zone-header">
+                        <span class="role-zone-title">Committee Chair</span>
+                        <span class="role-badge required">Required</span>
+                    </div>
+                    <div class="role-description">
+                        Leads the committee and presides over meetings
+                    </div>
+                    <div class="drop-zone empty" id="chairZone" data-role="chair" data-max="1">
+                        Drop chair here
+                    </div>
+                </div>
+
+                <div class="role-zone">
+                    <div class="role-zone-header">
+                        <span class="role-zone-title">Vice Chair</span>
+                        <span class="role-badge optional">Optional</span>
+                    </div>
+                    <div class="role-description">
+                        Assists the chair and serves in their absence
+                    </div>
+                    <div class="drop-zone empty" id="viceChairZone" data-role="vicechair" data-max="2">
+                        Drop vice chair here
+                    </div>
+                </div>
+
+                <div class="role-zone">
+                    <div class="role-zone-header">
+                        <span class="role-zone-title">Secretary</span>
+                        <span class="role-badge optional">Optional</span>
+                    </div>
+                    <div class="role-description">
+                        Records minutes and manages documentation
+                    </div>
+                    <div class="drop-zone empty" id="secretaryZone" data-role="secretary" data-max="1">
+                        Drop secretary here
+                    </div>
+                </div>
+
+                <div class="role-zone">
+                    <div class="role-zone-header">
+                        <span class="role-zone-title">Members</span>
+                        <span class="role-badge optional">Optional</span>
+                    </div>
+                    <div class="role-description">
+                        Regular committee members
+                    </div>
+                    <div class="drop-zone empty" id="membersZone" data-role="member" data-max="999">
+                        Drop members here
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <div class="completion-status">
+                <div class="status-item">
+                    <div class="status-icon" id="statusBasic">○</div>
+                    <span class="status-text">Basic Info</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon complete">✓</div>
+                    <span class="status-text">Meetings</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon" id="statusChair">○</div>
+                    <span class="status-text">Chair Assigned</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon" id="statusMembers">○</div>
+                    <span class="status-text">2+ Members</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="createBtn" disabled onclick="createCommittee()">
+                Create Committee
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Committee Created Successfully!</h2>
+            <p class="success-message">
+                Your committee has been created and is ready for use. Members will be notified of their assignments.
+            </p>
+
+            <div class="committee-summary">
+                <h3 id="successCommitteeName">Committee Name</h3>
+                <div class="summary-grid">
+                    <span class="summary-label">Total Members:</span>
+                    <span class="summary-value" id="successMemberCount">0</span>
+                    <span class="summary-label">Chair:</span>
+                    <span class="summary-value" id="successChair">-</span>
+                    <span class="summary-label">Meeting Frequency:</span>
+                    <span class="summary-value" id="successFrequency">-</span>
+                    <span class="summary-label">Privacy:</span>
+                    <span class="summary-value" id="successPrivacy">-</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn btn-primary" onclick="location.reload()">Create Another Committee</button>
+            </div>
+            <a href="../index.html" class="back-link">← Back to Options</a>
+        </div>
+    </div>
+
+    <script>
+        // Mock member data
+        const availableMembers = [
+            { id: 1, name: 'Sarah Johnson', initials: 'SJ' },
+            { id: 2, name: 'Michael Chen', initials: 'MC' },
+            { id: 3, name: 'Emily Rodriguez', initials: 'ER' },
+            { id: 4, name: 'David Kim', initials: 'DK' },
+            { id: 5, name: 'Jennifer Williams', initials: 'JW' },
+            { id: 6, name: 'Robert Brown', initials: 'RB' },
+            { id: 7, name: 'Lisa Anderson', initials: 'LA' },
+            { id: 8, name: 'James Martinez', initials: 'JM' }
+        ];
+
+        let roleAssignments = {
+            chair: [],
+            vicechair: [],
+            secretary: [],
+            member: []
+        };
+
+        let selectedValues = {
+            privacy: 'Members Only',
+            frequency: 'Monthly',
+            duration: '1 hour'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMemberPool();
+            setupPillGroups();
+            setupDragAndDrop();
+            setupFormValidation();
+        });
+
+        function renderMemberPool() {
+            const pool = document.getElementById('memberPool');
+            pool.innerHTML = availableMembers.map(member => `
+                <div class="member-chip" draggable="true" data-member-id="${member.id}">
+                    <div class="member-avatar">${member.initials}</div>
+                    <div class="member-name">${member.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupPillGroups() {
+            ['privacyGroup', 'frequencyGroup', 'durationGroup'].forEach(groupId => {
+                const group = document.getElementById(groupId);
+                group.querySelectorAll('.pill-option').forEach(pill => {
+                    pill.addEventListener('click', () => {
+                        group.querySelectorAll('.pill-option').forEach(p => p.classList.remove('selected'));
+                        pill.classList.add('selected');
+
+                        const type = groupId.replace('Group', '');
+                        selectedValues[type] = pill.dataset.value;
+
+                        if (type === 'frequency' || type === 'duration') {
+                            updateMeetingPreview();
+                        }
+
+                        validateForm();
+                    });
+                });
+            });
+        }
+
+        function updateMeetingPreview() {
+            const preview = document.querySelector('.meeting-preview-text');
+            preview.innerHTML = `
+                <strong>${selectedValues.frequency}</strong> meetings<br>
+                <strong>${selectedValues.duration}</strong> duration
+            `;
+        }
+
+        function setupDragAndDrop() {
+            const pool = document.getElementById('memberPool');
+
+            pool.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('member-chip')) {
+                    e.target.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('memberId', e.target.dataset.memberId);
+                }
+            });
+
+            pool.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('member-chip')) {
+                    e.target.classList.remove('dragging');
+                }
+            });
+
+            // Setup drop zones
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+
+                    const memberId = parseInt(e.dataTransfer.getData('memberId'));
+                    const role = zone.dataset.role;
+                    const maxMembers = parseInt(zone.dataset.max);
+
+                    assignMemberToRole(memberId, role, maxMembers, zone);
+                });
+            });
+        }
+
+        function assignMemberToRole(memberId, role, maxMembers, zone) {
+            // Check if member is already in any role
+            for (let r in roleAssignments) {
+                const index = roleAssignments[r].indexOf(memberId);
+                if (index > -1) {
+                    roleAssignments[r].splice(index, 1);
+                }
+            }
+
+            // Check max limit
+            if (roleAssignments[role].length >= maxMembers) {
+                if (role !== 'member') {
+                    alert(`This role can only have ${maxMembers} member(s)`);
+                    return;
+                }
+            }
+
+            // Add to new role
+            roleAssignments[role].push(memberId);
+
+            // Update UI
+            updateRoleZones();
+            updateMemberPoolVisuals();
+            validateForm();
+        }
+
+        function updateRoleZones() {
+            Object.keys(roleAssignments).forEach(role => {
+                const zoneId = role === 'vicechair' ? 'viceChairZone' :
+                              role === 'member' ? 'membersZone' :
+                              `${role}Zone`;
+                const zone = document.getElementById(zoneId);
+
+                if (roleAssignments[role].length === 0) {
+                    zone.classList.add('empty');
+                    zone.innerHTML = role === 'chair' ? 'Drop chair here' :
+                                    role === 'vicechair' ? 'Drop vice chair here' :
+                                    role === 'secretary' ? 'Drop secretary here' :
+                                    'Drop members here';
+                } else {
+                    zone.classList.remove('empty');
+                    zone.innerHTML = roleAssignments[role].map(memberId => {
+                        const member = availableMembers.find(m => m.id === memberId);
+                        return `
+                            <div class="role-member">
+                                <div class="member-avatar">${member.initials}</div>
+                                <div class="member-name">${member.name}</div>
+                                <div class="remove-btn" onclick="removeMemberFromRole(${memberId}, '${role}')">×</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            });
+        }
+
+        function removeMemberFromRole(memberId, role) {
+            const index = roleAssignments[role].indexOf(memberId);
+            if (index > -1) {
+                roleAssignments[role].splice(index, 1);
+            }
+            updateRoleZones();
+            updateMemberPoolVisuals();
+            validateForm();
+        }
+
+        function updateMemberPoolVisuals() {
+            const pool = document.getElementById('memberPool');
+            pool.querySelectorAll('.member-chip').forEach(chip => {
+                const memberId = parseInt(chip.dataset.memberId);
+                const inRole = Object.values(roleAssignments).some(arr => arr.includes(memberId));
+                chip.classList.toggle('in-role', inRole);
+            });
+        }
+
+        function setupFormValidation() {
+            document.getElementById('committeeName').addEventListener('input', validateForm);
+            document.getElementById('committeePurpose').addEventListener('input', validateForm);
+            validateForm();
+        }
+
+        function validateForm() {
+            const name = document.getElementById('committeeName').value.trim();
+            const purpose = document.getElementById('committeePurpose').value.trim();
+            const hasChair = roleAssignments.chair.length > 0;
+            const totalMembers = Object.values(roleAssignments).flat().length;
+
+            // Update status icons
+            updateStatusIcon('statusBasic', name && purpose);
+            updateStatusIcon('statusChair', hasChair);
+            updateStatusIcon('statusMembers', totalMembers >= 2);
+
+            // Enable/disable create button
+            const isValid = name && purpose && hasChair && totalMembers >= 2;
+            document.getElementById('createBtn').disabled = !isValid;
+        }
+
+        function updateStatusIcon(id, isComplete) {
+            const icon = document.getElementById(id);
+            if (isComplete) {
+                icon.classList.add('complete');
+                icon.classList.remove('incomplete');
+                icon.textContent = '✓';
+            } else {
+                icon.classList.add('incomplete');
+                icon.classList.remove('complete');
+                icon.textContent = '○';
+            }
+        }
+
+        function createCommittee() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('active');
+
+            // Populate success modal
+            document.getElementById('successCommitteeName').textContent = document.getElementById('committeeName').value;
+
+            const totalMembers = Object.values(roleAssignments).flat().length;
+            document.getElementById('successMemberCount').textContent = totalMembers;
+
+            const chairId = roleAssignments.chair[0];
+            const chair = availableMembers.find(m => m.id === chairId);
+            document.getElementById('successChair').textContent = chair.name;
+
+            document.getElementById('successFrequency').textContent = selectedValues.frequency;
+            document.getElementById('successPrivacy').textContent = selectedValues.privacy;
+        }
+
+        // Close modal on background click
+        document.getElementById('successModal').addEventListener('click', (e) => {
+            if (e.target.id === 'successModal') {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 7: Standards Ballot - Design Options Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .intro {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .intro p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .option-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .option-header h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .option-header .philosophy {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .option-preview {
+            position: relative;
+            height: 300px;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .option-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 3rem;
+            color: #ddd;
+        }
+
+        .option-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #666;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .best-for {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .best-for h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .best-for ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .best-for li {
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .best-for li::before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #667eea;
+        }
+
+        .cta-button {
+            display: inline-block;
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .comparison-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .comparison-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparison-link {
+            display: block;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .comparison-link:hover {
+            background: #e9ecef;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Journey 7: Standards Ballot</h1>
+            <p class="subtitle">Compare Three Design Approaches for Standards Development Ballot Management</p>
+        </header>
+
+        <div class="intro">
+            <h2>The Challenge</h2>
+            <p>
+                Standards Working Group Chairs need to manage complex ballot processes that involve document versioning,
+                inline commenting with precise line references, systematic comment resolution, change tracking across iterations,
+                and approval voting. The interface must balance the need to see the document in context, efficiently process
+                high volumes of comments, and track what changed between versions. How should we design this multi-faceted workflow?
+            </p>
+        </div>
+
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option A</h3>
+                    <p class="philosophy">Document-Centric View</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📄</div>
+                </div>
+                <div class="option-content">
+                    <p style="margin-bottom: 20px;">
+                        Keep the document front and center with integrated commenting and resolution tools.
+                        Comments appear inline with the text, preserving context while enabling efficient resolution.
+                    </p>
+
+                    <ul class="features-list">
+                        <li>Full document display with line numbering</li>
+                        <li>Inline comment markers and threading</li>
+                        <li>Sidebar for comment details and resolution</li>
+                        <li>In-place editing and change highlighting</li>
+                        <li>Integrated voting panel</li>
+                    </ul>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Seeing comments in context</li>
+                            <li>Detailed line-by-line review</li>
+                            <li>Sequential comment resolution</li>
+                            <li>Real-time collaborative editing</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-A/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option B</h3>
+                    <p class="philosophy">Comment Management Dashboard</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📊</div>
+                </div>
+                <div class="option-content">
+                    <p style="margin-bottom: 20px;">
+                        Treat comments as structured data to be efficiently processed and resolved.
+                        A powerful dashboard provides filtering, sorting, and batch operations for systematic resolution.
+                    </p>
+
+                    <ul class="features-list">
+                        <li>Filterable/sortable comment table</li>
+                        <li>Batch resolution actions</li>
+                        <li>Comment categorization and tagging</li>
+                        <li>Separate document preview panel</li>
+                        <li>Analytics and progress tracking</li>
+                    </ul>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>High-volume comment processing</li>
+                            <li>Systematic resolution workflows</li>
+                            <li>Committee-based review assignments</li>
+                            <li>Progress tracking and reporting</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-B/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option C</h3>
+                    <p class="philosophy">Side-by-Side Diff View</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">⚖️</div>
+                </div>
+                <div class="option-content">
+                    <p style="margin-bottom: 20px;">
+                        Focus on what changed between versions with integrated resolution tracking.
+                        Visual diff highlighting makes changes immediately obvious, perfect for recirculation ballots.
+                    </p>
+
+                    <ul class="features-list">
+                        <li>Split-screen original vs. revised</li>
+                        <li>Visual change highlighting (redline/strikethrough)</li>
+                        <li>Comment association with specific changes</li>
+                        <li>Version timeline navigation</li>
+                        <li>Approval voting integrated with changes</li>
+                    </ul>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Recirculation ballots</li>
+                            <li>Change-focused review</li>
+                            <li>Visual learners</li>
+                            <li>Quick approval workflows</li>
+                        </ul>
+                    </div>
+
+                    <a href="option-C/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2>Detailed Side-by-Side Comparison</h2>
+            <a href="COMPARISON.md" class="comparison-link">
+                View detailed feature comparison matrix →
+            </a>
+        </div>
+
+        <footer>
+            <p>Standards Ballot Journey • Design Mockups • February 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

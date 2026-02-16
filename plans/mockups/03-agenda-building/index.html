@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 3: Agenda Building - Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .intro {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .option-header {
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+        }
+
+        .option-a .option-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .option-b .option-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .option-c .option-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .option-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .option-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .option-tagline {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .option-body {
+            padding: 1.5rem;
+        }
+
+        .option-description {
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .strengths, .weaknesses {
+            margin-bottom: 1.5rem;
+        }
+
+        .strengths h4, .weaknesses h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .strengths h4 {
+            color: #10b981;
+        }
+
+        .weaknesses h4 {
+            color: #ef4444;
+        }
+
+        .strengths ul, .weaknesses ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .strengths li, .weaknesses li {
+            padding: 0.3rem 0 0.3rem 1.5rem;
+            position: relative;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .strengths li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .weaknesses li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+        }
+
+        .best-for {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 1.5rem;
+        }
+
+        .best-for strong {
+            color: #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: scale(1.02);
+        }
+
+        .option-b .btn {
+            background: #f5576c;
+        }
+
+        .option-b .btn:hover {
+            background: #e0475d;
+        }
+
+        .option-c .btn {
+            background: #4facfe;
+        }
+
+        .option-c .btn:hover {
+            background: #3a9be8;
+        }
+
+        .comparison-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .rating {
+            display: inline-block;
+        }
+
+        .rating-stars {
+            color: #fbbf24;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Journey 3: Agenda Building</h1>
+        <p>Compare Three Design Approaches</p>
+    </header>
+
+    <div class="container">
+        <div class="intro">
+            <h2>Choose Your Preferred Approach</h2>
+            <p>
+                Building effective meeting agendas requires balancing structure with flexibility. We've designed
+                three distinct approaches to agenda creation, each optimized for different user preferences and
+                workflows. Explore each prototype to find the best fit for your committee management needs.
+            </p>
+        </div>
+
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card option-a">
+                <div class="option-header">
+                    <div class="option-label">Option A</div>
+                    <h2 class="option-title">Step-by-Step Wizard</h2>
+                    <p class="option-tagline">Guided agenda creation with structured steps</p>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        A guided workflow that walks users through creating agenda items one step at a time,
+                        ensuring all required information is collected and validated.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Perfect for new users</li>
+                            <li>Reduces errors with validation</li>
+                            <li>Clear, structured process</li>
+                            <li>Built-in guidance</li>
+                        </ul>
+                    </div>
+
+                    <div class="weaknesses">
+                        <h4>Weaknesses</h4>
+                        <ul>
+                            <li>More clicks required</li>
+                            <li>Harder to see full agenda</li>
+                            <li>Less flexible workflow</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-for">
+                        <strong>Best For:</strong> New users, formal meetings, strict structure requirements
+                    </div>
+
+                    <a href="option-A/prototype.html" class="btn">Try Option A</a>
+                </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card option-b">
+                <div class="option-header">
+                    <div class="option-label">Option B</div>
+                    <h2 class="option-title">Spreadsheet Grid</h2>
+                    <p class="option-tagline">Tabular view with inline editing</p>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        A familiar spreadsheet-like interface that displays all agenda items in a table,
+                        enabling fast inline editing and bulk operations.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Fastest data entry</li>
+                            <li>See entire agenda at once</li>
+                            <li>Familiar paradigm</li>
+                            <li>Efficient bulk editing</li>
+                        </ul>
+                    </div>
+
+                    <div class="weaknesses">
+                        <h4>Weaknesses</h4>
+                        <ul>
+                            <li>Can overwhelm new users</li>
+                            <li>Limited hierarchy visualization</li>
+                            <li>Less intuitive for complex items</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-for">
+                        <strong>Best For:</strong> Power users, simple agendas, quick updates
+                    </div>
+
+                    <a href="option-B/prototype.html" class="btn">Try Option B</a>
+                </div>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card option-c">
+                <div class="option-header">
+                    <div class="option-label">Option C</div>
+                    <h2 class="option-title">Visual Builder</h2>
+                    <p class="option-tagline">Drag-and-drop interface with nested items</p>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        An interactive visual interface with drag-and-drop reordering, collapsible sections,
+                        and inline editing for a modern, intuitive experience.
+                    </p>
+
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Intuitive visual hierarchy</li>
+                            <li>Easy drag-and-drop reordering</li>
+                            <li>Modern, engaging interface</li>
+                            <li>Flexible workflow</li>
+                        </ul>
+                    </div>
+
+                    <div class="weaknesses">
+                        <h4>Weaknesses</h4>
+                        <ul>
+                            <li>Requires more screen space</li>
+                            <li>Drag-drop tricky on mobile</li>
+                            <li>More complex to build</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-for">
+                        <strong>Best For:</strong> Most users, complex agendas, frequent reordering
+                    </div>
+
+                    <a href="option-C/prototype.html" class="btn">Try Option C</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2>Quick Comparison</h2>
+            <p style="margin-bottom: 1.5rem;">
+                Rate each option across key criteria (1-5 stars, 5 being best):
+            </p>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Option A: Wizard</th>
+                        <th>Option B: Grid</th>
+                        <th>Option C: Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ease of Learning</strong></td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                        <td><span class="rating-stars">★★★☆☆</span></td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Efficiency</strong></td>
+                        <td><span class="rating-stars">★★★☆☆</span></td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error Prevention</strong></td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                        <td><span class="rating-stars">★★★☆☆</span></td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Flexibility</strong></td>
+                        <td><span class="rating-stars">★★☆☆☆</span></td>
+                        <td><span class="rating-stars">★★★☆☆</span></td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Visual Clarity</strong></td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td><span class="rating-stars">★★★☆☆</span></td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 1.5rem;">
+                <strong>Read the detailed comparison:</strong>
+                <a href="COMPARISON.md" style="color: #667eea; text-decoration: none; font-weight: 600;">COMPARISON.md</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Committees Application - MemberJunction Platform</p>
+        <p>Interactive prototypes for user testing and feedback</p>
+    </footer>
+</body>
+</html>

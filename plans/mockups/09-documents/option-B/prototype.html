@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Grid/List View - Document Collaboration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .app-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-title i {
+            color: #667eea;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 500px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 40px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #f7fafc;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-bar .filter-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            cursor: pointer;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #718096;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+
+        .upload-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Breadcrumb Navigation */
+        .breadcrumb-nav {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #718096;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+
+        .breadcrumb-item.current {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .breadcrumb-separator {
+            color: #cbd5e0;
+        }
+
+        .folder-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .view-toggle-btn {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            color: #718096;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .sort-dropdown {
+            position: relative;
+        }
+
+        .sort-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toolbar-right {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px;
+        }
+
+        /* Grid View */
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-view.hidden {
+            display: none;
+        }
+
+        .grid-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .grid-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .grid-item-checkbox {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 20px;
+            height: 20px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .grid-item:hover .grid-item-checkbox {
+            opacity: 1;
+        }
+
+        .grid-item-menu {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: white;
+            border: none;
+            color: #718096;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .grid-item:hover .grid-item-menu {
+            opacity: 1;
+        }
+
+        .grid-item-menu:hover {
+            background: #f7fafc;
+        }
+
+        .grid-item-icon {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-item-icon i {
+            font-size: 4rem;
+        }
+
+        .grid-item-icon.pdf i { color: #e53e3e; }
+        .grid-item-icon.excel i { color: #38a169; }
+        .grid-item-icon.word i { color: #3182ce; }
+        .grid-item-icon.ppt i { color: #dd6b20; }
+        .grid-item-icon.image i { color: #805ad5; }
+
+        .grid-item-name {
+            font-size: 0.9rem;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .grid-item-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .grid-item-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .integration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            width: fit-content;
+        }
+
+        .integration-badge.gdrive {
+            background: #fef5e7;
+            color: #d68910;
+        }
+
+        .integration-badge.sharepoint {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .integration-badge.box {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .comment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        /* List View */
+        .list-view {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .list-view.hidden {
+            display: none;
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list-table thead {
+            background: #f7fafc;
+        }
+
+        .list-table th {
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .list-table th:hover {
+            background: #edf2f7;
+        }
+
+        .list-table th i {
+            margin-left: 4px;
+            color: #a0aec0;
+            font-size: 0.75rem;
+        }
+
+        .list-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f7fafc;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .list-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .list-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .doc-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-icon {
+            font-size: 1.8rem;
+        }
+
+        .doc-icon.pdf { color: #e53e3e; }
+        .doc-icon.excel { color: #38a169; }
+        .doc-icon.word { color: #3182ce; }
+        .doc-icon.ppt { color: #dd6b20; }
+        .doc-icon.image { color: #805ad5; }
+
+        .doc-info {
+            flex: 1;
+        }
+
+        .doc-name {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .doc-meta-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        /* Preview Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+        }
+
+        .modal-preview {
+            flex: 1;
+            padding: 24px;
+            background: #f7fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-placeholder {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 8.5/11;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-placeholder i {
+            font-size: 6rem;
+            color: #cbd5e0;
+        }
+
+        .modal-sidebar {
+            width: 350px;
+            border-left: 1px solid #e2e8f0;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            color: #718096;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .sidebar-tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom-color: #667eea;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: #718096;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .comment-input-area {
+            margin-bottom: 20px;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-input-box input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comment-input-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #5a67d8;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comment {
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .comment-author-info {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .comment-text {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .version-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .version-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .version-item:hover {
+            background: #f7fafc;
+        }
+
+        .version-item.current {
+            background: #edf2f7;
+            border: 1px solid #667eea;
+        }
+
+        .version-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            height: fit-content;
+        }
+
+        .version-item.current .version-badge {
+            background: #48bb78;
+        }
+
+        .version-info {
+            flex: 1;
+        }
+
+        .version-meta {
+            font-size: 0.9rem;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .version-details {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 2000;
+            min-width: 300px;
+        }
+
+        .notification.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            color: #48bb78;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-bar {
+                width: 300px;
+            }
+
+            .grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .modal-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <div class="app-title">
+                <i class="fas fa-folder-open"></i>
+                Documents
+            </div>
+            <div class="search-bar">
+                <i class="search-icon fas fa-search"></i>
+                <input type="text" placeholder="Search documents, folders, and content...">
+                <i class="filter-icon fas fa-sliders"></i>
+            </div>
+        </div>
+        <div class="top-bar-right">
+            <button class="icon-btn" title="Settings">
+                <i class="fas fa-gear"></i>
+            </button>
+            <button class="icon-btn" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-btn" title="Help">
+                <i class="fas fa-circle-question"></i>
+            </button>
+            <button class="upload-btn" onclick="showNotification('Upload Started', 'Preparing to upload files...')">
+                <i class="fas fa-cloud-arrow-up"></i>
+                Upload
+            </button>
+            <button class="icon-btn">
+                <i class="fas fa-user-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-nav">
+        <div class="breadcrumb">
+            <div class="breadcrumb-item">
+                <i class="fas fa-home"></i>
+                <span>My Committees</span>
+            </div>
+            <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+            <div class="breadcrumb-item">
+                <i class="fas fa-folder"></i>
+                <span>Board of Directors</span>
+            </div>
+            <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+            <div class="breadcrumb-item current">
+                <i class="fas fa-folder-open"></i>
+                <span>Q1 2026 Review</span>
+            </div>
+        </div>
+        <div class="folder-actions">
+            <button class="action-btn">
+                <i class="fas fa-share-nodes"></i>
+                Share
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-folder-plus"></i>
+                New Folder
+            </button>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" onclick="switchView('grid')">
+                    <i class="fas fa-grid"></i>
+                    Grid
+                </button>
+                <button class="view-toggle-btn" onclick="switchView('list')">
+                    <i class="fas fa-list"></i>
+                    List
+                </button>
+            </div>
+            <div class="sort-dropdown">
+                <button class="sort-btn">
+                    <i class="fas fa-arrow-down-wide-short"></i>
+                    Sort: Modified
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <button class="action-btn">
+                <i class="fas fa-filter"></i>
+                Filter
+            </button>
+        </div>
+        <div class="toolbar-right">
+            8 items
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Grid View -->
+        <div class="grid-view" id="gridView">
+            <div class="grid-item" onclick="openPreview('Meeting Agenda.pdf', 'pdf')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon pdf">
+                    <i class="far fa-file-pdf"></i>
+                </div>
+                <div class="grid-item-name" title="Meeting Agenda.pdf">Meeting Agenda.pdf</div>
+                <div class="grid-item-meta">
+                    <span>245 KB</span>
+                    <span>Today</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span>
+                    <span class="comment-badge"><i class="fas fa-comment"></i> 3 comments</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Financial Report Q1.xlsx', 'excel')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon excel">
+                    <i class="far fa-file-excel"></i>
+                </div>
+                <div class="grid-item-name" title="Financial Report Q1.xlsx">Financial Report Q1.xlsx</div>
+                <div class="grid-item-meta">
+                    <span>1.2 MB</span>
+                    <span>Today</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span>
+                    <span class="comment-badge"><i class="fas fa-comment"></i> 5 comments</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Strategic Plan 2026.docx', 'word')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon word">
+                    <i class="far fa-file-word"></i>
+                </div>
+                <div class="grid-item-name" title="Strategic Plan 2026.docx">Strategic Plan 2026.docx</div>
+                <div class="grid-item-meta">
+                    <span>532 KB</span>
+                    <span>Yesterday</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span>
+                    <span class="comment-badge"><i class="fas fa-comment"></i> 8 comments</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Budget 2026.xlsx', 'excel')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon excel">
+                    <i class="far fa-file-excel"></i>
+                </div>
+                <div class="grid-item-name" title="Budget 2026.xlsx">Budget 2026.xlsx</div>
+                <div class="grid-item-meta">
+                    <span>890 KB</span>
+                    <span>Mar 10</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge box"><i class="fas fa-box"></i> Box</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Q1 Board Presentation.pptx', 'ppt')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon ppt">
+                    <i class="far fa-file-powerpoint"></i>
+                </div>
+                <div class="grid-item-name" title="Q1 Board Presentation.pptx">Q1 Board Presentation.pptx</div>
+                <div class="grid-item-meta">
+                    <span>3.4 MB</span>
+                    <span>Mar 8</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span>
+                    <span class="comment-badge"><i class="fas fa-comment"></i> 2 comments</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Revenue Chart.png', 'image')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon image">
+                    <i class="far fa-file-image"></i>
+                </div>
+                <div class="grid-item-name" title="Revenue Chart.png">Revenue Chart.png</div>
+                <div class="grid-item-meta">
+                    <span>156 KB</span>
+                    <span>Mar 7</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Previous Meeting Minutes.pdf', 'pdf')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon pdf">
+                    <i class="far fa-file-pdf"></i>
+                </div>
+                <div class="grid-item-name" title="Previous Meeting Minutes.pdf">Previous Meeting Minutes.pdf</div>
+                <div class="grid-item-meta">
+                    <span>189 KB</span>
+                    <span>Feb 28</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span>
+                </div>
+            </div>
+
+            <div class="grid-item" onclick="openPreview('Market Analysis.xlsx', 'excel')">
+                <input type="checkbox" class="grid-item-checkbox">
+                <button class="grid-item-menu"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="grid-item-icon excel">
+                    <i class="far fa-file-excel"></i>
+                </div>
+                <div class="grid-item-name" title="Market Analysis.xlsx">Market Analysis.xlsx</div>
+                <div class="grid-item-meta">
+                    <span>678 KB</span>
+                    <span>Feb 25</span>
+                </div>
+                <div class="grid-item-badges">
+                    <span class="integration-badge box"><i class="fas fa-box"></i> Box</span>
+                    <span class="comment-badge"><i class="fas fa-comment"></i> 1 comment</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div class="list-view hidden" id="listView">
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>Name <i class="fas fa-sort"></i></th>
+                        <th>Modified <i class="fas fa-sort"></i></th>
+                        <th>Owner <i class="fas fa-sort"></i></th>
+                        <th>Size <i class="fas fa-sort"></i></th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="openPreview('Meeting Agenda.pdf', 'pdf')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon pdf far fa-file-pdf"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Meeting Agenda.pdf</div>
+                                    <div class="doc-meta-inline">
+                                        <span class="comment-badge"><i class="fas fa-comment"></i> 3</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Today, 2:30 PM</td>
+                        <td>Sarah Chen</td>
+                        <td>245 KB</td>
+                        <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Financial Report Q1.xlsx', 'excel')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon excel far fa-file-excel"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Financial Report Q1.xlsx</div>
+                                    <div class="doc-meta-inline">
+                                        <span class="comment-badge"><i class="fas fa-comment"></i> 5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Today, 11:45 AM</td>
+                        <td>Michael Rodriguez</td>
+                        <td>1.2 MB</td>
+                        <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Strategic Plan 2026.docx', 'word')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon word far fa-file-word"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Strategic Plan 2026.docx</div>
+                                    <div class="doc-meta-inline">
+                                        <span class="comment-badge"><i class="fas fa-comment"></i> 8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Yesterday, 4:15 PM</td>
+                        <td>Jennifer Lee</td>
+                        <td>532 KB</td>
+                        <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Budget 2026.xlsx', 'excel')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon excel far fa-file-excel"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Budget 2026.xlsx</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Mar 10, 2026</td>
+                        <td>David Kim</td>
+                        <td>890 KB</td>
+                        <td><span class="integration-badge box"><i class="fas fa-box"></i> Box</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Q1 Board Presentation.pptx', 'ppt')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon ppt far fa-file-powerpoint"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Q1 Board Presentation.pptx</div>
+                                    <div class="doc-meta-inline">
+                                        <span class="comment-badge"><i class="fas fa-comment"></i> 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Mar 8, 2026</td>
+                        <td>Sarah Chen</td>
+                        <td>3.4 MB</td>
+                        <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Revenue Chart.png', 'image')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon image far fa-file-image"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Revenue Chart.png</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Mar 7, 2026</td>
+                        <td>Michael Rodriguez</td>
+                        <td>156 KB</td>
+                        <td><span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Drive</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Previous Meeting Minutes.pdf', 'pdf')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon pdf far fa-file-pdf"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Previous Meeting Minutes.pdf</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Feb 28, 2026</td>
+                        <td>Jennifer Lee</td>
+                        <td>189 KB</td>
+                        <td><span class="integration-badge sharepoint"><i class="fab fa-microsoft"></i> SharePoint</span></td>
+                    </tr>
+                    <tr onclick="openPreview('Market Analysis.xlsx', 'excel')">
+                        <td>
+                            <div class="doc-name-cell">
+                                <i class="doc-icon excel far fa-file-excel"></i>
+                                <div class="doc-info">
+                                    <div class="doc-name">Market Analysis.xlsx</div>
+                                    <div class="doc-meta-inline">
+                                        <span class="comment-badge"><i class="fas fa-comment"></i> 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Feb 25, 2026</td>
+                        <td>David Kim</td>
+                        <td>678 KB</td>
+                        <td><span class="integration-badge box"><i class="fas fa-box"></i> Box</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Document Preview</span>
+                <div class="modal-actions">
+                    <button class="icon-btn" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="icon-btn" title="Share">
+                        <i class="fas fa-share-nodes"></i>
+                    </button>
+                    <button class="icon-btn" title="More">
+                        <i class="fas fa-ellipsis"></i>
+                    </button>
+                    <button class="icon-btn" onclick="closePreview()">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-preview">
+                    <div class="preview-placeholder">
+                        <i class="far fa-file-pdf" id="previewIcon"></i>
+                    </div>
+                </div>
+                <div class="modal-sidebar">
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active" onclick="switchTab('details')">Details</button>
+                        <button class="sidebar-tab" onclick="switchTab('comments')">Comments</button>
+                        <button class="sidebar-tab" onclick="switchTab('versions')">Versions</button>
+                    </div>
+                    <div class="sidebar-content" id="sidebarContent">
+                        <!-- Content will be dynamically loaded -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="notification-icon fas fa-check-circle"></i>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Success</div>
+            <div class="notification-message" id="notificationMessage">Action completed</div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            const gridView = document.getElementById('gridView');
+            const listView = document.getElementById('listView');
+            const buttons = document.querySelectorAll('.view-toggle-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'grid') {
+                gridView.classList.remove('hidden');
+                listView.classList.add('hidden');
+                buttons[0].classList.add('active');
+            } else {
+                gridView.classList.add('hidden');
+                listView.classList.remove('hidden');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        function openPreview(filename, type) {
+            const modal = document.getElementById('previewModal');
+            const title = document.getElementById('modalTitle');
+            const icon = document.getElementById('previewIcon');
+
+            title.textContent = filename;
+
+            const iconClasses = {
+                'pdf': 'far fa-file-pdf',
+                'excel': 'far fa-file-excel',
+                'word': 'far fa-file-word',
+                'ppt': 'far fa-file-powerpoint',
+                'image': 'far fa-file-image'
+            };
+
+            icon.className = iconClasses[type] || 'far fa-file';
+
+            modal.classList.add('active');
+            switchTab('details');
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('active');
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.sidebar-tab');
+            const content = document.getElementById('sidebarContent');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            event?.target?.classList.add('active');
+
+            if (tab === 'details') {
+                tabs[0].classList.add('active');
+                content.innerHTML = `
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Information</div>
+                        <div class="info-grid">
+                            <div class="info-label">Type:</div>
+                            <div class="info-value">PDF Document</div>
+                            <div class="info-label">Size:</div>
+                            <div class="info-value">245 KB</div>
+                            <div class="info-label">Owner:</div>
+                            <div class="info-value">Sarah Chen</div>
+                            <div class="info-label">Created:</div>
+                            <div class="info-value">Mar 10, 2026</div>
+                            <div class="info-label">Modified:</div>
+                            <div class="info-value">Today, 2:30 PM</div>
+                            <div class="info-label">Source:</div>
+                            <div class="info-value">
+                                <span class="integration-badge gdrive"><i class="fab fa-google-drive"></i> Google Drive</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Sharing</div>
+                        <div class="info-grid">
+                            <div class="info-label">Access:</div>
+                            <div class="info-value">Committee Members</div>
+                            <div class="info-label">Permissions:</div>
+                            <div class="info-value">Can View & Comment</div>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'comments') {
+                tabs[1].classList.add('active');
+                content.innerHTML = `
+                    <div class="comment-input-area">
+                        <div class="comment-input-box">
+                            <input type="text" placeholder="Add a comment...">
+                            <button class="send-btn" onclick="showNotification('Comment Added', 'Your comment has been posted')">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="comment-list">
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">MR</div>
+                                <div class="comment-author-info">
+                                    <div class="comment-author">Michael Rodriguez</div>
+                                    <div class="comment-time">1 hour ago</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Should we add the new initiative discussion to item 4? I think it's important for the board to review.
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #48bb78;">JL</div>
+                                <div class="comment-author-info">
+                                    <div class="comment-author">Jennifer Lee</div>
+                                    <div class="comment-time">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Great agenda! Can we allocate more time for the strategic planning section?
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #f56565;">DK</div>
+                                <div class="comment-author-info">
+                                    <div class="comment-author">David Kim</div>
+                                    <div class="comment-time">3 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Please include the financial projections we discussed last week.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'versions') {
+                tabs[2].classList.add('active');
+                content.innerHTML = `
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Version History</div>
+                        <div class="version-list">
+                            <div class="version-item current">
+                                <div class="version-badge">v3</div>
+                                <div class="version-info">
+                                    <div class="version-meta">Current Version</div>
+                                    <div class="version-details">Sarah Chen • Today, 2:30 PM • 245 KB</div>
+                                </div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-badge">v2</div>
+                                <div class="version-info">
+                                    <div class="version-meta">Previous Version</div>
+                                    <div class="version-details">Jennifer Lee • Yesterday, 4:15 PM • 238 KB</div>
+                                </div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-badge">v1</div>
+                                <div class="version-info">
+                                    <div class="version-meta">Initial Version</div>
+                                    <div class="version-details">Sarah Chen • Mar 10, 2026 • 220 KB</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('previewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'previewModal') {
+                closePreview();
+            }
+        });
+    </script>
+</body>
+</html>

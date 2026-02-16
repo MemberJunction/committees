@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Step-by-Step Wizard - Agenda Building</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .wizard-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .progress-step {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .progress-step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 10px solid #e5e7eb;
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-step.active:after {
+            border-left-color: #667eea;
+        }
+
+        .progress-step.completed {
+            background: #10b981;
+            color: white;
+        }
+
+        .progress-step.completed:after {
+            border-left-color: #10b981;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-step.active .step-number,
+        .progress-step.completed .step-number {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .wizard-content {
+            padding: 2rem;
+        }
+
+        .step-panel {
+            display: none;
+        }
+
+        .step-panel.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        label .required {
+            color: #ef4444;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input[type="radio"] {
+            width: auto;
+        }
+
+        .file-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-item button {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .agenda-preview {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .preview-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .preview-item.child {
+            margin-left: 2rem;
+            border-left-color: #a78bfa;
+        }
+
+        .preview-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-item-title {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .preview-item-time {
+            color: #667eea;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .preview-item-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+
+        .success-message h2 {
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .time-allocation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .progress-bar {
+                flex-direction: column;
+            }
+
+            .progress-step:after {
+                display: none;
+            }
+
+            .time-allocation {
+                grid-template-columns: 1fr;
+            }
+
+            .wizard-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>Option A: Step-by-Step Wizard</h1>
+                <div class="subtitle">Building Agenda for: Technology Committee - March 2026 Meeting</div>
+            </div>
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Comparison
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="wizard-container">
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Item Details</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Time & Presenter</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Sub-Items</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Documents</div>
+                </div>
+                <div class="progress-step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+
+            <div class="wizard-content">
+                <!-- Step 1: Item Details -->
+                <div class="step-panel active" data-step="1">
+                    <h2 class="step-title">Agenda Item Details</h2>
+                    <p class="step-description">
+                        Start by entering the basic information for this agenda item. You can add sub-items in the next steps.
+                    </p>
+
+                    <div class="form-group">
+                        <label>
+                            Item Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="itemTitle" placeholder="e.g., Budget Review for Q1 2026" value="Budget Review for Q1 2026">
+                        <div class="help-text">A clear, concise title for this agenda item</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="itemDescription" placeholder="Optional detailed description of this agenda item">Review and approve the proposed budget allocations for Q1 2026, including technology initiatives and infrastructure investments.</textarea>
+                        <div class="help-text">Provide additional context or details (optional)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Item Type <span class="required">*</span>
+                        </label>
+                        <select id="itemType">
+                            <option value="discussion">Discussion</option>
+                            <option value="presentation" selected>Presentation</option>
+                            <option value="decision">Decision Required</option>
+                            <option value="information">Information Only</option>
+                            <option value="break">Break</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            This is a: <span class="required">*</span>
+                        </label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="parentItem" name="itemLevel" value="parent" checked>
+                                <label for="parentItem" style="margin: 0; font-weight: normal;">Parent Item</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="standaloneItem" name="itemLevel" value="standalone">
+                                <label for="standaloneItem" style="margin: 0; font-weight: normal;">Standalone Item (no sub-items)</label>
+                            </div>
+                        </div>
+                        <div class="help-text">Parent items can have sub-items added in step 3</div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Time & Presenter -->
+                <div class="step-panel" data-step="2">
+                    <h2 class="step-title">Time Allocation & Presenter</h2>
+                    <p class="step-description">
+                        Specify how much time this item should take and who will present it.
+                    </p>
+
+                    <div class="time-allocation">
+                        <div class="form-group">
+                            <label>
+                                Duration (minutes) <span class="required">*</span>
+                            </label>
+                            <input type="number" id="itemDuration" min="1" value="30" placeholder="30">
+                            <div class="help-text">Total time for this item</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="text" id="itemStartTime" value="10:00 AM" placeholder="e.g., 10:00 AM">
+                            <div class="help-text">Optional - can be auto-calculated</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Presenter <span class="required">*</span>
+                        </label>
+                        <select id="itemPresenter">
+                            <option value="">Select a presenter...</option>
+                            <option value="john-doe" selected>John Doe - CFO</option>
+                            <option value="jane-smith">Jane Smith - CTO</option>
+                            <option value="bob-johnson">Bob Johnson - Director of IT</option>
+                            <option value="alice-williams">Alice Williams - Budget Manager</option>
+                            <option value="external">External Guest Speaker</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Presenter Notes</label>
+                        <textarea id="presenterNotes" placeholder="Any special notes or instructions for the presenter">Please prepare slides highlighting budget vs. actuals and variance explanations.</textarea>
+                    </div>
+                </div>
+
+                <!-- Step 3: Sub-Items -->
+                <div class="step-panel" data-step="3">
+                    <h2 class="step-title">Add Sub-Items</h2>
+                    <p class="step-description">
+                        Break this agenda item into smaller sub-items for better organization. You can skip this step if not needed.
+                    </p>
+
+                    <div id="subItemsList">
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Revenue Budget Overview</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-user"></i> John Doe</span>
+                                <span><i class="fas fa-list"></i> Presentation</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Expense Budget Overview</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-user"></i> John Doe</span>
+                                <span><i class="fas fa-list"></i> Presentation</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Q&A and Discussion</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-users"></i> All Members</span>
+                                <span><i class="fas fa-list"></i> Discussion</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="alert('Add Sub-Item dialog would appear here')">
+                        <i class="fas fa-plus"></i> Add Another Sub-Item
+                    </button>
+                </div>
+
+                <!-- Step 4: Documents -->
+                <div class="step-panel" data-step="4">
+                    <h2 class="step-title">Attach Documents</h2>
+                    <p class="step-description">
+                        Upload or link to relevant documents, presentations, or reference materials for this agenda item.
+                    </p>
+
+                    <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Click to upload files</div>
+                        <div style="font-size: 0.9rem; color: #6b7280;">or drag and drop</div>
+                        <input type="file" id="fileInput" multiple onchange="handleFileUpload(event)">
+                    </div>
+
+                    <div class="file-list" id="fileList">
+                        <div class="file-item">
+                            <div>
+                                <i class="fas fa-file-pdf" style="color: #ef4444; margin-right: 0.5rem;"></i>
+                                Q1_2026_Budget_Proposal.pdf (1.2 MB)
+                            </div>
+                            <button onclick="removeFile(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="file-item">
+                            <div>
+                                <i class="fas fa-file-excel" style="color: #10b981; margin-right: 0.5rem;"></i>
+                                Budget_Spreadsheet.xlsx (456 KB)
+                            </div>
+                            <button onclick="removeFile(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review -->
+                <div class="step-panel" data-step="5">
+                    <h2 class="step-title">Review & Save</h2>
+                    <p class="step-description">
+                        Review your agenda item before saving. You can edit any section by clicking on the progress steps above.
+                    </p>
+
+                    <div class="agenda-preview">
+                        <div class="preview-item">
+                            <div class="preview-item-header">
+                                <div>
+                                    <div class="preview-item-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                                        Budget Review for Q1 2026
+                                    </div>
+                                    <div style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                        Review and approve the proposed budget allocations for Q1 2026, including technology initiatives and infrastructure investments.
+                                    </div>
+                                </div>
+                                <div class="preview-item-time" style="font-size: 1.1rem;">30 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-user"></i> John Doe - CFO</span>
+                                <span><i class="fas fa-clock"></i> 10:00 AM</span>
+                                <span><i class="fas fa-list"></i> Presentation</span>
+                                <span><i class="fas fa-paperclip"></i> 2 documents</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Revenue Budget Overview</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-user"></i> John Doe</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Expense Budget Overview</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-user"></i> John Doe</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-item child">
+                            <div class="preview-item-header">
+                                <div class="preview-item-title">Q&A and Discussion</div>
+                                <div class="preview-item-time">10 min</div>
+                            </div>
+                            <div class="preview-item-meta">
+                                <span><i class="fas fa-users"></i> All Members</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 1rem; border-radius: 6px;">
+                        <strong><i class="fas fa-info-circle"></i> What happens next?</strong>
+                        <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            After saving, you can add more agenda items or proceed to publish the agenda to committee members.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Panel -->
+                <div class="step-panel" data-step="6">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2>Agenda Item Saved Successfully!</h2>
+                        <p>Your agenda item "Budget Review for Q1 2026" has been added to the agenda.</p>
+
+                        <div class="success-actions">
+                            <button class="btn btn-primary" onclick="location.reload()">
+                                <i class="fas fa-plus"></i> Add Another Item
+                            </button>
+                            <button class="btn btn-secondary" onclick="alert('Would navigate to full agenda view')">
+                                <i class="fas fa-eye"></i> View Full Agenda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wizard-actions">
+                <button class="btn btn-secondary" id="btnPrevious" onclick="previousStep()">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <div style="color: #6b7280; font-size: 0.9rem;" id="stepIndicator">
+                    Step 1 of 5
+                </div>
+                <button class="btn btn-primary" id="btnNext" onclick="nextStep()">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function updateUI() {
+            // Update panels
+            document.querySelectorAll('.step-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.querySelector(`.step-panel[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach(step => {
+                const stepNum = parseInt(step.dataset.step);
+                step.classList.remove('active', 'completed');
+                if (stepNum === currentStep) {
+                    step.classList.add('active');
+                } else if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                }
+            });
+
+            // Update buttons
+            const btnPrevious = document.getElementById('btnPrevious');
+            const btnNext = document.getElementById('btnNext');
+            const stepIndicator = document.getElementById('stepIndicator');
+
+            btnPrevious.disabled = currentStep === 1;
+
+            if (currentStep === totalSteps) {
+                btnNext.innerHTML = '<i class="fas fa-save"></i> Save Agenda Item';
+            } else if (currentStep === 6) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                btnNext.style.display = 'inline-block';
+            }
+
+            stepIndicator.textContent = currentStep <= totalSteps
+                ? `Step ${currentStep} of ${totalSteps}`
+                : 'Complete';
+        }
+
+        function nextStep() {
+            if (currentStep === totalSteps) {
+                // Save and show success
+                currentStep = 6;
+            } else if (currentStep < totalSteps) {
+                currentStep++;
+            }
+            updateUI();
+        }
+
+        function previousStep() {
+            if (currentStep > 1 && currentStep <= totalSteps) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // Allow clicking on progress steps to navigate
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                const targetStep = parseInt(this.dataset.step);
+                if (targetStep <= totalSteps) {
+                    currentStep = targetStep;
+                    updateUI();
+                }
+            });
+        });
+
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const fileList = document.getElementById('fileList');
+
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <i class="fas fa-file" style="color: #667eea; margin-right: 0.5rem;"></i>
+                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                    </div>
+                    <button onclick="removeFile(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(button) {
+            button.closest('.file-item').remove();
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>

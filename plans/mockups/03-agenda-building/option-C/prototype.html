@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Visual Builder - Agenda Building</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1.5rem;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+        }
+
+        .sidebar h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .add-item-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .add-item-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #d1d5db;
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            font-weight: 600;
+            color: #4facfe;
+            transition: all 0.3s;
+            margin-bottom: 0.75rem;
+        }
+
+        .add-item-btn:hover {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .template-list {
+            list-style: none;
+        }
+
+        .template-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .template-item:hover {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .stats-panel {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .canvas-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .canvas-toolbar {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .canvas-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .canvas-title h2 {
+            font-size: 1.3rem;
+            color: #374151;
+        }
+
+        .meeting-date {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3a9be8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .agenda-canvas {
+            padding: 1.5rem;
+            min-height: 600px;
+        }
+
+        .agenda-item {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            cursor: move;
+        }
+
+        .agenda-item:hover {
+            border-color: #4facfe;
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.15);
+        }
+
+        .agenda-item.dragging {
+            opacity: 0.5;
+        }
+
+        .agenda-item.expanded {
+            border-color: #4facfe;
+        }
+
+        .item-header {
+            padding: 1.25rem 1.5rem;
+            display: grid;
+            grid-template-columns: 30px 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .drag-handle {
+            cursor: move;
+            color: #9ca3af;
+            font-size: 1.2rem;
+        }
+
+        .item-main {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-title[contenteditable="true"]:hover {
+            outline: 1px dashed #d1d5db;
+            border-radius: 4px;
+            padding: 0.25rem;
+        }
+
+        .item-title[contenteditable="true"]:focus {
+            outline: 2px solid #4facfe;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #6b7280;
+        }
+
+        .meta-item i {
+            color: #9ca3af;
+        }
+
+        .meta-item.time {
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .action-btn.expand {
+            color: #4facfe;
+        }
+
+        .action-btn.delete:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .item-body {
+            display: none;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: 1px solid #f3f4f6;
+            margin-top: 0.5rem;
+        }
+
+        .item-body.visible {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-body-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .field-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .field-input,
+        .field-select,
+        .field-textarea {
+            padding: 0.65rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .field-input:focus,
+        .field-select:focus,
+        .field-textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .field-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .sub-items {
+            margin-top: 1rem;
+            padding-left: 2rem;
+            border-left: 3px solid #e0f2fe;
+        }
+
+        .sub-item {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .sub-item:hover {
+            background: white;
+            border-color: #4facfe;
+        }
+
+        .sub-item-header {
+            display: grid;
+            grid-template-columns: 20px 1fr auto;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .sub-item-title {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .sub-item-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            padding-left: 1.75rem;
+        }
+
+        .add-sub-item {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            border: 2px dashed #d1d5db;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .add-sub-item:hover {
+            background: #f8fafc;
+            border-color: #4facfe;
+            color: #4facfe;
+        }
+
+        .documents-section {
+            margin-top: 1rem;
+        }
+
+        .documents-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .document-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .document-chip button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+        }
+
+        .document-chip button:hover {
+            color: #dc2626;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .type-presentation {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .type-discussion {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .type-decision {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .type-information {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .type-break {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed #4facfe;
+            background: rgba(79, 172, 254, 0.05);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>Option C: Visual Drag-and-Drop Builder</h1>
+                <div class="subtitle">Building Agenda for: Technology Committee - March 2026 Meeting</div>
+            </div>
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Comparison
+            </a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Quick Actions</h3>
+            <div class="add-item-group">
+                <button class="add-item-btn" onclick="addAgendaItem()">
+                    <i class="fas fa-plus"></i> Add Agenda Item
+                </button>
+                <button class="add-item-btn" style="border-style: solid; color: #6b7280;" onclick="alert('Template selection dialog')">
+                    <i class="fas fa-file-alt"></i> Load Template
+                </button>
+            </div>
+
+            <h3>Quick Templates</h3>
+            <ul class="template-list">
+                <li class="template-item" onclick="alert('Load monthly meeting template')">
+                    <i class="fas fa-calendar"></i> Monthly Status
+                </li>
+                <li class="template-item" onclick="alert('Load quarterly review template')">
+                    <i class="fas fa-chart-line"></i> Quarterly Review
+                </li>
+                <li class="template-item" onclick="alert('Load special meeting template')">
+                    <i class="fas fa-star"></i> Special Session
+                </li>
+            </ul>
+
+            <div class="stats-panel">
+                <h3>Agenda Stats</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Total Items:</span>
+                    <span class="stat-value" id="totalItems">6</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Sub-Items:</span>
+                    <span class="stat-value" id="totalSubItems">3</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Duration:</span>
+                    <span class="stat-value" id="totalDuration">110 min</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Start Time:</span>
+                    <span class="stat-value">9:00 AM</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Est. End:</span>
+                    <span class="stat-value" id="endTime">10:50 AM</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Canvas -->
+        <main class="canvas-container">
+            <div class="canvas-toolbar">
+                <div class="canvas-title">
+                    <h2>Agenda Builder</h2>
+                    <span class="meeting-date">
+                        <i class="fas fa-calendar"></i> March 15, 2026 at 9:00 AM
+                    </span>
+                </div>
+                <div class="canvas-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button class="btn btn-primary" onclick="alert('Publish agenda to committee members')">
+                        <i class="fas fa-paper-plane"></i> Publish Agenda
+                    </button>
+                </div>
+            </div>
+
+            <div class="agenda-canvas" id="agendaCanvas">
+                <!-- Agenda Item 1 -->
+                <div class="agenda-item" draggable="true" data-id="1">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Call to Order & Welcome</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 9:00 AM - 5 min
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i> Jane Smith - CTO
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-information">Information</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Expand details">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-body">
+                        <div class="item-body-grid">
+                            <div class="field-group">
+                                <label class="field-label">Type</label>
+                                <select class="field-select">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information" selected>Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Start Time</label>
+                                <input type="text" class="field-input" value="9:00 AM">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Duration (minutes)</label>
+                                <input type="number" class="field-input" value="5" min="1">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Presenter</label>
+                                <select class="field-select">
+                                    <option value="jane-smith" selected>Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Description / Notes</label>
+                            <textarea class="field-textarea" placeholder="Add notes or description...">Welcome committee members and review meeting objectives.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda Item 2 with sub-items -->
+                <div class="agenda-item expanded" draggable="true" data-id="2">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Budget Review for Q1 2026</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 9:05 AM - 30 min
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i> John Doe - CFO
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-presentation">Presentation</span>
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-paperclip"></i> 2 documents
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-list"></i> 3 sub-items
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Collapse details">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-body visible">
+                        <div class="item-body-grid">
+                            <div class="field-group">
+                                <label class="field-label">Type</label>
+                                <select class="field-select">
+                                    <option value="presentation" selected>Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Start Time</label>
+                                <input type="text" class="field-input" value="9:05 AM">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Duration (minutes)</label>
+                                <input type="number" class="field-input" value="30" min="1">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Presenter</label>
+                                <select class="field-select">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe" selected>John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Description / Notes</label>
+                            <textarea class="field-textarea">Review and approve the proposed budget allocations for Q1 2026, including technology initiatives and infrastructure investments.</textarea>
+                        </div>
+
+                        <div class="documents-section">
+                            <label class="field-label">Attached Documents</label>
+                            <div class="documents-list">
+                                <div class="document-chip">
+                                    <i class="fas fa-file-pdf" style="color: #ef4444;"></i>
+                                    Q1_2026_Budget_Proposal.pdf
+                                    <button onclick="this.parentElement.remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="document-chip">
+                                    <i class="fas fa-file-excel" style="color: #10b981;"></i>
+                                    Budget_Spreadsheet.xlsx
+                                    <button onclick="this.parentElement.remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <button class="add-sub-item" style="width: auto; padding: 0.5rem 1rem; margin-top: 0;" onclick="alert('File upload dialog')">
+                                    <i class="fas fa-plus"></i> Add Document
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="sub-items">
+                            <label class="field-label" style="margin-bottom: 0.75rem;">Sub-Items</label>
+
+                            <div class="sub-item" draggable="true">
+                                <div class="sub-item-header">
+                                    <i class="fas fa-grip-lines drag-handle" style="font-size: 0.9rem;"></i>
+                                    <div class="sub-item-title" contenteditable="true">Revenue Budget Overview</div>
+                                    <button class="action-btn delete" onclick="this.closest('.sub-item').remove()" title="Delete">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="sub-item-meta">
+                                    <span><i class="fas fa-clock"></i> 10 min</span>
+                                    <span><i class="fas fa-user"></i> John Doe</span>
+                                    <span class="type-badge type-presentation">Presentation</span>
+                                </div>
+                            </div>
+
+                            <div class="sub-item" draggable="true">
+                                <div class="sub-item-header">
+                                    <i class="fas fa-grip-lines drag-handle" style="font-size: 0.9rem;"></i>
+                                    <div class="sub-item-title" contenteditable="true">Expense Budget Overview</div>
+                                    <button class="action-btn delete" onclick="this.closest('.sub-item').remove()" title="Delete">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="sub-item-meta">
+                                    <span><i class="fas fa-clock"></i> 10 min</span>
+                                    <span><i class="fas fa-user"></i> John Doe</span>
+                                    <span class="type-badge type-presentation">Presentation</span>
+                                </div>
+                            </div>
+
+                            <div class="sub-item" draggable="true">
+                                <div class="sub-item-header">
+                                    <i class="fas fa-grip-lines drag-handle" style="font-size: 0.9rem;"></i>
+                                    <div class="sub-item-title" contenteditable="true">Q&A and Discussion</div>
+                                    <button class="action-btn delete" onclick="this.closest('.sub-item').remove()" title="Delete">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="sub-item-meta">
+                                    <span><i class="fas fa-clock"></i> 10 min</span>
+                                    <span><i class="fas fa-users"></i> All Members</span>
+                                    <span class="type-badge type-discussion">Discussion</span>
+                                </div>
+                            </div>
+
+                            <button class="add-sub-item" onclick="alert('Add sub-item dialog')">
+                                <i class="fas fa-plus"></i> Add Sub-Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda Item 3 -->
+                <div class="agenda-item" draggable="true" data-id="3">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Security Infrastructure Review</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 9:35 AM - 20 min
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i> Bob Johnson - Director
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-discussion">Discussion</span>
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-paperclip"></i> 1 document
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Expand details">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-body">
+                        <div class="item-body-grid">
+                            <div class="field-group">
+                                <label class="field-label">Type</label>
+                                <select class="field-select">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion" selected>Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Start Time</label>
+                                <input type="text" class="field-input" value="9:35 AM">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Duration (minutes)</label>
+                                <input type="number" class="field-input" value="20" min="1">
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Presenter</label>
+                                <select class="field-select">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson" selected>Bob Johnson - Director</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Description / Notes</label>
+                            <textarea class="field-textarea">Review current security posture and discuss upcoming infrastructure upgrades.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda Item 4 - Break -->
+                <div class="agenda-item" draggable="true" data-id="4">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Break</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 9:55 AM - 10 min
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-break">Break</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Expand details">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda Item 5 -->
+                <div class="agenda-item" draggable="true" data-id="5">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Approval: Cloud Migration Phase 2</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 10:05 AM - 25 min
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i> Jane Smith - CTO
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-decision">Decision</span>
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-paperclip"></i> 3 documents
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Expand details">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agenda Item 6 -->
+                <div class="agenda-item" draggable="true" data-id="6">
+                    <div class="item-header">
+                        <i class="fas fa-grip-vertical drag-handle"></i>
+                        <div class="item-main">
+                            <div class="item-title" contenteditable="true">Next Steps & Adjournment</div>
+                            <div class="item-meta">
+                                <span class="meta-item time">
+                                    <i class="fas fa-clock"></i> 10:30 AM - 5 min
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-user"></i> Jane Smith - CTO
+                                </span>
+                                <span class="meta-item">
+                                    <span class="type-badge type-information">Information</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn expand" onclick="toggleItem(this)" title="Expand details">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let itemCounter = 7;
+
+        function toggleItem(button) {
+            const item = button.closest('.agenda-item');
+            const body = item.querySelector('.item-body');
+            const icon = button.querySelector('i');
+
+            if (body.classList.contains('visible')) {
+                body.classList.remove('visible');
+                icon.className = 'fas fa-chevron-down';
+                item.classList.remove('expanded');
+            } else {
+                body.classList.add('visible');
+                icon.className = 'fas fa-chevron-up';
+                item.classList.add('expanded');
+            }
+        }
+
+        function deleteItem(button) {
+            if (confirm('Delete this agenda item?')) {
+                button.closest('.agenda-item').remove();
+                updateStats();
+            }
+        }
+
+        function duplicateItem(button) {
+            const item = button.closest('.agenda-item');
+            const clone = item.cloneNode(true);
+            clone.setAttribute('data-id', itemCounter++);
+            item.parentNode.insertBefore(clone, item.nextSibling);
+            updateStats();
+        }
+
+        function addAgendaItem() {
+            const canvas = document.getElementById('agendaCanvas');
+            const newItem = document.createElement('div');
+            newItem.className = 'agenda-item expanded';
+            newItem.setAttribute('draggable', 'true');
+            newItem.setAttribute('data-id', itemCounter++);
+
+            newItem.innerHTML = `
+                <div class="item-header">
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    <div class="item-main">
+                        <div class="item-title" contenteditable="true">New Agenda Item</div>
+                        <div class="item-meta">
+                            <span class="meta-item time">
+                                <i class="fas fa-clock"></i> TBD - 15 min
+                            </span>
+                            <span class="meta-item">
+                                <span class="type-badge type-discussion">Discussion</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn expand" onclick="toggleItem(this)" title="Collapse details">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                        <button class="action-btn" onclick="duplicateItem(this)" title="Duplicate">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="deleteItem(this)" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-body visible">
+                    <div class="item-body-grid">
+                        <div class="field-group">
+                            <label class="field-label">Type</label>
+                            <select class="field-select">
+                                <option value="presentation">Presentation</option>
+                                <option value="discussion" selected>Discussion</option>
+                                <option value="decision">Decision</option>
+                                <option value="information">Information</option>
+                                <option value="break">Break</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Start Time</label>
+                            <input type="text" class="field-input" value="TBD">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Duration (minutes)</label>
+                            <input type="number" class="field-input" value="15" min="1">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Presenter</label>
+                            <select class="field-select">
+                                <option value="">Select presenter...</option>
+                                <option value="jane-smith">Jane Smith - CTO</option>
+                                <option value="john-doe">John Doe - CFO</option>
+                                <option value="bob-johnson">Bob Johnson - Director</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Description / Notes</label>
+                        <textarea class="field-textarea" placeholder="Add notes or description..."></textarea>
+                    </div>
+                </div>
+            `;
+
+            canvas.appendChild(newItem);
+            setupDragAndDrop();
+            updateStats();
+
+            // Scroll to new item and focus title
+            newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                newItem.querySelector('.item-title').focus();
+            }, 300);
+        }
+
+        function updateStats() {
+            const items = document.querySelectorAll('.agenda-item').length;
+            const subItems = document.querySelectorAll('.sub-item').length;
+
+            document.getElementById('totalItems').textContent = items;
+            document.getElementById('totalSubItems').textContent = subItems;
+        }
+
+        // Drag and drop functionality
+        let draggedElement = null;
+        let dropZone = null;
+
+        function setupDragAndDrop() {
+            const canvas = document.getElementById('agendaCanvas');
+
+            canvas.addEventListener('dragstart', function(e) {
+                if (e.target.classList.contains('agenda-item')) {
+                    draggedElement = e.target;
+                    e.target.classList.add('dragging');
+                }
+            });
+
+            canvas.addEventListener('dragend', function(e) {
+                if (e.target.classList.contains('agenda-item')) {
+                    e.target.classList.remove('dragging');
+                    if (dropZone) {
+                        dropZone.remove();
+                        dropZone = null;
+                    }
+                }
+            });
+
+            canvas.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(canvas, e.clientY);
+
+                if (dropZone) {
+                    dropZone.remove();
+                }
+
+                dropZone = document.createElement('div');
+                dropZone.className = 'drop-zone';
+                dropZone.innerHTML = '<div style="text-align: center; color: #4facfe; padding: 1rem;">Drop here</div>';
+
+                if (afterElement == null) {
+                    canvas.appendChild(dropZone);
+                } else {
+                    canvas.insertBefore(dropZone, afterElement);
+                }
+            });
+
+            canvas.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (draggedElement && dropZone) {
+                    canvas.insertBefore(draggedElement, dropZone);
+                    dropZone.remove();
+                    dropZone = null;
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.agenda-item:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Auto-save simulation
+        let saveTimer;
+        document.addEventListener('input', function() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(function() {
+                console.log('Auto-saved');
+            }, 1000);
+        });
+
+        // Initialize
+        setupDragAndDrop();
+    </script>
+</body>
+</html>

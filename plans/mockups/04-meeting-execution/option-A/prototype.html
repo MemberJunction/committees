@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Linear Flow - Meeting Execution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .meeting-title {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .meeting-time {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-display i {
+            font-size: 1.2em;
+        }
+
+        .quorum-status {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quorum-status.met {
+            background: rgba(40, 167, 69, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: white;
+            height: 6px;
+        }
+
+        .progress-step.completed {
+            background: rgba(40, 167, 69, 0.6);
+        }
+
+        .progress-label {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            font-size: 0.75em;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        .progress-step.active .progress-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Attendance Section */
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .member-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        .member-details h3 {
+            font-size: 1.1em;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .member-details p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .attendance-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .attendance-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .attendance-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .attendance-btn.active-present {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .attendance-btn.active-absent {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .attendance-btn.active-excused {
+            background: #ffc107;
+            color: #333;
+            border-color: #ffc107;
+        }
+
+        /* Agenda Section */
+        .agenda-item {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .agenda-item.current {
+            border-left: 4px solid #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .agenda-title {
+            flex: 1;
+        }
+
+        .agenda-title h3 {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .agenda-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .agenda-timer {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .agenda-timer.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .agenda-timer.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .timer-btn {
+            padding: 8px 16px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .timer-btn:hover {
+            background: #5568d3;
+        }
+
+        .timer-btn.secondary {
+            background: #6c757d;
+        }
+
+        .timer-btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Notes Section */
+        .notes-editor {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 15px;
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .editor-content {
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            outline: none;
+            line-height: 1.8;
+        }
+
+        .editor-content:focus {
+            border-color: #667eea;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .template-btn {
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .template-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Actions Section */
+        .actions-list {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .action-item {
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .action-item:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .action-info h4 {
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .action-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .action-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-action-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Finalization Section */
+        .minutes-preview {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .preview-header h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .preview-section {
+            margin-bottom: 25px;
+        }
+
+        .preview-section h4 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        /* Navigation Footer */
+        .nav-footer {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 20px 30px;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+        }
+
+        .nav-buttons {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .nav-btn.secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .auto-save {
+            color: #28a745;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="meeting-title">
+                    <i class="fas fa-gavel"></i> Technology Committee Meeting
+                </div>
+                <div class="meeting-time">
+                    <div class="time-display">
+                        <i class="fas fa-clock"></i>
+                        <span id="meeting-timer">0:00:00</span>
+                    </div>
+                    <div class="quorum-status" id="quorum-status">
+                        <i class="fas fa-users"></i>
+                        <span>Quorum: <span id="quorum-count">0/7</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-step active" id="step-0">
+                    <div class="progress-label">Attendance</div>
+                </div>
+                <div class="progress-step" id="step-1">
+                    <div class="progress-label">Agenda</div>
+                </div>
+                <div class="progress-step" id="step-2">
+                    <div class="progress-label">Notes</div>
+                </div>
+                <div class="progress-step" id="step-3">
+                    <div class="progress-label">Actions</div>
+                </div>
+                <div class="progress-step" id="step-4">
+                    <div class="progress-label">Finalize</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Section 1: Attendance -->
+            <div class="section-content active" id="section-0">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-check"></i> Mark Attendance</h2>
+                    <p>Record who is present for today's meeting</p>
+                </div>
+
+                <div class="attendance-grid">
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">JS</div>
+                            <div class="member-details">
+                                <h3>John Smith</h3>
+                                <p>Committee Chair</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(0, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">SJ</div>
+                            <div class="member-details">
+                                <h3>Sarah Johnson</h3>
+                                <p>Vice Chair</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(1, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">MC</div>
+                            <div class="member-details">
+                                <h3>Michael Chen</h3>
+                                <p>Member</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(2, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">EP</div>
+                            <div class="member-details">
+                                <h3>Emily Parker</h3>
+                                <p>Member</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(3, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">DW</div>
+                            <div class="member-details">
+                                <h3>David Wilson</h3>
+                                <p>Member</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(4, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">LM</div>
+                            <div class="member-details">
+                                <h3>Lisa Martinez</h3>
+                                <p>Member</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(5, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div class="member-avatar">RT</div>
+                            <div class="member-details">
+                                <h3>Robert Taylor</h3>
+                                <p>Member</p>
+                            </div>
+                        </div>
+                        <div class="attendance-buttons">
+                            <button class="attendance-btn" onclick="markAttendance(6, 'present')">
+                                <i class="fas fa-check"></i> Present
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Agenda with Timer -->
+            <div class="section-content" id="section-1">
+                <div class="section-header">
+                    <h2><i class="fas fa-list-check"></i> Meeting Agenda</h2>
+                    <p>Progress through agenda items with timer</p>
+                </div>
+
+                <div class="agenda-item current">
+                    <div class="agenda-header">
+                        <div class="agenda-title">
+                            <h3>1. Call to Order & Welcome</h3>
+                            <div class="agenda-meta">
+                                <span><i class="fas fa-user"></i> John Smith</span>
+                                <span><i class="fas fa-hourglass-half"></i> 5 minutes</span>
+                            </div>
+                        </div>
+                        <div class="agenda-timer" id="item-timer">
+                            <i class="fas fa-stopwatch"></i>
+                            <span>0:00</span>
+                        </div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="startTimer()">
+                            <i class="fas fa-play"></i> Start Timer
+                        </button>
+                        <button class="timer-btn secondary" onclick="pauseTimer()">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="timer-btn secondary" onclick="resetTimer()">
+                            <i class="fas fa-rotate-right"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-header">
+                        <div class="agenda-title">
+                            <h3>2. Approval of Previous Minutes</h3>
+                            <div class="agenda-meta">
+                                <span><i class="fas fa-user"></i> Sarah Johnson</span>
+                                <span><i class="fas fa-hourglass-half"></i> 10 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-header">
+                        <div class="agenda-title">
+                            <h3>3. IT Infrastructure Update</h3>
+                            <div class="agenda-meta">
+                                <span><i class="fas fa-user"></i> Michael Chen</span>
+                                <span><i class="fas fa-hourglass-half"></i> 20 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-header">
+                        <div class="agenda-title">
+                            <h3>4. Cybersecurity Policy Review</h3>
+                            <div class="agenda-meta">
+                                <span><i class="fas fa-user"></i> Emily Parker</span>
+                                <span><i class="fas fa-hourglass-half"></i> 25 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Notes -->
+            <div class="section-content" id="section-2">
+                <div class="section-header">
+                    <h2><i class="fas fa-pen-to-square"></i> Meeting Notes</h2>
+                    <p>Capture discussion points and decisions</p>
+                </div>
+
+                <div class="notes-editor">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="color: #667eea;">Notes for: Call to Order & Welcome</h3>
+                        <div class="auto-save">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Auto-saved</span>
+                        </div>
+                    </div>
+
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn"><i class="fas fa-bold"></i></button>
+                        <button class="toolbar-btn"><i class="fas fa-italic"></i></button>
+                        <button class="toolbar-btn"><i class="fas fa-underline"></i></button>
+                        <div style="width: 1px; background: #ddd; margin: 0 5px;"></div>
+                        <button class="toolbar-btn"><i class="fas fa-list-ul"></i></button>
+                        <button class="toolbar-btn"><i class="fas fa-list-ol"></i></button>
+                        <div style="width: 1px; background: #ddd; margin: 0 5px;"></div>
+                        <button class="toolbar-btn"><i class="fas fa-link"></i></button>
+                    </div>
+
+                    <div class="editor-content" contenteditable="true">
+                        Meeting called to order at 2:00 PM by Chair John Smith.
+                        <br><br>
+                        Welcome extended to all members. Quorum confirmed with 7 of 7 members present.
+                    </div>
+
+                    <div class="template-buttons">
+                        <button class="template-btn" onclick="insertMotion()">
+                            <i class="fas fa-gavel"></i> Insert Motion Template
+                        </button>
+                        <button class="template-btn" onclick="insertVote()">
+                            <i class="fas fa-vote-yea"></i> Insert Vote Template
+                        </button>
+                        <button class="template-btn" onclick="insertDiscussion()">
+                            <i class="fas fa-comments"></i> Insert Discussion Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Action Items -->
+            <div class="section-content" id="section-3">
+                <div class="section-header">
+                    <h2><i class="fas fa-tasks"></i> Action Items</h2>
+                    <p>Create and track follow-up actions</p>
+                </div>
+
+                <div class="actions-list">
+                    <div class="action-item">
+                        <div class="action-info">
+                            <h4>Review updated cybersecurity policy draft</h4>
+                            <div class="action-meta">
+                                <span><i class="fas fa-user"></i> Emily Parker</span>
+                                <span><i class="fas fa-calendar"></i> Due: Feb 28, 2026</span>
+                                <span><i class="fas fa-tag"></i> High Priority</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-info">
+                            <h4>Prepare Q1 infrastructure budget report</h4>
+                            <div class="action-meta">
+                                <span><i class="fas fa-user"></i> Michael Chen</span>
+                                <span><i class="fas fa-calendar"></i> Due: Feb 22, 2026</span>
+                                <span><i class="fas fa-tag"></i> Medium Priority</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="add-action-form">
+                        <h3 style="margin-bottom: 15px; color: #667eea;">Add New Action Item</h3>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea rows="3" placeholder="What needs to be done?"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Assign To</label>
+                                <select>
+                                    <option>Select member...</option>
+                                    <option>John Smith</option>
+                                    <option>Sarah Johnson</option>
+                                    <option>Michael Chen</option>
+                                    <option>Emily Parker</option>
+                                    <option>David Wilson</option>
+                                    <option>Lisa Martinez</option>
+                                    <option>Robert Taylor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Priority</label>
+                                <select>
+                                    <option>Medium</option>
+                                    <option>High</option>
+                                    <option>Low</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select>
+                                    <option>General</option>
+                                    <option>Infrastructure</option>
+                                    <option>Security</option>
+                                    <option>Budget</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="nav-btn primary" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Add Action Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Finalization -->
+            <div class="section-content" id="section-4">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-contract"></i> Finalize Minutes</h2>
+                    <p>Review and publish meeting minutes</p>
+                </div>
+
+                <div class="minutes-preview">
+                    <div class="preview-header">
+                        <h3>Technology Committee Meeting Minutes</h3>
+                        <p>February 15, 2026 | 2:00 PM - 3:45 PM</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h4>Attendance</h4>
+                        <p><strong>Present:</strong> John Smith (Chair), Sarah Johnson (Vice Chair), Michael Chen, Emily Parker, David Wilson, Lisa Martinez, Robert Taylor</p>
+                        <p><strong>Absent:</strong> None</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h4>1. Call to Order & Welcome</h4>
+                        <p>Meeting called to order at 2:00 PM by Chair John Smith. Welcome extended to all members. Quorum confirmed with 7 of 7 members present.</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h4>2. Approval of Previous Minutes</h4>
+                        <p>Motion to approve the minutes from the January 18, 2026 meeting. Moved by Sarah Johnson, seconded by Michael Chen. Motion carried unanimously.</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h4>Action Items</h4>
+                        <ul style="padding-left: 20px;">
+                            <li>Emily Parker: Review updated cybersecurity policy draft (Due: Feb 28, 2026)</li>
+                            <li>Michael Chen: Prepare Q1 infrastructure budget report (Due: Feb 22, 2026)</li>
+                        </ul>
+                    </div>
+
+                    <div class="preview-section">
+                        <p><strong>Meeting adjourned at 3:45 PM</strong></p>
+                        <p style="margin-top: 20px;"><em>Minutes prepared by: Committee Secretary</em></p>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="nav-btn secondary">
+                        <i class="fas fa-edit"></i> Edit Minutes
+                    </button>
+                    <button class="nav-btn primary">
+                        <i class="fas fa-file-pdf"></i> Export to PDF
+                    </button>
+                    <button class="nav-btn primary" onclick="showPublishModal()">
+                        <i class="fas fa-paper-plane"></i> Publish & Distribute
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="nav-footer">
+            <div class="nav-buttons">
+                <button class="nav-btn secondary" id="prev-btn" onclick="previousSection()" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="nav-btn primary" id="next-btn" onclick="nextSection()">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="publish-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle" style="color: #28a745;"></i> Minutes Published</h3>
+            </div>
+            <p>Meeting minutes have been successfully published and distributed to all committee members.</p>
+            <div class="modal-buttons">
+                <button class="nav-btn secondary" onclick="closeModal()">Close</button>
+                <button class="nav-btn primary" onclick="window.location.href='../index.html'">
+                    Return to Overview
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 5;
+        let attendanceCount = 0;
+        let meetingSeconds = 0;
+        let itemSeconds = 0;
+        let timerRunning = false;
+        let timerInterval;
+
+        // Meeting timer
+        setInterval(() => {
+            meetingSeconds++;
+            const hours = Math.floor(meetingSeconds / 3600);
+            const minutes = Math.floor((meetingSeconds % 3600) / 60);
+            const seconds = meetingSeconds % 60;
+            document.getElementById('meeting-timer').textContent =
+                `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+
+        function markAttendance(index, status) {
+            const buttons = document.querySelectorAll('.member-card')[index].querySelectorAll('.attendance-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active-present', 'active-absent', 'active-excused');
+            });
+
+            const clickedBtn = buttons[0];
+
+            // Toggle through states
+            if (clickedBtn.classList.contains('active-present')) {
+                clickedBtn.classList.add('active-absent');
+                clickedBtn.innerHTML = '<i class="fas fa-times"></i> Absent';
+                attendanceCount--;
+            } else if (clickedBtn.classList.contains('active-absent')) {
+                clickedBtn.classList.add('active-excused');
+                clickedBtn.innerHTML = '<i class="fas fa-minus"></i> Excused';
+                attendanceCount--;
+            } else if (clickedBtn.classList.contains('active-excused')) {
+                clickedBtn.classList.remove('active-excused');
+                clickedBtn.innerHTML = '<i class="fas fa-check"></i> Present';
+            } else {
+                clickedBtn.classList.add('active-present');
+                clickedBtn.innerHTML = '<i class="fas fa-check"></i> Present';
+                attendanceCount++;
+            }
+
+            updateQuorum();
+        }
+
+        function updateQuorum() {
+            const quorumElement = document.getElementById('quorum-count');
+            const quorumStatus = document.getElementById('quorum-status');
+            quorumElement.textContent = `${attendanceCount}/7`;
+
+            if (attendanceCount >= 4) {
+                quorumStatus.classList.add('met');
+            } else {
+                quorumStatus.classList.remove('met');
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                document.getElementById(`section-${currentSection}`).classList.remove('active');
+                document.getElementById(`step-${currentSection}`).classList.remove('active');
+                document.getElementById(`step-${currentSection}`).classList.add('completed');
+
+                currentSection++;
+
+                document.getElementById(`section-${currentSection}`).classList.add('active');
+                document.getElementById(`step-${currentSection}`).classList.add('active');
+
+                updateNavButtons();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                document.getElementById(`section-${currentSection}`).classList.remove('active');
+                document.getElementById(`step-${currentSection}`).classList.remove('active');
+
+                currentSection--;
+
+                document.getElementById(`section-${currentSection}`).classList.add('active');
+                document.getElementById(`step-${currentSection}`).classList.remove('completed');
+
+                updateNavButtons();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            prevBtn.disabled = currentSection === 0;
+
+            if (currentSection === totalSections - 1) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'flex';
+            }
+        }
+
+        function startTimer() {
+            if (!timerRunning) {
+                timerRunning = true;
+                timerInterval = setInterval(() => {
+                    itemSeconds++;
+                    const minutes = Math.floor(itemSeconds / 60);
+                    const seconds = itemSeconds % 60;
+                    document.querySelector('#item-timer span').textContent =
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                    const timerEl = document.getElementById('item-timer');
+                    if (itemSeconds > 240) {
+                        timerEl.classList.add('danger');
+                    } else if (itemSeconds > 180) {
+                        timerEl.classList.add('warning');
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            timerRunning = false;
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            itemSeconds = 0;
+            document.querySelector('#item-timer span').textContent = '0:00';
+            document.getElementById('item-timer').classList.remove('warning', 'danger');
+        }
+
+        function insertMotion() {
+            const editor = document.querySelector('.editor-content');
+            editor.innerHTML += `<br><br><strong>MOTION:</strong> [Motion text]<br><strong>Moved by:</strong> [Name]<br><strong>Seconded by:</strong> [Name]<br><strong>Vote:</strong> [Result]<br>`;
+        }
+
+        function insertVote() {
+            const editor = document.querySelector('.editor-content');
+            editor.innerHTML += `<br><br><strong>VOTE:</strong><br>In favor: [Count]<br>Opposed: [Count]<br>Abstained: [Count]<br>Result: [Passed/Failed]<br>`;
+        }
+
+        function insertDiscussion() {
+            const editor = document.querySelector('.editor-content');
+            editor.innerHTML += `<br><br><strong>DISCUSSION:</strong><br>[Discussion points]<br>`;
+        }
+
+        function showPublishModal() {
+            document.getElementById('publish-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('publish-modal').classList.remove('active');
+        }
+
+        // Initialize
+        updateNavButtons();
+    </script>
+</body>
+</html>

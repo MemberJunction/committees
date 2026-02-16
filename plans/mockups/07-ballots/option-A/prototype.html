@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Document-Centric View - Standards Ballot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .header-btn.primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .header-btn.primary:hover {
+            background: #f0f0f0;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 0 15px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .toolbar-section:last-child {
+            border-right: none;
+        }
+
+        .toolbar-btn {
+            padding: 6px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: #e9ecef;
+        }
+
+        .toolbar-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .version-select {
+            padding: 6px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .stats-badge {
+            padding: 4px 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .stats-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .stats-badge.resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Document Panel */
+        .document-panel {
+            flex: 1;
+            background: white;
+            overflow-y: auto;
+            padding: 40px 60px;
+            position: relative;
+        }
+
+        .document-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+
+        .doc-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .doc-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .doc-section {
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .line-number {
+            display: inline-block;
+            width: 40px;
+            color: #999;
+            font-size: 0.8rem;
+            user-select: none;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .doc-line {
+            position: relative;
+            padding: 4px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .doc-line:hover {
+            background: #f8f9fa;
+        }
+
+        .doc-line.has-comment {
+            background: #fff3cd;
+        }
+
+        .doc-line.has-comment:hover {
+            background: #ffe69c;
+        }
+
+        .comment-marker {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: #ffc107;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .comment-marker:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .comment-marker.resolved {
+            background: #28a745;
+            color: white;
+        }
+
+        .comment-marker.technical {
+            background: #dc3545;
+        }
+
+        .change-highlight {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .change-removed {
+            background: #f8d7da;
+            text-decoration: line-through;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 450px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .sidebar-tab {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .comment-card {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .comment-card:hover {
+            background: #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comment-card.resolved {
+            border-left-color: #28a745;
+            opacity: 0.7;
+        }
+
+        .comment-card.technical {
+            border-left-color: #dc3545;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .comment-meta {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .comment-location {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .comment-badges {
+            display: flex;
+            gap: 5px;
+        }
+
+        .comment-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .comment-badge.technical {
+            background: #dc3545;
+            color: white;
+        }
+
+        .comment-badge.editorial {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .comment-badge.resolved {
+            background: #28a745;
+            color: white;
+        }
+
+        .comment-text {
+            color: #333;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .comment-suggestion {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .comment-btn {
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .comment-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .comment-btn.accept {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .comment-btn.accept:hover {
+            background: #218838;
+        }
+
+        .comment-btn.reject {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .comment-btn.reject:hover {
+            background: #c82333;
+        }
+
+        /* Voting Panel */
+        .voting-panel {
+            padding: 20px;
+        }
+
+        .voting-header {
+            margin-bottom: 20px;
+        }
+
+        .voting-progress {
+            margin: 20px 0;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: width 0.3s;
+        }
+
+        .progress-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .voting-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .voting-stat {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .voting-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .voting-stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .voting-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .vote-option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vote-option:hover {
+            border-color: #667eea;
+        }
+
+        .vote-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .modal-btn.primary:hover {
+            background: #5568d3;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #e9ecef;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="../index.html" class="back-button">←</a>
+                <div class="header-title">
+                    <h1>Ballot #2024-08: IoT Security Standard v2.0</h1>
+                    <div class="header-subtitle">Working Group: IoT Security • Chair: Sarah Chen</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn">Export PDF</button>
+                <button class="header-btn">Share</button>
+                <button class="header-btn primary" onclick="openBallotSettings()">Ballot Settings</button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="toolbar-section">
+                    <label style="font-size: 0.85rem; color: #666;">Version:</label>
+                    <select class="version-select" onchange="changeVersion(this.value)">
+                        <option value="draft-3">Draft 3 (Current)</option>
+                        <option value="draft-2">Draft 2</option>
+                        <option value="draft-1">Draft 1</option>
+                    </select>
+                </div>
+                <div class="toolbar-section">
+                    <button class="toolbar-btn active" onclick="toggleView('edit')">Edit Mode</button>
+                    <button class="toolbar-btn" onclick="toggleView('preview')">Preview</button>
+                    <button class="toolbar-btn" onclick="toggleView('changes')">Track Changes</button>
+                </div>
+                <div class="toolbar-section">
+                    <span class="stats-badge pending">23 Pending</span>
+                    <span class="stats-badge resolved">45 Resolved</span>
+                </div>
+            </div>
+            <button class="header-btn primary" onclick="openCommentModal()">+ Add Comment</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Document Panel -->
+            <div class="document-panel">
+                <div class="document-container">
+                    <div class="doc-header">
+                        <div class="doc-title">IoT Security Standard</div>
+                        <div class="doc-meta">Version 2.0 Draft 3 • January 2026</div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title"><span class="line-number">1</span>1. Introduction</h2>
+                        <div class="doc-line">
+                            <span class="line-number">2</span>
+                            This standard establishes security requirements for Internet of Things (IoT) devices deployed in enterprise environments.
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(1)">
+                            <span class="line-number">3</span>
+                            It applies to all connected devices that <span class="change-highlight">collect, process, or transmit</span> sensitive data.
+                            <span class="comment-marker technical">1</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title"><span class="line-number">5</span>2. Scope</h2>
+                        <div class="doc-line">
+                            <span class="line-number">6</span>
+                            This standard covers the following device categories:
+                        </div>
+                        <div class="doc-line">
+                            <span class="line-number">7</span>
+                            • Industrial sensors and actuators
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(2)">
+                            <span class="line-number">8</span>
+                            • Smart building systems
+                            <span class="comment-marker">2</span>
+                        </div>
+                        <div class="doc-line">
+                            <span class="line-number">9</span>
+                            • Healthcare monitoring devices
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(3)">
+                            <span class="line-number">10</span>
+                            • <span class="change-removed">Network infrastructure</span> <span class="change-highlight">Edge computing devices</span>
+                            <span class="comment-marker resolved">✓</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title"><span class="line-number">12</span>3. Security Requirements</h2>
+                        <div class="doc-line">
+                            <span class="line-number">13</span>
+                            <strong>3.1 Authentication</strong>
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(4)">
+                            <span class="line-number">14</span>
+                            All IoT devices SHALL implement multi-factor authentication for administrative access.
+                            <span class="comment-marker technical">3</span>
+                        </div>
+                        <div class="doc-line">
+                            <span class="line-number">15</span>
+                            Default passwords MUST be changed during initial device setup.
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(5)">
+                            <span class="line-number">16</span>
+                            Devices SHALL support <span class="change-highlight">certificate-based authentication</span> for machine-to-machine communication.
+                            <span class="comment-marker">4</span>
+                        </div>
+                        <div class="doc-line">
+                            <span class="line-number">18</span>
+                            <strong>3.2 Encryption</strong>
+                        </div>
+                        <div class="doc-line">
+                            <span class="line-number">19</span>
+                            Data in transit MUST be encrypted using TLS 1.3 or higher.
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(6)">
+                            <span class="line-number">20</span>
+                            Data at rest SHOULD be encrypted using AES-256 or equivalent.
+                            <span class="comment-marker technical">5</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title"><span class="line-number">22</span>4. Compliance and Certification</h2>
+                        <div class="doc-line">
+                            <span class="line-number">23</span>
+                            Manufacturers SHALL provide documentation demonstrating compliance with this standard.
+                        </div>
+                        <div class="doc-line has-comment" onclick="selectComment(7)">
+                            <span class="line-number">24</span>
+                            Third-party security audits MUST be conducted <span class="change-highlight">annually</span> for certified devices.
+                            <span class="comment-marker">6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Comments & Resolution</h3>
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active" onclick="switchTab('comments')">Comments (23)</button>
+                        <button class="sidebar-tab" onclick="switchTab('voting')">Voting</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-content" id="commentsTab">
+                    <div class="filters">
+                        <button class="filter-btn active" onclick="filterComments('all')">All</button>
+                        <button class="filter-btn" onclick="filterComments('technical')">Technical</button>
+                        <button class="filter-btn" onclick="filterComments('editorial')">Editorial</button>
+                        <button class="filter-btn" onclick="filterComments('pending')">Pending</button>
+                    </div>
+
+                    <!-- Comment 1 -->
+                    <div class="comment-card technical" onclick="scrollToLine(3)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Michael Torres</div>
+                                <div class="comment-location">Line 3 • Section 1</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge technical">Technical</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            The phrase "sensitive data" is too broad. We need to define what constitutes sensitive data in the context of IoT devices. Suggest adding a definition section.
+                        </div>
+                        <div class="comment-suggestion">
+                            Suggested: "...that collect, process, or transmit data classified as Confidential or higher per the organization's data classification policy."
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(1, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(1, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(1, event)">Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment 2 -->
+                    <div class="comment-card" onclick="scrollToLine(8)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Lisa Park</div>
+                                <div class="comment-location">Line 8 • Section 2</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge editorial">Editorial</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            Consider adding "HVAC and environmental controls" as a specific example under smart building systems for clarity.
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(2, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(2, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(2, event)">Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment 3 - Resolved -->
+                    <div class="comment-card resolved" onclick="scrollToLine(10)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">David Kim</div>
+                                <div class="comment-location">Line 10 • Section 2</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge resolved">Resolved</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            "Network infrastructure" is too broad and overlaps with traditional IT security standards. Suggest replacing with "Edge computing devices" to better reflect IoT context.
+                        </div>
+                        <div class="comment-suggestion">
+                            Resolution: Accepted. Changed to "Edge computing devices" as suggested.
+                        </div>
+                    </div>
+
+                    <!-- Comment 4 -->
+                    <div class="comment-card technical" onclick="scrollToLine(14)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Jennifer Wong</div>
+                                <div class="comment-location">Line 14 • Section 3.1</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge technical">Technical</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            MFA requirement may not be practical for all IoT device types, especially headless devices. Suggest changing SHALL to SHOULD with exception criteria.
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(4, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(4, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(4, event)">Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment 5 -->
+                    <div class="comment-card" onclick="scrollToLine(16)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Robert Martinez</div>
+                                <div class="comment-location">Line 16 • Section 3.1</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge editorial">Editorial</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            Good addition. Suggest also mentioning key rotation requirements for certificate-based auth.
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(5, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(5, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(5, event)">Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment 6 -->
+                    <div class="comment-card technical" onclick="scrollToLine(20)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Amanda Foster</div>
+                                <div class="comment-location">Line 20 • Section 3.2</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge technical">Technical</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            SHOULD is too weak for data at rest encryption. Many IoT devices handle sensitive health or financial data. Recommend changing to MUST with exceptions for resource-constrained devices.
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(6, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(6, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(6, event)">Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment 7 -->
+                    <div class="comment-card" onclick="scrollToLine(24)">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">Thomas Anderson</div>
+                                <div class="comment-location">Line 24 • Section 4</div>
+                            </div>
+                            <div class="comment-badges">
+                                <span class="comment-badge editorial">Editorial</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            Annual audits may be too frequent and costly. Consider biennial audits with mandatory security patch verification between audit cycles.
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-btn accept" onclick="acceptComment(7, event)">Accept</button>
+                            <button class="comment-btn reject" onclick="rejectComment(7, event)">Reject</button>
+                            <button class="comment-btn" onclick="replyComment(7, event)">Reply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voting Tab (Hidden by default) -->
+                <div class="sidebar-content" id="votingTab" style="display: none;">
+                    <div class="voting-panel">
+                        <div class="voting-header">
+                            <h3>Ballot Status</h3>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">
+                                Comment period: Feb 1-15, 2026<br>
+                                Voting opens: Feb 16, 2026
+                            </p>
+                        </div>
+
+                        <div class="voting-progress">
+                            <h4 style="margin-bottom: 10px;">Current Progress</h4>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar progress-approve" style="width: 66%;">
+                                    66% Resolved
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="voting-stats">
+                            <div class="voting-stat">
+                                <div class="voting-stat-value">68</div>
+                                <div class="voting-stat-label">Total Comments</div>
+                            </div>
+                            <div class="voting-stat">
+                                <div class="voting-stat-value">45</div>
+                                <div class="voting-stat-label">Resolved</div>
+                            </div>
+                            <div class="voting-stat">
+                                <div class="voting-stat-value">23</div>
+                                <div class="voting-stat-label">Pending</div>
+                            </div>
+                        </div>
+
+                        <div class="voting-form">
+                            <h4 style="margin-bottom: 15px;">Submit Your Vote</h4>
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">
+                                Voting will open on February 16, 2026 after all comments are resolved.
+                            </p>
+                            <div class="vote-option">
+                                <strong>✓ Approve</strong>
+                                <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">
+                                    I approve this standard as written
+                                </p>
+                            </div>
+                            <div class="vote-option">
+                                <strong>✗ Disapprove</strong>
+                                <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">
+                                    I disapprove with technical objections
+                                </p>
+                            </div>
+                            <div class="vote-option">
+                                <strong>○ Abstain</strong>
+                                <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">
+                                    I abstain from voting
+                                </p>
+                            </div>
+                            <button class="header-btn primary" style="width: 100%; margin-top: 15px;" disabled>
+                                Submit Vote (Opens Feb 16)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Comment Modal -->
+    <div class="modal" id="commentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Comment</h3>
+                <button class="modal-close" onclick="closeCommentModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Line Number</label>
+                    <input type="number" class="form-input" placeholder="e.g., 14" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Comment Type</label>
+                    <select class="form-select">
+                        <option>Technical</option>
+                        <option>Editorial</option>
+                        <option>General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Comment</label>
+                    <textarea class="form-textarea" placeholder="Enter your comment..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Suggested Change (Optional)</label>
+                    <textarea class="form-textarea" placeholder="Provide suggested text..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" onclick="closeCommentModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="submitComment()">Submit Comment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openCommentModal() {
+            document.getElementById('commentModal').classList.add('active');
+        }
+
+        function closeCommentModal() {
+            document.getElementById('commentModal').classList.remove('active');
+        }
+
+        function submitComment() {
+            alert('Comment submitted successfully!');
+            closeCommentModal();
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.sidebar-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tab === 'comments') {
+                document.getElementById('commentsTab').style.display = 'block';
+                document.getElementById('votingTab').style.display = 'none';
+            } else {
+                document.getElementById('commentsTab').style.display = 'none';
+                document.getElementById('votingTab').style.display = 'block';
+            }
+        }
+
+        function filterComments(filter) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const cards = document.querySelectorAll('.comment-card');
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'technical') {
+                    card.style.display = card.classList.contains('technical') ? 'block' : 'none';
+                } else if (filter === 'editorial') {
+                    const hasEditorialBadge = card.querySelector('.comment-badge.editorial');
+                    card.style.display = hasEditorialBadge ? 'block' : 'none';
+                } else if (filter === 'pending') {
+                    card.style.display = !card.classList.contains('resolved') ? 'block' : 'none';
+                }
+            });
+        }
+
+        function acceptComment(id, event) {
+            event.stopPropagation();
+            alert('Comment #' + id + ' accepted. Changes applied to document.');
+        }
+
+        function rejectComment(id, event) {
+            event.stopPropagation();
+            const reason = prompt('Please provide a reason for rejecting this comment:');
+            if (reason) {
+                alert('Comment #' + id + ' rejected with reason: ' + reason);
+            }
+        }
+
+        function replyComment(id, event) {
+            event.stopPropagation();
+            const reply = prompt('Enter your reply:');
+            if (reply) {
+                alert('Reply posted to comment #' + id);
+            }
+        }
+
+        function scrollToLine(lineNum) {
+            alert('Scrolling to line ' + lineNum + ' in document view');
+        }
+
+        function selectComment(id) {
+            const cards = document.querySelectorAll('.comment-card');
+            cards.forEach(card => card.style.border = 'none');
+            event.currentTarget.style.background = '#ffe69c';
+        }
+
+        function changeVersion(version) {
+            alert('Switching to ' + version);
+        }
+
+        function toggleView(view) {
+            const buttons = document.querySelectorAll('.toolbar-section:nth-child(2) .toolbar-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            alert('Switched to ' + view + ' mode');
+        }
+
+        function openBallotSettings() {
+            alert('Opening ballot settings...');
+        }
+    </script>
+</body>
+</html>

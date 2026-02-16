@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Interactive Prototype - Minimal & Clean Wizard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #666;
+        }
+
+        .progress-bar {
+            padding: 2rem 2rem 1rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .step-circle.completed {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .step-label.active {
+            color: #667eea;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label.required:after {
+            content: " *";
+            color: #f44336;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.75rem;
+        }
+
+        .checkbox-list {
+            list-style: none;
+        }
+
+        .checkbox-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .member-email {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .member-role {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .edit-link {
+            font-size: 0.85rem;
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+
+        .review-item {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-icon {
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1.25rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-box ol {
+            margin-left: 1.5rem;
+            color: #555;
+        }
+
+        .info-box li {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .success-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .success-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .success-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #555;
+        }
+
+        .success-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .next-steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .next-step-card {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .next-step-card:hover {
+            background: #e8e9ea;
+            transform: translateY(-2px);
+        }
+
+        .next-step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .next-step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .next-step-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .next-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Schedule Meeting for Finance Committee</div>
+            <button class="close-btn" onclick="alert('Close prototype')">&times;</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill" style="width: 33%"></div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle active" id="step1Circle">1</div>
+                    <div class="step-label active">Basics</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step2Circle">2</div>
+                    <div class="step-label">Invites</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step3Circle">3</div>
+                    <div class="step-label">Confirm</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <!-- Step 1: Basics -->
+            <div class="form-section active" id="step1">
+                <div class="section-title">Meeting Details</div>
+
+                <div class="form-group">
+                    <label class="form-label required">Title</label>
+                    <input type="text" class="form-input" value="Finance Committee - March 2026" id="meetingTitle">
+                    <div class="form-hint">ℹ️ Auto-generated from committee name and date</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description (optional)</label>
+                    <textarea class="form-input" id="meetingDescription" placeholder="What will be discussed?">Quarterly financial review and budget planning</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">When</label>
+                    <div class="form-row">
+                        <div>
+                            <input type="date" class="form-input" value="2026-03-15" id="meetingDate">
+                        </div>
+                        <div>
+                            <input type="time" class="form-input" value="14:00" id="meetingTime">
+                        </div>
+                        <div>
+                            <select class="form-input" id="meetingDuration">
+                                <option value="30">30 min</option>
+                                <option value="60" selected>1 hour</option>
+                                <option value="90">1.5 hours</option>
+                                <option value="120">2 hours</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-hint">🌍 Meeting time will be shown in each member's local time zone</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Location</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="location" value="inperson">
+                            <span>🏢 In Person</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="location" value="virtual" checked>
+                            <span>💻 Virtual</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="location" value="hybrid">
+                            <span>🔄 Hybrid</span>
+                        </label>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">Virtual Platform</div>
+                        <select class="form-input">
+                            <option value="zoom" selected>Zoom (Auto-create meeting link)</option>
+                            <option value="teams">Microsoft Teams</option>
+                            <option value="meet">Google Meet</option>
+                        </select>
+                        <div class="form-hint" style="margin-top: 0.5rem;">✓ Meeting link will be automatically generated and included in calendar invites</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="radio-option">
+                        <input type="checkbox" id="recurringCheck">
+                        <span style="font-weight: 500;">Recurring Meeting</span>
+                    </label>
+                    <div class="panel" id="recurringPanel" style="display: none; margin-top: 0.75rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                            <span>Every</span>
+                            <select class="form-input" style="width: auto; padding: 0.5rem;">
+                                <option>Monthly</option>
+                                <option>Weekly</option>
+                                <option>Quarterly</option>
+                            </select>
+                            <span>on the</span>
+                            <select class="form-input" style="width: auto; padding: 0.5rem;">
+                                <option>3rd</option>
+                                <option>1st</option>
+                                <option>2nd</option>
+                                <option>Last</option>
+                            </select>
+                            <select class="form-input" style="width: auto; padding: 0.5rem;">
+                                <option>Friday</option>
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                            </select>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <span>Ends after</span>
+                            <input type="number" class="form-input" value="4" style="width: 60px; display: inline-block; padding: 0.5rem; margin: 0 0.5rem;">
+                            <span>occurrences</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Invites -->
+            <div class="form-section" id="step2">
+                <div class="section-title">Who to Invite</div>
+
+                <div class="panel">
+                    <div class="panel-title">
+                        <label class="radio-option">
+                            <input type="checkbox" id="selectAll" checked>
+                            <span>Committee Members (8)</span>
+                        </label>
+                    </div>
+                    <ul class="checkbox-list">
+                        <li class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <div class="member-info">
+                                <div class="member-name">Sarah Johnson</div>
+                                <div class="member-email">sarah.j@org.com</div>
+                            </div>
+                            <div class="member-role">Chair</div>
+                        </li>
+                        <li class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <div class="member-info">
+                                <div class="member-name">Michael Chen</div>
+                                <div class="member-email">michael.c@org.com</div>
+                            </div>
+                            <div class="member-role">Vice Chair</div>
+                        </li>
+                        <li class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <div class="member-info">
+                                <div class="member-name">Jennifer Lee</div>
+                                <div class="member-email">jennifer.l@org.com</div>
+                            </div>
+                            <div class="member-role">Member</div>
+                        </li>
+                        <li class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <div class="member-info">
+                                <div class="member-name">David Kim</div>
+                                <div class="member-email">david.k@org.com</div>
+                            </div>
+                            <div class="member-role">Member</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label">Additional Attendees (Optional)</label>
+                    <input type="text" class="form-input" placeholder="Search by name or email...">
+                    <div class="form-hint">Add people who are not committee members</div>
+                </div>
+
+                <div class="panel" style="margin-top: 1.5rem;">
+                    <div class="panel-title">Notification Options</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <label class="radio-option">
+                            <input type="checkbox" checked>
+                            <span>Send email invitation now</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="checkbox" checked>
+                            <span>Add to members' calendars (Google/Outlook)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="checkbox" checked>
+                            <span>Send reminder 1 day before meeting</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="checkbox" checked>
+                            <span>Send reminder 1 hour before meeting</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Confirm -->
+            <div class="form-section" id="step3">
+                <div class="section-title">Review Meeting Details</div>
+
+                <div class="review-section">
+                    <div class="review-title">
+                        <span>Meeting Information</span>
+                        <a class="edit-link" onclick="goToStep(1)">Edit Basics</a>
+                    </div>
+                    <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem;">Finance Committee - March 2026</div>
+                    <div class="review-item">
+                        <span class="review-icon">📅</span>
+                        <span>Friday, March 15, 2026</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-icon">🕐</span>
+                        <span>2:00 PM - 3:00 PM EST</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-icon">🌍</span>
+                        <span>Virtual via Zoom</span>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-title">
+                        <span>Attendees (8)</span>
+                        <a class="edit-link" onclick="goToStep(2)">Edit Invites</a>
+                    </div>
+                    <div style="font-size: 0.95rem; color: #666;">
+                        <strong>Committee Members:</strong> Sarah Johnson (Chair), Michael Chen (Vice Chair), Jennifer Lee, David Kim, and 4 others
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">What Happens Next</div>
+                    <div style="color: #555;">When you click "Send Invitations" below:</div>
+                    <ol>
+                        <li>✉️ Email invitations sent to all 8 attendees</li>
+                        <li>📅 Calendar events created in their Google/Outlook</li>
+                        <li>🔗 Zoom meeting link auto-generated and included</li>
+                        <li>🔔 Reminders scheduled (1 day & 1 hour before)</li>
+                        <li>✓ Meeting appears in Committees app calendar</li>
+                    </ol>
+                    <div style="margin-top: 0.75rem; font-size: 0.9rem;">You can edit meeting details anytime before the meeting.</div>
+                </div>
+            </div>
+
+            <!-- Success Screen -->
+            <div class="form-section" id="stepSuccess">
+                <div class="success-screen">
+                    <div class="success-icon">✓</div>
+                    <div class="success-title">Success!</div>
+                    <div class="success-subtitle">Meeting invitations have been sent</div>
+
+                    <div class="success-details">
+                        <div style="font-weight: 600; margin-bottom: 1rem;">What We Did</div>
+                        <div class="success-item">
+                            <span>✓</span>
+                            <span>Created "Finance Committee - March 2026"</span>
+                        </div>
+                        <div class="success-item">
+                            <span>✓</span>
+                            <span>Sent 8 email invitations</span>
+                        </div>
+                        <div class="success-item">
+                            <span>✓</span>
+                            <span>Added events to 8 calendars</span>
+                        </div>
+                        <div class="success-item">
+                            <span>✓</span>
+                            <span>Generated Zoom meeting link</span>
+                        </div>
+                        <div class="success-item">
+                            <span>✓</span>
+                            <span>Scheduled reminders (1 day & 1 hour before)</span>
+                        </div>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+                            <strong>Zoom Link:</strong> <a href="#" style="color: #667eea;">https://zoom.us/j/123456789</a>
+                            <div style="font-size: 0.85rem; color: #999; margin-top: 0.25rem;">(also in calendar invite)</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <strong>Next Steps</strong>
+                    </div>
+                    <div class="next-steps">
+                        <div class="next-step-card" onclick="alert('Navigate to Agenda Builder')">
+                            <div class="next-step-icon">📝</div>
+                            <div class="next-step-title">Build Agenda</div>
+                            <div class="next-step-desc">Add items to discuss</div>
+                        </div>
+                        <div class="next-step-card" onclick="alert('Navigate to Meeting Details')">
+                            <div class="next-step-icon">📄</div>
+                            <div class="next-step-title">View Meeting</div>
+                            <div class="next-step-desc">Edit or add documents</div>
+                        </div>
+                        <div class="next-step-card" onclick="alert('Navigate to Attendees')">
+                            <div class="next-step-icon">👥</div>
+                            <div class="next-step-title">View Attendees</div>
+                            <div class="next-step-desc">Track RSVPs</div>
+                        </div>
+                        <div class="next-step-card" onclick="alert('Navigate to Calendar')">
+                            <div class="next-step-icon">📅</div>
+                            <div class="next-step-title">Back to Calendar</div>
+                            <div class="next-step-desc">See all meetings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="backBtn" onclick="previousStep()" style="display: none;">← Back</button>
+            <div style="flex: 1;"></div>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next: Invites →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        // Recurring checkbox toggle
+        document.getElementById('recurringCheck').addEventListener('change', function() {
+            document.getElementById('recurringPanel').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Select all checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        function updateProgress() {
+            const step1Circle = document.getElementById('step1Circle');
+            const step2Circle = document.getElementById('step2Circle');
+            const step3Circle = document.getElementById('step3Circle');
+            const progressFill = document.getElementById('progressFill');
+            const backBtn = document.getElementById('backBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            // Reset all
+            step1Circle.className = 'step-circle';
+            step2Circle.className = 'step-circle';
+            step3Circle.className = 'step-circle';
+            document.querySelectorAll('.step-label').forEach(l => l.classList.remove('active'));
+
+            // Update based on current step
+            if (currentStep === 1) {
+                step1Circle.classList.add('active');
+                document.querySelectorAll('.step-label')[0].classList.add('active');
+                progressFill.style.width = '0%';
+                backBtn.style.display = 'none';
+                nextBtn.textContent = 'Next: Invites →';
+            } else if (currentStep === 2) {
+                step1Circle.classList.add('completed');
+                step2Circle.classList.add('active');
+                document.querySelectorAll('.step-label')[1].classList.add('active');
+                progressFill.style.width = '50%';
+                backBtn.style.display = 'block';
+                nextBtn.textContent = 'Next: Confirm →';
+            } else if (currentStep === 3) {
+                step1Circle.classList.add('completed');
+                step2Circle.classList.add('completed');
+                step3Circle.classList.add('active');
+                document.querySelectorAll('.step-label')[2].classList.add('active');
+                progressFill.style.width = '100%';
+                backBtn.style.display = 'block';
+                nextBtn.textContent = 'Send Invitations';
+            }
+
+            // Show correct section
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            if (currentStep === 1) document.getElementById('step1').classList.add('active');
+            else if (currentStep === 2) document.getElementById('step2').classList.add('active');
+            else if (currentStep === 3) document.getElementById('step3').classList.add('active');
+            else if (currentStep === 4) {
+                document.getElementById('stepSuccess').classList.add('active');
+                document.querySelector('.progress-bar').style.display = 'none';
+                document.querySelector('.modal-footer').style.display = 'none';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                updateProgress();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            updateProgress();
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Data Table Dashboard - Committee Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .top-bar h1 {
+            font-size: 1.5rem;
+            color: #f5576c;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #f5576c;
+            border: 1px solid #f5576c;
+        }
+
+        .btn-secondary:hover {
+            background: #fff5f7;
+        }
+
+        .controls-bar {
+            background: white;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .bulk-actions {
+            padding: 1rem 2rem;
+            background: #fff3cd;
+            border-bottom: 1px solid #ffc107;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bulk-actions.active {
+            display: flex;
+        }
+
+        .bulk-actions-text {
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .table-container {
+            background: white;
+            margin: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.813rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            border-bottom: 2px solid #e1e8ed;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .data-table th:hover {
+            background: #e9ecef;
+        }
+
+        .data-table th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.3;
+        }
+
+        .data-table th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        .data-table th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.875rem;
+        }
+
+        .data-table tbody tr {
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tbody tr.selected {
+            background: #fff3f5;
+        }
+
+        .data-table tbody tr.expanded {
+            background: #f8f9fa;
+        }
+
+        .checkbox-cell {
+            width: 40px;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .expand-cell {
+            width: 40px;
+            text-align: center;
+            color: #999;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .committee-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .committee-type {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #e9ecef;
+            color: #666;
+        }
+
+        .health-score {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .health-value {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .health-bar {
+            flex: 1;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .health-bar-fill.good {
+            background: #28a745;
+        }
+
+        .health-bar-fill.warning {
+            background: #ffc107;
+        }
+
+        .health-bar-fill.danger {
+            background: #dc3545;
+        }
+
+        .metric-cell {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .sparkline-container {
+            width: 100px;
+            height: 30px;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .trend-indicator.up {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .trend-indicator.down {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .trend-indicator.stable {
+            background: #e9ecef;
+            color: #666;
+        }
+
+        .risk-indicators-cell {
+            max-width: 200px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.125rem;
+        }
+
+        .risk-badge.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-badge.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .actions-cell {
+            text-align: right;
+        }
+
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #f5576c;
+            color: #f5576c;
+        }
+
+        .expanded-row {
+            display: none;
+        }
+
+        .expanded-row.active {
+            display: table-row;
+        }
+
+        .expanded-content {
+            padding: 1.5rem;
+            background: #fafbfc;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .expanded-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .expanded-section h4 {
+            color: #f5576c;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.813rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+
+        .chart-section {
+            grid-column: 1 / -1;
+        }
+
+        .detail-chart-container {
+            height: 150px;
+            margin-top: 1rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-btn.active {
+            background: #f5576c;
+            color: white;
+            border-color: #f5576c;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            background: white;
+            margin: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 1rem;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .stat-box:last-child {
+            border-right: none;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f5576c;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 1200px) {
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .data-table {
+                min-width: 1200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Committee Analysis Dashboard</h1>
+        <div class="top-bar-actions">
+            <select class="filter-select" id="timeRange">
+                <option value="30">Last 30 Days</option>
+                <option value="60">Last 60 Days</option>
+                <option value="90" selected>Last 90 Days</option>
+                <option value="180">Last 6 Months</option>
+                <option value="365">Last Year</option>
+            </select>
+            <button class="btn btn-secondary" onclick="exportToCSV()">Export CSV</button>
+            <button class="btn btn-secondary" onclick="exportToExcel()">Export Excel</button>
+            <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+        </div>
+    </div>
+
+    <div class="summary-stats">
+        <div class="stat-box">
+            <div class="stat-value">20</div>
+            <div class="stat-label">Total Committees</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">78%</div>
+            <div class="stat-label">Avg Health</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">82%</div>
+            <div class="stat-label">Avg Attendance</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">75%</div>
+            <div class="stat-label">Completion Rate</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Healthy</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">5</div>
+            <div class="stat-label">At Risk</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Critical</div>
+        </div>
+    </div>
+
+    <div class="controls-bar">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search committees..." id="searchInput">
+        </div>
+        <div class="filter-group">
+            <select class="filter-select" id="filterType">
+                <option value="">All Types</option>
+                <option value="Standing">Standing</option>
+                <option value="Ad-Hoc">Ad-Hoc</option>
+                <option value="Steering">Steering</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select class="filter-select" id="filterDept">
+                <option value="">All Departments</option>
+                <option value="IT">IT</option>
+                <option value="HR">Human Resources</option>
+                <option value="Finance">Finance</option>
+                <option value="Operations">Operations</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select class="filter-select" id="filterHealth">
+                <option value="">All Health Levels</option>
+                <option value="good">Healthy (80-100)</option>
+                <option value="warning">Warning (60-79)</option>
+                <option value="danger">Critical (<60)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="bulk-actions" id="bulkActions">
+        <span class="bulk-actions-text"><span id="selectedCount">0</span> committees selected</span>
+        <button class="btn btn-secondary" onclick="bulkExport()">Export Selected</button>
+        <button class="btn btn-secondary" onclick="bulkGenerateReport()">Generate Reports</button>
+        <button class="btn btn-secondary" onclick="clearSelection()">Clear Selection</button>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-cell">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                    </th>
+                    <th class="expand-cell"></th>
+                    <th class="sortable" onclick="sortTable('name')">Committee Name</th>
+                    <th class="sortable" onclick="sortTable('type')">Type</th>
+                    <th class="sortable" onclick="sortTable('department')">Department</th>
+                    <th class="sortable" onclick="sortTable('healthScore')">Health Score</th>
+                    <th class="sortable" onclick="sortTable('attendance')">Attendance</th>
+                    <th class="sortable" onclick="sortTable('completion')">Completion</th>
+                    <th class="sortable" onclick="sortTable('engagement')">Engagement</th>
+                    <th class="sortable" onclick="sortTable('members')">Members</th>
+                    <th>Trend</th>
+                    <th>Risk Indicators</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Rows will be generated by JavaScript -->
+            </tbody>
+        </table>
+        <div class="pagination">
+            <div class="pagination-info">
+                Showing <span id="showingStart">1</span>-<span id="showingEnd">12</span> of <span id="totalRows">12</span> committees
+            </div>
+            <div class="pagination-controls">
+                <button class="page-btn" onclick="changePage(-1)">Previous</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const committees = [
+            { id: 1, name: "IT Steering Committee", type: "Steering", department: "IT", healthScore: 92, attendance: 95, completion: 88, engagement: 94, members: 12, meetings: 8, risks: [], trend: [75, 78, 82, 85, 88, 90, 92], trendDir: 'up' },
+            { id: 2, name: "Budget Review Committee", type: "Standing", department: "Finance", healthScore: 85, attendance: 88, completion: 82, engagement: 86, members: 8, meetings: 12, risks: [], trend: [82, 83, 84, 85, 85, 86, 85], trendDir: 'stable' },
+            { id: 3, name: "Employee Wellness Committee", type: "Standing", department: "HR", healthScore: 78, attendance: 75, completion: 80, engagement: 82, members: 10, meetings: 6, risks: ["Low Attendance"], trend: [85, 83, 82, 80, 79, 78, 78], trendDir: 'down' },
+            { id: 4, name: "Safety & Compliance Committee", type: "Standing", department: "Operations", healthScore: 88, attendance: 92, completion: 85, engagement: 87, members: 15, meetings: 10, risks: [], trend: [80, 82, 84, 85, 86, 87, 88], trendDir: 'up' },
+            { id: 5, name: "Digital Transformation Task Force", type: "Ad-Hoc", department: "IT", healthScore: 72, attendance: 70, completion: 68, engagement: 78, members: 9, meetings: 5, risks: ["Low Completion Rate", "Below Target Attendance"], trend: [78, 76, 75, 74, 73, 72, 72], trendDir: 'down' },
+            { id: 6, name: "Diversity & Inclusion Committee", type: "Standing", department: "HR", healthScore: 90, attendance: 93, completion: 88, engagement: 89, members: 11, meetings: 7, risks: [], trend: [85, 86, 87, 88, 89, 89, 90], trendDir: 'up' },
+            { id: 7, name: "Audit Committee", type: "Standing", department: "Finance", healthScore: 95, attendance: 98, completion: 92, engagement: 96, members: 7, meetings: 15, risks: [], trend: [92, 93, 93, 94, 94, 95, 95], trendDir: 'up' },
+            { id: 8, name: "Customer Experience Committee", type: "Standing", department: "Operations", healthScore: 68, attendance: 65, completion: 70, engagement: 72, members: 12, meetings: 4, risks: ["Low Attendance", "Declining Engagement"], trend: [75, 73, 72, 70, 69, 68, 68], trendDir: 'down' },
+            { id: 9, name: "Innovation Lab Committee", type: "Ad-Hoc", department: "IT", healthScore: 55, attendance: 58, completion: 52, engagement: 55, members: 10, meetings: 3, risks: ["Critical - Multiple Issues", "Low Completion", "Poor Attendance"], trend: [68, 65, 62, 60, 58, 56, 55], trendDir: 'down' },
+            { id: 10, name: "Compensation Committee", type: "Standing", department: "HR", healthScore: 82, attendance: 85, completion: 80, engagement: 81, members: 6, meetings: 9, risks: [], trend: [80, 80, 81, 81, 82, 82, 82], trendDir: 'stable' },
+            { id: 11, name: "Risk Management Committee", type: "Standing", department: "Finance", healthScore: 87, attendance: 90, completion: 85, engagement: 86, members: 9, meetings: 11, risks: [], trend: [83, 84, 85, 85, 86, 87, 87], trendDir: 'up' },
+            { id: 12, name: "Facilities Planning Committee", type: "Ad-Hoc", department: "Operations", healthScore: 58, attendance: 60, completion: 55, engagement: 60, members: 8, meetings: 2, risks: ["Low Activity", "Poor Completion"], trend: [70, 68, 65, 63, 61, 59, 58], trendDir: 'down' }
+        ];
+
+        let filteredData = [...committees];
+        let sortColumn = null;
+        let sortDirection = 'asc';
+        const chartInstances = {};
+
+        function getHealthStatus(score) {
+            if (score >= 80) return 'good';
+            if (score >= 60) return 'warning';
+            return 'danger';
+        }
+
+        function createRow(committee) {
+            const status = getHealthStatus(committee.healthScore);
+
+            return `
+                <tr data-id="${committee.id}">
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="row-checkbox" onchange="updateBulkActions()">
+                    </td>
+                    <td class="expand-cell" onclick="toggleExpanded(${committee.id}, event)">
+                        <span class="expand-icon">▶</span>
+                    </td>
+                    <td>
+                        <div class="committee-name">${committee.name}</div>
+                    </td>
+                    <td>
+                        <span class="committee-type">${committee.type}</span>
+                    </td>
+                    <td>${committee.department}</td>
+                    <td>
+                        <div class="health-score">
+                            <span class="health-value">${committee.healthScore}</span>
+                            <div class="health-bar">
+                                <div class="health-bar-fill ${status}" style="width: ${committee.healthScore}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="metric-cell">
+                        <div class="metric-value">${committee.attendance}%</div>
+                    </td>
+                    <td class="metric-cell">
+                        <div class="metric-value">${committee.completion}%</div>
+                    </td>
+                    <td class="metric-cell">
+                        <div class="metric-value">${committee.engagement}%</div>
+                    </td>
+                    <td class="metric-cell">
+                        <div class="metric-value">${committee.members}</div>
+                    </td>
+                    <td>
+                        <div class="sparkline-container">
+                            <canvas id="sparkline-${committee.id}"></canvas>
+                        </div>
+                    </td>
+                    <td class="risk-indicators-cell">
+                        ${committee.risks.length > 0 ?
+                            committee.risks.map(risk =>
+                                `<span class="risk-badge ${committee.healthScore < 60 ? 'high' : 'medium'}">${risk}</span>`
+                            ).join('')
+                            : '<span style="color: #999; font-size: 0.75rem;">None</span>'}
+                    </td>
+                    <td class="actions-cell">
+                        <button class="action-btn" onclick="viewDetails(${committee.id}, event)">View</button>
+                        <button class="action-btn" onclick="exportCommittee(${committee.id}, event)">Export</button>
+                    </td>
+                </tr>
+                <tr class="expanded-row" id="expanded-${committee.id}">
+                    <td colspan="13">
+                        <div class="expanded-content">
+                            <div class="expanded-grid">
+                                <div class="expanded-section">
+                                    <h4>Committee Information</h4>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Committee ID:</span>
+                                        <span class="detail-value">${committee.id}</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Total Members:</span>
+                                        <span class="detail-value">${committee.members}</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Active Meetings:</span>
+                                        <span class="detail-value">${committee.meetings}</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Last Meeting:</span>
+                                        <span class="detail-value">3 days ago</span>
+                                    </div>
+                                </div>
+                                <div class="expanded-section">
+                                    <h4>Performance Metrics</h4>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Health Score:</span>
+                                        <span class="detail-value">${committee.healthScore}%</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Attendance Rate:</span>
+                                        <span class="detail-value">${committee.attendance}%</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Action Completion:</span>
+                                        <span class="detail-value">${committee.completion}%</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Member Engagement:</span>
+                                        <span class="detail-value">${committee.engagement}%</span>
+                                    </div>
+                                </div>
+                                <div class="expanded-section chart-section">
+                                    <h4>Health Score Trend (Last 7 Weeks)</h4>
+                                    <div class="detail-chart-container">
+                                        <canvas id="detail-chart-${committee.id}"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = filteredData.map(c => createRow(c)).join('');
+
+            setTimeout(() => {
+                filteredData.forEach(committee => {
+                    createSparkline(committee);
+                });
+            }, 100);
+        }
+
+        function createSparkline(committee) {
+            const canvas = document.getElementById(`sparkline-${committee.id}`);
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const status = getHealthStatus(committee.healthScore);
+            const color = status === 'good' ? '#28a745' : status === 'warning' ? '#ffc107' : '#dc3545';
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['', '', '', '', '', '', ''],
+                    datasets: [{
+                        data: committee.trend,
+                        borderColor: color,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false, min: 0, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function toggleExpanded(id, event) {
+            event.stopPropagation();
+            const expandedRow = document.getElementById(`expanded-${id}`);
+            const icon = event.currentTarget.querySelector('.expand-icon');
+            const isExpanded = expandedRow.classList.toggle('active');
+            icon.classList.toggle('expanded');
+
+            const parentRow = event.currentTarget.closest('tr');
+            parentRow.classList.toggle('expanded');
+
+            if (isExpanded) {
+                setTimeout(() => {
+                    const committee = committees.find(c => c.id === id);
+                    createDetailChart(committee);
+                }, 100);
+            }
+        }
+
+        function createDetailChart(committee) {
+            const canvas = document.getElementById(`detail-chart-${committee.id}`);
+            if (!canvas || chartInstances[`detail-${committee.id}`]) return;
+
+            const ctx = canvas.getContext('2d');
+            const status = getHealthStatus(committee.healthScore);
+            const color = status === 'good' ? '#28a745' : status === 'warning' ? '#ffc107' : '#dc3545';
+
+            chartInstances[`detail-${committee.id}`] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['6 weeks ago', '5 weeks ago', '4 weeks ago', '3 weeks ago', '2 weeks ago', '1 week ago', 'Current'],
+                    datasets: [{
+                        label: 'Health Score',
+                        data: committee.trend,
+                        borderColor: color,
+                        backgroundColor: color + '20',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+
+            filteredData.sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+
+                if (typeof valA === 'string') {
+                    valA = valA.toLowerCase();
+                    valB = valB.toLowerCase();
+                }
+
+                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Update sort indicators
+            document.querySelectorAll('.data-table th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            event.target.classList.add(`sort-${sortDirection}`);
+
+            renderTable();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('filterType').value;
+            const deptFilter = document.getElementById('filterDept').value;
+            const healthFilter = document.getElementById('filterHealth').value;
+
+            filteredData = committees.filter(c => {
+                const matchesSearch = c.name.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || c.type === typeFilter;
+                const matchesDept = !deptFilter || c.department === deptFilter;
+                const matchesHealth = !healthFilter || getHealthStatus(c.healthScore) === healthFilter;
+
+                return matchesSearch && matchesType && matchesDept && matchesHealth;
+            });
+
+            renderTable();
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const selected = document.querySelectorAll('.row-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = selected;
+            document.getElementById('bulkActions').classList.toggle('active', selected > 0);
+        }
+
+        function clearSelection() {
+            document.getElementById('selectAll').checked = false;
+            toggleSelectAll();
+        }
+
+        function viewDetails(id, event) {
+            event.stopPropagation();
+            alert(`Viewing detailed page for committee ${id}`);
+        }
+
+        function exportCommittee(id, event) {
+            event.stopPropagation();
+            alert(`Exporting data for committee ${id}`);
+        }
+
+        function exportToCSV() {
+            alert('Exporting all data to CSV...');
+        }
+
+        function exportToExcel() {
+            alert('Exporting all data to Excel...');
+        }
+
+        function generateReport() {
+            alert('Generating comprehensive report...');
+        }
+
+        function bulkExport() {
+            const selected = document.querySelectorAll('.row-checkbox:checked').length;
+            alert(`Exporting ${selected} selected committees...`);
+        }
+
+        function bulkGenerateReport() {
+            const selected = document.querySelectorAll('.row-checkbox:checked').length;
+            alert(`Generating reports for ${selected} selected committees...`);
+        }
+
+        function changePage(direction) {
+            alert(`Changing to page ${direction > 0 ? 'next' : 'previous'}`);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('filterType').addEventListener('change', applyFilters);
+        document.getElementById('filterDept').addEventListener('change', applyFilters);
+        document.getElementById('filterHealth').addEventListener('change', applyFilters);
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>
