@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 1: Committee Setup - Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .journey-context {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .journey-context h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .journey-context p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .option-header {
+            margin-bottom: 25px;
+        }
+
+        .option-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .option-card h2 {
+            font-size: 1.8em;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .option-card .tagline {
+            color: #718096;
+            font-size: 1.05em;
+            font-style: italic;
+        }
+
+        .features {
+            margin: 25px 0;
+        }
+
+        .features h3 {
+            font-size: 1.1em;
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .features h3::before {
+            content: '✓';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #48bb78;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.9em;
+        }
+
+        .features ul {
+            list-style: none;
+            margin-left: 32px;
+        }
+
+        .features li {
+            padding: 8px 0;
+            color: #4a5568;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .features li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .pros-cons div h4 {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pros-cons .pros h4 {
+            color: #38a169;
+        }
+
+        .pros-cons .pros h4::before {
+            content: '👍';
+        }
+
+        .pros-cons .cons h4 {
+            color: #e53e3e;
+        }
+
+        .pros-cons .cons h4::before {
+            content: '👎';
+        }
+
+        .pros-cons ul {
+            list-style: none;
+        }
+
+        .pros-cons li {
+            font-size: 0.9em;
+            color: #4a5568;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .pros-cons .pros li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #38a169;
+            font-weight: bold;
+        }
+
+        .pros-cons .cons li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .comparison-link {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .comparison-link h2 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .comparison-link p {
+            color: white;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .comparison-link a {
+            display: inline-block;
+            padding: 14px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .comparison-link a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .best-for {
+            background: #edf2f7;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .best-for h4 {
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .best-for p {
+            color: #4a5568;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Journey 1: Committee Setup</h1>
+            <p class="subtitle">Exploring Three UX Approaches</p>
+        </header>
+
+        <div class="journey-context">
+            <h2>📖 User Journey</h2>
+            <p>
+                <strong>As a Board Administrator</strong>, I need to create a new committee with complete configuration
+                including basic settings (name, purpose, charter, meeting frequency), add initial members, and assign
+                roles (Chair, Vice Chair, Secretary, etc.) so that the committee is ready for meetings and activities.
+            </p>
+        </div>
+
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card">
+                <div class="option-header">
+                    <span class="option-label">OPTION A</span>
+                    <h2>Wizard-Based</h2>
+                    <p class="tagline">"Step-by-step guidance with minimal cognitive load"</p>
+                </div>
+
+                <div class="features">
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>4-step progressive wizard</li>
+                        <li>Clear progress indicator</li>
+                        <li>Single focus per screen</li>
+                        <li>Smart validation at each step</li>
+                        <li>Review summary before save</li>
+                    </ul>
+                </div>
+
+                <div class="best-for">
+                    <h4>👥 Best For:</h4>
+                    <p>First-time users, mobile devices, and situations where reduced decision fatigue is important</p>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>Easy to follow</li>
+                            <li>Less overwhelming</li>
+                            <li>Mobile-friendly</li>
+                            <li>Clear progress</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>More clicks</li>
+                            <li>No overview</li>
+                            <li>Harder to edit</li>
+                            <li>Takes longer</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="option-A/prototype.html" class="cta-button">Try Option A →</a>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card">
+                <div class="option-header">
+                    <span class="option-label">OPTION B</span>
+                    <h2>Comprehensive Form</h2>
+                    <p class="tagline">"All information visible for power users"</p>
+                </div>
+
+                <div class="features">
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>Single-page all-in-one form</li>
+                        <li>Collapsible sections</li>
+                        <li>Inline validation</li>
+                        <li>Smart defaults</li>
+                        <li>Sticky action bar</li>
+                    </ul>
+                </div>
+
+                <div class="best-for">
+                    <h4>👥 Best For:</h4>
+                    <p>Experienced admins who want to see all options at once and complete setup quickly</p>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>Very efficient</li>
+                            <li>Full visibility</li>
+                            <li>Easy to review</li>
+                            <li>Fewer clicks</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>Can overwhelm</li>
+                            <li>Requires scrolling</li>
+                            <li>Not mobile-ideal</li>
+                            <li>Complex initially</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="option-B/prototype.html" class="cta-button">Try Option B →</a>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card">
+                <div class="option-header">
+                    <span class="option-label">OPTION C</span>
+                    <h2>Visual & Interactive</h2>
+                    <p class="tagline">"Modern drag-and-drop experience"</p>
+                </div>
+
+                <div class="features">
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>Card-based visual layout</li>
+                        <li>Drag-and-drop members</li>
+                        <li>Visual role assignment</li>
+                        <li>Interactive schedule builder</li>
+                        <li>Real-time visual feedback</li>
+                    </ul>
+                </div>
+
+                <div class="best-for">
+                    <h4>👥 Best For:</h4>
+                    <p>Users who prefer visual, interactive interfaces and enjoy drag-and-drop interactions</p>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>Engaging UI</li>
+                            <li>Intuitive</li>
+                            <li>Visual feedback</li>
+                            <li>Modern feel</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>Complex code</li>
+                            <li>Less keyboard-friendly</li>
+                            <li>Accessibility concerns</li>
+                            <li>May be slower</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="option-C/prototype.html" class="cta-button">Try Option C →</a>
+            </div>
+        </div>
+
+        <div class="comparison-link">
+            <h2>📊 Detailed Comparison</h2>
+            <p>View a side-by-side analysis of all three design options</p>
+            <a href="COMPARISON.md">Read Full Comparison →</a>
+        </div>
+    </div>
+</body>
+</html>

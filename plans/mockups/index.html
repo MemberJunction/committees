@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Committees App - UX Design Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.25rem;
+        }
+
+        .journey-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .journey-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .journey-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .journey-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+        }
+
+        .journey-number {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .journey-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .journey-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .journey-persona {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .journey-body {
+            padding: 2rem;
+        }
+
+        .journey-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .journey-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-status {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-priority {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge-options {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge.completed {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .badge.in-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge.not-started {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .journey-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Committees App UX Design</h1>
+            <p class="subtitle">🖱️ Click any journey to explore 3 interactive design options</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">User Journeys</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Design Options</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="journey-grid">
+            <!-- Journey 1 -->
+            <a href="01-committee-setup/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">01</div>
+                    <div class="journey-icon">🏛️</div>
+                    <div class="journey-title">Committee Setup</div>
+                    <div class="journey-persona">Board Administrator</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Create new committee and configure basic settings, add initial members, and assign roles.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: High</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 2 -->
+            <a href="02-meeting-scheduling/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">02</div>
+                    <div class="journey-icon">📅</div>
+                    <div class="journey-title">Meeting Scheduling</div>
+                    <div class="journey-persona">Committee Chair</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Schedule a meeting with agenda, set date/time, add calendar event, and send invites to members.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge completed">✓ Completed</span>
+                        <span class="badge-options badge">3 Design Options</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 3 -->
+            <a href="03-agenda-building/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">03</div>
+                    <div class="journey-icon">📝</div>
+                    <div class="journey-title">Agenda Building</div>
+                    <div class="journey-persona">Committee Chair</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Build structured agenda with nested items, set presenters, attach documents, and publish to members.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: High</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 4 -->
+            <a href="04-meeting-execution/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">04</div>
+                    <div class="journey-icon">🎯</div>
+                    <div class="journey-title">Meeting Execution</div>
+                    <div class="journey-persona">Committee Secretary</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Conduct meeting live: mark attendance, progress through agenda, capture notes, and create action items.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: High</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 5 -->
+            <a href="05-action-tracking/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">05</div>
+                    <div class="journey-icon">✅</div>
+                    <div class="journey-title">Action Tracking</div>
+                    <div class="journey-persona">Committee Member</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        View assigned action items, update progress, mark complete, and add notes or attachments.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: High</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 6 -->
+            <a href="06-elections/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">06</div>
+                    <div class="journey-icon">🗳️</div>
+                    <div class="journey-title">Election Management</div>
+                    <div class="journey-persona">Nominating Committee Chair</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Run officer election process: open nominations, review candidates, configure ballot, conduct vote, and announce results.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: Medium</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 7 -->
+            <a href="07-ballots/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">07</div>
+                    <div class="journey-icon">📊</div>
+                    <div class="journey-title">Standards Ballot</div>
+                    <div class="journey-persona">Standards WG Chair</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Conduct standards development ballot: create draft, open comment period, collect comments, resolve, and recirculate.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: Medium</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 8 -->
+            <a href="08-dashboard/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">08</div>
+                    <div class="journey-icon">📊</div>
+                    <div class="journey-title">Committee Dashboard</div>
+                    <div class="journey-persona">Board Administrator</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Monitor health of all committees: view engagement scores, identify at-risk committees, review action item completion.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: Medium</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 9 -->
+            <a href="09-documents/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">09</div>
+                    <div class="journey-icon">📄</div>
+                    <div class="journey-title">Document Collaboration</div>
+                    <div class="journey-persona">Committee Member</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        Collaborate on meeting documents: access shared folder, comment on agenda, upload materials, and track versions.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: Low</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Journey 10 -->
+            <a href="10-member-profile/index.html" class="journey-card">
+                <div class="journey-header">
+                    <div class="journey-number">10</div>
+                    <div class="journey-icon">👤</div>
+                    <div class="journey-title">Member Profile</div>
+                    <div class="journey-persona">Committee Member</div>
+                </div>
+                <div class="journey-body">
+                    <p class="journey-description">
+                        View my committee involvement and activity: see committees, action items, engagement score, and update availability.
+                    </p>
+                    <div class="journey-meta">
+                        <span class="badge not-started">Not Started</span>
+                        <span class="badge-priority badge">Priority: Low</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <footer>
+            <p><strong>Committees Application UX Design</strong></p>
+            <p style="margin-top: 0.5rem; opacity: 0.8;">Version 1.0 • Last Updated: February 15, 2026</p>
+            <div class="footer-links">
+                <a href="../COMPREHENSIVE_DESIGN.md">📘 Design Doc</a>
+                <a href="../MARKET_RESEARCH_REPORT.md">📊 Market Research</a>
+                <a href="../README.md">📋 Planning Docs</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

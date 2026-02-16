@@ -16,8 +16,8 @@ export class RoleFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'roleBasics', sectionName: 'Role Basics', isExpanded: true },
-            { sectionKey: 'permissions', sectionName: 'Permissions', isExpanded: true },
+            { sectionKey: 'roleDefinition', sectionName: 'Role Definition', isExpanded: true },
+            { sectionKey: 'roleSettings', sectionName: 'Role Settings', isExpanded: true },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesMemberships', sectionName: 'Committees: Memberships', isExpanded: false }
         ]);

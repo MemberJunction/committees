@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 8: Committee Dashboard - Design Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .journey-overview {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .journey-overview h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .user-story {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-left: 4px solid #667eea;
+            margin: 1.5rem 0;
+            font-style: italic;
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .feature-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .design-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .option-header {
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .option-a .option-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .option-b .option-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .option-c .option-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .option-header h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-header p {
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+
+        .option-preview {
+            position: relative;
+            height: 300px;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .option-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 4rem;
+            color: #ddd;
+        }
+
+        .option-content {
+            padding: 2rem;
+        }
+
+        .option-content h4 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .option-content ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-content li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .option-content li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .pros {
+            background: #d4edda;
+            border-left: 3px solid #28a745;
+        }
+
+        .cons {
+            background: #f8d7da;
+            border-left: 3px solid #dc3545;
+        }
+
+        .pros h5, .cons h5 {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pros ul, .cons ul {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .pros li:before {
+            content: "+";
+            color: #28a745;
+        }
+
+        .cons li:before {
+            content: "-";
+            color: #dc3545;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .comparison-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .comparison-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .design-options {
+                grid-template-columns: 1fr;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Journey 8: Committee Dashboard</h1>
+        <p>Board Administrator monitors and manages committee health across the organization</p>
+    </div>
+
+    <div class="container">
+        <div class="journey-overview">
+            <h2>User Journey Overview</h2>
+
+            <div class="user-story">
+                <strong>As a</strong> Board Administrator<br>
+                <strong>I want to</strong> monitor the health and performance of all committees from a single dashboard<br>
+                <strong>So that</strong> I can identify at-risk committees, track engagement metrics, and ensure committees are functioning effectively
+            </div>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">Key Dashboard Features</h3>
+            <div class="key-features">
+                <div class="feature-item">
+                    <h4>Health Scores</h4>
+                    <p>Composite metrics showing overall committee health (0-100) with color-coded indicators</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Engagement Metrics</h4>
+                    <p>Member participation rates, active/inactive counts, communication frequency</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Action Items</h4>
+                    <p>Completion rates, overdue counts, average time to completion</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Attendance Tracking</h4>
+                    <p>Meeting attendance rates, trends, quorum achievement, absence patterns</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Risk Indicators</h4>
+                    <p>Committees requiring attention, declining trends, governance violations</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Reporting & Export</h4>
+                    <p>Generate PDF reports, export to CSV/Excel, schedule automated reports</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="text-align: center; margin-bottom: 2rem; color: #667eea;">Compare Design Options</h2>
+
+        <div class="design-options">
+            <!-- Option A: Card-Based Dashboard -->
+            <div class="option-card option-a">
+                <div class="option-header">
+                    <h3>Option A</h3>
+                    <p>Card-Based Dashboard</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📊</div>
+                </div>
+                <div class="option-content">
+                    <h4>Design Philosophy</h4>
+                    <p>Visual, scannable layout with emphasis on health scores and quick identification of issues through color-coded committee cards.</p>
+
+                    <h4 style="margin-top: 1.5rem;">Key Features</h4>
+                    <ul>
+                        <li>Committee cards with prominent health scores</li>
+                        <li>Color-coded borders for status (red/yellow/green)</li>
+                        <li>Mini charts embedded in each card</li>
+                        <li>Responsive grid layout</li>
+                        <li>Quick action buttons per committee</li>
+                        <li>Filter and sort controls at top</li>
+                    </ul>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h5>Strengths</h5>
+                            <ul>
+                                <li>Highly visual and scannable</li>
+                                <li>Quick pattern recognition</li>
+                                <li>Easy to spot problem committees</li>
+                                <li>Intuitive for non-technical users</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h5>Limitations</h5>
+                            <ul>
+                                <li>Less dense information display</li>
+                                <li>Harder to compare metrics</li>
+                                <li>More scrolling required</li>
+                                <li>Limited sorting capability</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="option-A/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option B: Data Table Dashboard -->
+            <div class="option-card option-b">
+                <div class="option-header">
+                    <h3>Option B</h3>
+                    <p>Data Table Dashboard</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📋</div>
+                </div>
+                <div class="option-content">
+                    <h4>Design Philosophy</h4>
+                    <p>Dense information display with powerful sorting/filtering, optimized for analytical work and metric comparison.</p>
+
+                    <h4 style="margin-top: 1.5rem;">Key Features</h4>
+                    <ul>
+                        <li>Comprehensive table with all metrics</li>
+                        <li>Advanced sorting and filtering</li>
+                        <li>Inline sparklines and mini charts</li>
+                        <li>Expandable rows for details</li>
+                        <li>Bulk actions and export</li>
+                        <li>Column customization</li>
+                    </ul>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h5>Strengths</h5>
+                            <ul>
+                                <li>Maximum information density</li>
+                                <li>Powerful comparison tools</li>
+                                <li>Efficient for data analysis</li>
+                                <li>Quick multi-sort capability</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h5>Limitations</h5>
+                            <ul>
+                                <li>Can feel overwhelming</li>
+                                <li>Less visually engaging</li>
+                                <li>Steeper learning curve</li>
+                                <li>Harder to present to execs</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="option-B/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option C: Visual Dashboard -->
+            <div class="option-card option-c">
+                <div class="option-header">
+                    <h3>Option C</h3>
+                    <p>Visual Dashboard</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📈</div>
+                </div>
+                <div class="option-content">
+                    <h4>Design Philosophy</h4>
+                    <p>Executive overview with emphasis on trends, patterns, and high-level insights through charts and visualizations.</p>
+
+                    <h4 style="margin-top: 1.5rem;">Key Features</h4>
+                    <ul>
+                        <li>Large charts and graphs</li>
+                        <li>Interactive heatmaps</li>
+                        <li>Trend indicators and forecasts</li>
+                        <li>Summary statistics cards</li>
+                        <li>Dashboard-style widgets</li>
+                        <li>Drill-down capability from charts</li>
+                    </ul>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h5>Strengths</h5>
+                            <ul>
+                                <li>Excellent for presentations</li>
+                                <li>Clear trend visualization</li>
+                                <li>Engaging and modern</li>
+                                <li>Easy executive buy-in</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h5>Limitations</h5>
+                            <ul>
+                                <li>Less detailed committee info</li>
+                                <li>Requires more clicks to details</li>
+                                <li>Charts can be misinterpreted</li>
+                                <li>Performance with large datasets</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="option-C/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2>Quick Comparison Matrix</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Option A: Cards</th>
+                        <th>Option B: Table</th>
+                        <th>Option C: Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Information Density</strong></td>
+                        <td><span class="rating">★★☆☆☆</span> Low</td>
+                        <td><span class="rating">★★★★★</span> Very High</td>
+                        <td><span class="rating">★★★☆☆</span> Medium</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Visual Appeal</strong></td>
+                        <td><span class="rating">★★★★☆</span> High</td>
+                        <td><span class="rating">★★☆☆☆</span> Low</td>
+                        <td><span class="rating">★★★★★</span> Very High</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quick Scanning</strong></td>
+                        <td><span class="rating">★★★★★</span> Excellent</td>
+                        <td><span class="rating">★★★☆☆</span> Good</td>
+                        <td><span class="rating">★★★★☆</span> Very Good</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Analysis</strong></td>
+                        <td><span class="rating">★★☆☆☆</span> Limited</td>
+                        <td><span class="rating">★★★★★</span> Excellent</td>
+                        <td><span class="rating">★★★☆☆</span> Good</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ease of Use</strong></td>
+                        <td><span class="rating">★★★★★</span> Very Easy</td>
+                        <td><span class="rating">★★★☆☆</span> Moderate</td>
+                        <td><span class="rating">★★★★☆</span> Easy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trend Visibility</strong></td>
+                        <td><span class="rating">★★★☆☆</span> Good</td>
+                        <td><span class="rating">★★☆☆☆</span> Limited</td>
+                        <td><span class="rating">★★★★★</span> Excellent</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Comparison Ability</strong></td>
+                        <td><span class="rating">★★☆☆☆</span> Difficult</td>
+                        <td><span class="rating">★★★★★</span> Excellent</td>
+                        <td><span class="rating">★★★☆☆</span> Good</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Best For</strong></td>
+                        <td>Quick health checks, identifying problems</td>
+                        <td>Detailed analysis, metric comparison</td>
+                        <td>Executive presentations, trend monitoring</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="comparison-section">
+            <h2>Additional Resources</h2>
+            <div style="margin-top: 1rem;">
+                <a href="COMPARISON.md" class="btn btn-secondary" style="display: inline-block; margin-right: 1rem;">View Detailed Comparison</a>
+                <a href="README.md" class="btn btn-secondary" style="display: inline-block;">View Full Requirements</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Committee Dashboard Design Exploration - MemberJunction Platform</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Test each prototype with real users to determine the best approach for your organization</p>
+    </div>
+</body>
+</html>

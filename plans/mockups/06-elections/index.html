@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 6: Election Management - Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .journey-info {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .journey-info h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .user-story {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #764ba2;
+        }
+
+        .feature strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .option-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .option-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .option-header .approach {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .option-preview {
+            height: 300px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .option-preview svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .option-body {
+            padding: 30px;
+        }
+
+        .option-body h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .strengths, .best-for {
+            margin-bottom: 20px;
+        }
+
+        .strengths ul, .best-for ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .strengths li, .best-for li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .strengths li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .best-for li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .comparison-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .comparison-link a {
+            display: inline-block;
+            padding: 20px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.2em;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-link a:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Journey 6: Election Management</h1>
+            <p class="subtitle">Comprehensive Officer Election Process</p>
+        </header>
+
+        <div class="journey-info">
+            <h2>User Journey Overview</h2>
+            <div class="user-story">
+                <strong>User Story:</strong><br>
+                As a <strong>Nominating Committee Chair</strong>, I want to <strong>manage the complete officer election process</strong>
+                so that I can <strong>conduct fair, transparent elections with proper ballot configuration and result tracking</strong>.
+            </div>
+
+            <h3 style="margin-top: 25px; margin-bottom: 15px; color: #667eea;">Key Features</h3>
+            <div class="key-features">
+                <div class="feature">
+                    <strong>Nomination Management</strong>
+                    Open nomination periods, collect nominations, track acceptances, gather candidate statements
+                </div>
+                <div class="feature">
+                    <strong>Ballot Configuration</strong>
+                    Support multiple voting methods (single choice, ranked choice, approval voting)
+                </div>
+                <div class="feature">
+                    <strong>Voting Interface</strong>
+                    Secure, anonymous voting with clear instructions and progress indicators
+                </div>
+                <div class="feature">
+                    <strong>Results & Reporting</strong>
+                    Real-time tallying, winner determination, audit trail, export capabilities
+                </div>
+                <div class="feature">
+                    <strong>Timeline Management</strong>
+                    Configure phase dates, automatic transitions, send reminders
+                </div>
+                <div class="feature">
+                    <strong>Audit & Compliance</strong>
+                    Complete election history, vote verification, participation tracking
+                </div>
+            </div>
+        </div>
+
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card" onclick="window.location.href='option-A/prototype.html'">
+                <div class="option-header">
+                    <h2>Option A</h2>
+                    <p class="approach">Multi-Step Wizard</p>
+                </div>
+                <div class="option-preview">
+                    <svg width="340" height="280" viewBox="0 0 340 280">
+                        <!-- Wizard Steps -->
+                        <circle cx="60" cy="40" r="20" fill="#10b981"/>
+                        <text x="60" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="bold">1</text>
+                        <text x="60" y="70" text-anchor="middle" fill="#333" font-size="12">Setup</text>
+
+                        <line x1="80" y1="40" x2="120" y2="40" stroke="#cbd5e0" stroke-width="2"/>
+
+                        <circle cx="140" cy="40" r="20" fill="#667eea"/>
+                        <text x="140" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="bold">2</text>
+                        <text x="140" y="70" text-anchor="middle" fill="#333" font-size="12">Nominations</text>
+
+                        <line x1="160" y1="40" x2="200" y2="40" stroke="#cbd5e0" stroke-width="2"/>
+
+                        <circle cx="220" cy="40" r="20" fill="#cbd5e0"/>
+                        <text x="220" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="bold">3</text>
+                        <text x="220" y="70" text-anchor="middle" fill="#333" font-size="12">Ballot</text>
+
+                        <line x1="240" y1="40" x2="280" y2="40" stroke="#cbd5e0" stroke-width="2"/>
+
+                        <circle cx="300" cy="40" r="20" fill="#cbd5e0"/>
+                        <text x="300" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="bold">4</text>
+                        <text x="300" y="70" text-anchor="middle" fill="#333" font-size="12">Vote</text>
+
+                        <!-- Form Panel -->
+                        <rect x="20" y="100" width="300" height="160" rx="8" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+                        <rect x="20" y="100" width="300" height="40" rx="8" fill="#f7fafc"/>
+                        <text x="170" y="125" text-anchor="middle" fill="#667eea" font-size="14" font-weight="bold">Collect Nominations</text>
+
+                        <!-- Form fields -->
+                        <rect x="40" y="155" width="260" height="30" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+                        <rect x="40" y="195" width="260" height="30" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+
+                        <!-- Buttons -->
+                        <rect x="40" y="235" width="100" height="15" rx="4" fill="#e2e8f0"/>
+                        <rect x="200" y="235" width="100" height="15" rx="4" fill="#667eea"/>
+                    </svg>
+                </div>
+                <div class="option-body">
+                    <div class="strengths">
+                        <h3>Strengths</h3>
+                        <ul>
+                            <li>Clear linear progression through election phases</li>
+                            <li>Step validation prevents incomplete setup</li>
+                            <li>Guided workflow reduces errors</li>
+                            <li>Easy to understand for first-time users</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h3>Best For</h3>
+                        <ul>
+                            <li>Users who prefer structured processes</li>
+                            <li>First-time election managers</li>
+                            <li>Simple, single-position elections</li>
+                        </ul>
+                    </div>
+                    <a href="option-A/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card" onclick="window.location.href='option-B/prototype.html'">
+                <div class="option-header">
+                    <h2>Option B</h2>
+                    <p class="approach">Timeline-Based View</p>
+                </div>
+                <div class="option-preview">
+                    <svg width="340" height="280" viewBox="0 0 340 280">
+                        <!-- Timeline -->
+                        <line x1="30" y1="40" x2="310" y2="40" stroke="#667eea" stroke-width="3"/>
+
+                        <!-- Phase markers -->
+                        <circle cx="30" cy="40" r="8" fill="#10b981"/>
+                        <circle cx="110" cy="40" r="8" fill="#667eea"/>
+                        <circle cx="190" cy="40" r="8" fill="#cbd5e0"/>
+                        <circle cx="270" cy="40" r="8" fill="#cbd5e0"/>
+                        <circle cx="310" cy="40" r="8" fill="#cbd5e0"/>
+
+                        <!-- Phase labels -->
+                        <text x="30" y="25" text-anchor="middle" fill="#333" font-size="10">Setup</text>
+                        <text x="110" y="25" text-anchor="middle" fill="#333" font-size="10">Nominate</text>
+                        <text x="190" y="25" text-anchor="middle" fill="#333" font-size="10">Ballot</text>
+                        <text x="270" y="25" text-anchor="middle" fill="#333" font-size="10">Vote</text>
+                        <text x="310" y="25" text-anchor="middle" fill="#333" font-size="10">Results</text>
+
+                        <!-- Active phase panel -->
+                        <rect x="70" y="60" width="200" height="200" rx="8" fill="white" stroke="#667eea" stroke-width="2"/>
+                        <rect x="70" y="60" width="200" height="35" rx="8" fill="#667eea"/>
+                        <text x="170" y="82" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Nomination Period</text>
+
+                        <!-- Status info -->
+                        <text x="90" y="110" fill="#333" font-size="11" font-weight="bold">Status: Active</text>
+                        <text x="90" y="128" fill="#666" font-size="10">Opens: Jan 15, 2026</text>
+                        <text x="90" y="143" fill="#666" font-size="10">Closes: Jan 29, 2026</text>
+
+                        <!-- Progress bar -->
+                        <rect x="90" y="160" width="160" height="6" rx="3" fill="#e2e8f0"/>
+                        <rect x="90" y="160" width="100" height="6" rx="3" fill="#667eea"/>
+                        <text x="170" y="178" text-anchor="middle" fill="#666" font-size="10">8 of 12 days</text>
+
+                        <!-- Action items -->
+                        <rect x="90" y="195" width="160" height="22" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+                        <text x="100" y="210" fill="#333" font-size="10">12 nominations received</text>
+
+                        <rect x="90" y="225" width="160" height="22" rx="4" fill="#fef3c7" stroke="#fbbf24"/>
+                        <text x="100" y="240" fill="#92400e" font-size="10">3 pending acceptance</text>
+                    </svg>
+                </div>
+                <div class="option-body">
+                    <div class="strengths">
+                        <h3>Strengths</h3>
+                        <ul>
+                            <li>See entire election timeline at a glance</li>
+                            <li>Flexible navigation between phases</li>
+                            <li>Visual progress tracking</li>
+                            <li>Easy to identify bottlenecks</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h3>Best For</h3>
+                        <ul>
+                            <li>Users who need comprehensive overview</li>
+                            <li>Managing complex multi-position elections</li>
+                            <li>Users who jump between phases</li>
+                        </ul>
+                    </div>
+                    <a href="option-B/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card" onclick="window.location.href='option-C/prototype.html'">
+                <div class="option-header">
+                    <h2>Option C</h2>
+                    <p class="approach">Visual Workflow</p>
+                </div>
+                <div class="option-preview">
+                    <svg width="340" height="280" viewBox="0 0 340 280">
+                        <!-- Workflow stages -->
+                        <rect x="20" y="20" width="90" height="70" rx="8" fill="#10b981"/>
+                        <text x="65" y="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">SETUP</text>
+                        <text x="65" y="62" text-anchor="middle" fill="white" font-size="10">Complete</text>
+                        <circle cx="100" cy="80" r="6" fill="white"/>
+                        <text x="100" y="84" text-anchor="middle" fill="#10b981" font-size="10">✓</text>
+
+                        <path d="M 110 55 L 130 55" stroke="#cbd5e0" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#cbd5e0"/>
+                            </marker>
+                        </defs>
+
+                        <rect x="130" y="20" width="90" height="70" rx="8" fill="#667eea" stroke="#764ba2" stroke-width="3"/>
+                        <text x="175" y="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">NOMINATE</text>
+                        <text x="175" y="62" text-anchor="middle" fill="white" font-size="10">In Progress</text>
+                        <rect x="140" y="75" width="70" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="140" y="75" width="45" height="4" rx="2" fill="white"/>
+
+                        <path d="M 220 55 L 240 55" stroke="#cbd5e0" stroke-width="2"/>
+
+                        <rect x="240" y="20" width="90" height="70" rx="8" fill="#e2e8f0"/>
+                        <text x="285" y="45" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="bold">BALLOT</text>
+                        <text x="285" y="62" text-anchor="middle" fill="#94a3b8" font-size="10">Pending</text>
+
+                        <!-- Action cards -->
+                        <rect x="20" y="110" width="145" height="50" rx="6" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+                        <text x="30" y="128" fill="#333" font-size="11" font-weight="bold">Active Nominations</text>
+                        <text x="30" y="145" fill="#667eea" font-size="18" font-weight="bold">12</text>
+                        <rect x="120" y="130" width="35" height="18" rx="4" fill="#667eea"/>
+                        <text x="137" y="143" text-anchor="middle" fill="white" font-size="10">View</text>
+
+                        <rect x="175" y="110" width="145" height="50" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+                        <text x="185" y="128" fill="#92400e" font-size="11" font-weight="bold">Pending Acceptance</text>
+                        <text x="185" y="145" fill="#d97706" font-size="18" font-weight="bold">3</text>
+                        <rect x="275" y="130" width="35" height="18" rx="4" fill="#d97706"/>
+                        <text x="292" y="143" text-anchor="middle" fill="white" font-size="10">Act</text>
+
+                        <!-- Candidates preview -->
+                        <rect x="20" y="175" width="300" height="85" rx="6" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+                        <text x="30" y="195" fill="#333" font-size="11" font-weight="bold">Confirmed Candidates (9)</text>
+
+                        <!-- Candidate cards -->
+                        <rect x="30" y="205" width="80" height="45" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+                        <circle cx="50" cy="222" r="10" fill="#cbd5e0"/>
+                        <text x="65" y="220" fill="#333" font-size="9" font-weight="bold">J. Smith</text>
+                        <text x="65" y="230" fill="#666" font-size="8">President</text>
+
+                        <rect x="120" y="205" width="80" height="45" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+                        <circle cx="140" cy="222" r="10" fill="#cbd5e0"/>
+                        <text x="155" y="220" fill="#333" font-size="9" font-weight="bold">A. Jones</text>
+                        <text x="155" y="230" fill="#666" font-size="8">Vice Pres</text>
+
+                        <rect x="210" y="205" width="80" height="45" rx="4" fill="#f7fafc" stroke="#e2e8f0"/>
+                        <circle cx="230" cy="222" r="10" fill="#cbd5e0"/>
+                        <text x="245" y="220" fill="#333" font-size="9" font-weight="bold">M. Lee</text>
+                        <text x="245" y="230" fill="#666" font-size="8">Secretary</text>
+                    </svg>
+                </div>
+                <div class="option-body">
+                    <div class="strengths">
+                        <h3>Strengths</h3>
+                        <ul>
+                            <li>Visual progress through workflow stages</li>
+                            <li>Contextual actions within each stage</li>
+                            <li>Parallel task management</li>
+                            <li>Quick access to critical information</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h3>Best For</h3>
+                        <ul>
+                            <li>Users managing multiple elections</li>
+                            <li>Power users who multitask</li>
+                            <li>Users who need dashboard-style overview</li>
+                        </ul>
+                    </div>
+                    <a href="option-C/prototype.html" class="cta-button">View Interactive Prototype</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-link">
+            <a href="COMPARISON.md">View Detailed Comparison</a>
+        </div>
+    </div>
+</body>
+</html>

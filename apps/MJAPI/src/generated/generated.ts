@@ -18,14 +18,14 @@ import { MaxLength } from 'class-validator';
 import * as mj_core_schema_server_object_types from '@memberjunction/server'
 
 
-import { ActionItemEntity, AgendaItemEntity, ArtifactTypeEntity, ArtifactEntity, AttendanceEntity, CommitteeEntity, MeetingEntity, MembershipEntity, MinuteEntity, MotionEntity, RoleEntity, TermEntity, TypeEntity, VoteEntity } from 'mj_generatedentities';
+import { ActionItemEntity, AgendaItemEntity, ArtifactTypeEntity, ArtifactEntity, AttendanceEntity, CommitteeEntity, MeetingEntity, MembershipEntity, MinuteEntity, MotionEntity, RoleEntity, TermEntity, TypeEntity, VoteEntity, AddressLinkEntity, AddressTypeEntity, AddressEntity, ContactMethodEntity, ContactTypeEntity, OrganizationTypeEntity, OrganizationEntity, PersonEntity, RelationshipTypeEntity, RelationshipEntity } from 'mj_generatedentities';
     
 
 //****************************************************************************
 // ENTITY CLASS for Committees: Action Items
 //****************************************************************************
 @ObjectType({ description: `Tasks and action items assigned from committees or meetings` })
-export class CommitteesActionItem_ {
+export class mjCommitteesActionItem_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -51,11 +51,11 @@ export class CommitteesActionItem_ {
         
     @Field() 
     @MaxLength(16)
-    AssignedToUserID: string;
+    AssignedToPersonID: string;
         
     @Field({nullable: true}) 
     @MaxLength(16)
-    AssignedByUserID?: string;
+    AssignedByPersonID?: string;
         
     @Field({nullable: true, description: `Due date for completion`}) 
     @MaxLength(3)
@@ -88,16 +88,8 @@ export class CommitteesActionItem_ {
     @MaxLength(510)
     Committee: string;
         
-    @Field() 
-    @MaxLength(200)
-    AssignedToUser: string;
-        
-    @Field({nullable: true}) 
-    @MaxLength(200)
-    AssignedByUser?: string;
-        
-    @Field(() => [CommitteesArtifact_])
-    Committees_Artifacts_ActionItemIDArray: CommitteesArtifact_[]; // Link to Committees_Artifacts
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_ActionItemIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
     
 }
 
@@ -105,7 +97,7 @@ export class CommitteesActionItem_ {
 // INPUT TYPE for Committees: Action Items
 //****************************************************************************
 @InputType()
-export class CreateCommitteesActionItemInput {
+export class CreatemjCommitteesActionItemInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -125,10 +117,10 @@ export class CreateCommitteesActionItemInput {
     Description: string | null;
 
     @Field({ nullable: true })
-    AssignedToUserID?: string;
+    AssignedToPersonID?: string;
 
     @Field({ nullable: true })
-    AssignedByUserID: string | null;
+    AssignedByPersonID: string | null;
 
     @Field({ nullable: true })
     DueDate: Date | null;
@@ -151,7 +143,7 @@ export class CreateCommitteesActionItemInput {
 // INPUT TYPE for Committees: Action Items
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesActionItemInput {
+export class UpdatemjCommitteesActionItemInput {
     @Field()
     ID: string;
 
@@ -171,10 +163,10 @@ export class UpdateCommitteesActionItemInput {
     Description?: string | null;
 
     @Field({ nullable: true })
-    AssignedToUserID?: string;
+    AssignedToPersonID?: string;
 
     @Field({ nullable: true })
-    AssignedByUserID?: string | null;
+    AssignedByPersonID?: string | null;
 
     @Field({ nullable: true })
     DueDate?: Date | null;
@@ -199,9 +191,9 @@ export class UpdateCommitteesActionItemInput {
 // RESOLVER for Committees: Action Items
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesActionItemViewResult {
-    @Field(() => [CommitteesActionItem_])
-    Results: CommitteesActionItem_[];
+export class RunmjCommitteesActionItemViewResult {
+    @Field(() => [mjCommitteesActionItem_])
+    Results: mjCommitteesActionItem_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -222,51 +214,51 @@ export class RunCommitteesActionItemViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesActionItem_)
-export class CommitteesActionItemResolver extends ResolverBase {
-    @Query(() => RunCommitteesActionItemViewResult)
-    async RunCommitteesActionItemViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesActionItem_)
+export class mjCommitteesActionItemResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesActionItemViewResult)
+    async RunmjCommitteesActionItemViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesActionItemViewResult)
-    async RunCommitteesActionItemViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesActionItemViewResult)
+    async RunmjCommitteesActionItemViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesActionItemViewResult)
-    async RunCommitteesActionItemDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesActionItemViewResult)
+    async RunmjCommitteesActionItemDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Action Items';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesActionItem_, { nullable: true })
-    async CommitteesActionItem(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesActionItem_ | null> {
+    @Query(() => mjCommitteesActionItem_, { nullable: true })
+    async mjCommitteesActionItem(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesActionItem_ | null> {
         this.CheckUserReadPermissions('Committees: Action Items', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwActionItems] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Action Items', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesArtifact_])
-    async Committees_Artifacts_ActionItemIDArray(@Root() committeesactionitem_: CommitteesActionItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_ActionItemIDArray(@Root() mjcommitteesactionitem_: mjCommitteesActionItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [ActionItemID]='${committeesactionitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [ActionItemID]='${mjcommitteesactionitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesActionItem_)
-    async CreateCommitteesActionItem(
-        @Arg('input', () => CreateCommitteesActionItemInput) input: CreateCommitteesActionItemInput,
+    @Mutation(() => mjCommitteesActionItem_)
+    async CreatemjCommitteesActionItem(
+        @Arg('input', () => CreatemjCommitteesActionItemInput) input: CreatemjCommitteesActionItemInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -274,9 +266,9 @@ export class CommitteesActionItemResolver extends ResolverBase {
         return this.CreateRecord('Committees: Action Items', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesActionItem_)
-    async UpdateCommitteesActionItem(
-        @Arg('input', () => UpdateCommitteesActionItemInput) input: UpdateCommitteesActionItemInput,
+    @Mutation(() => mjCommitteesActionItem_)
+    async UpdatemjCommitteesActionItem(
+        @Arg('input', () => UpdatemjCommitteesActionItemInput) input: UpdatemjCommitteesActionItemInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -284,8 +276,8 @@ export class CommitteesActionItemResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Action Items', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesActionItem_)
-    async DeleteCommitteesActionItem(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesActionItem_)
+    async DeletemjCommitteesActionItem(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Action Items', key, options, provider, userPayload, pubSub);
@@ -297,7 +289,7 @@ export class CommitteesActionItemResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Agenda Items
 //****************************************************************************
 @ObjectType({ description: `Structured agenda items for meetings with hierarchy support` })
-export class CommitteesAgendaItem_ {
+export class mjCommitteesAgendaItem_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -322,7 +314,7 @@ export class CommitteesAgendaItem_ {
         
     @Field({nullable: true}) 
     @MaxLength(16)
-    PresenterUserID?: string;
+    PresenterPersonID?: string;
         
     @Field(() => Int, {nullable: true, description: `Estimated duration in minutes`}) 
     DurationMinutes?: number;
@@ -351,24 +343,20 @@ export class CommitteesAgendaItem_ {
     _mj__UpdatedAt: Date;
         
     @Field({nullable: true}) 
-    @MaxLength(200)
-    PresenterUser?: string;
-        
-    @Field({nullable: true}) 
     @MaxLength(16)
     RootParentAgendaItemID?: string;
         
-    @Field(() => [CommitteesMotion_])
-    Committees_Motions_AgendaItemIDArray: CommitteesMotion_[]; // Link to Committees_Motions
+    @Field(() => [mjCommitteesMotion_])
+    Committees_Motions_AgendaItemIDArray: mjCommitteesMotion_[]; // Link to Committees_Motions
     
-    @Field(() => [CommitteesAgendaItem_])
-    Committees_AgendaItems_ParentAgendaItemIDArray: CommitteesAgendaItem_[]; // Link to Committees_AgendaItems
+    @Field(() => [mjCommitteesAgendaItem_])
+    Committees_AgendaItems_ParentAgendaItemIDArray: mjCommitteesAgendaItem_[]; // Link to Committees_AgendaItems
     
-    @Field(() => [CommitteesActionItem_])
-    Committees_ActionItems_AgendaItemIDArray: CommitteesActionItem_[]; // Link to Committees_ActionItems
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_AgendaItemIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
     
-    @Field(() => [CommitteesArtifact_])
-    Committees_Artifacts_AgendaItemIDArray: CommitteesArtifact_[]; // Link to Committees_Artifacts
+    @Field(() => [mjCommitteesActionItem_])
+    Committees_ActionItems_AgendaItemIDArray: mjCommitteesActionItem_[]; // Link to Committees_ActionItems
     
 }
 
@@ -376,7 +364,7 @@ export class CommitteesAgendaItem_ {
 // INPUT TYPE for Committees: Agenda Items
 //****************************************************************************
 @InputType()
-export class CreateCommitteesAgendaItemInput {
+export class CreatemjCommitteesAgendaItemInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -396,7 +384,7 @@ export class CreateCommitteesAgendaItemInput {
     Description: string | null;
 
     @Field({ nullable: true })
-    PresenterUserID: string | null;
+    PresenterPersonID: string | null;
 
     @Field(() => Int, { nullable: true })
     DurationMinutes: number | null;
@@ -419,7 +407,7 @@ export class CreateCommitteesAgendaItemInput {
 // INPUT TYPE for Committees: Agenda Items
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesAgendaItemInput {
+export class UpdatemjCommitteesAgendaItemInput {
     @Field()
     ID: string;
 
@@ -439,7 +427,7 @@ export class UpdateCommitteesAgendaItemInput {
     Description?: string | null;
 
     @Field({ nullable: true })
-    PresenterUserID?: string | null;
+    PresenterPersonID?: string | null;
 
     @Field(() => Int, { nullable: true })
     DurationMinutes?: number | null;
@@ -464,9 +452,9 @@ export class UpdateCommitteesAgendaItemInput {
 // RESOLVER for Committees: Agenda Items
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesAgendaItemViewResult {
-    @Field(() => [CommitteesAgendaItem_])
-    Results: CommitteesAgendaItem_[];
+export class RunmjCommitteesAgendaItemViewResult {
+    @Field(() => [mjCommitteesAgendaItem_])
+    Results: mjCommitteesAgendaItem_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -487,84 +475,84 @@ export class RunCommitteesAgendaItemViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesAgendaItem_)
-export class CommitteesAgendaItemResolver extends ResolverBase {
-    @Query(() => RunCommitteesAgendaItemViewResult)
-    async RunCommitteesAgendaItemViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesAgendaItem_)
+export class mjCommitteesAgendaItemResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesAgendaItemViewResult)
+    async RunmjCommitteesAgendaItemViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesAgendaItemViewResult)
-    async RunCommitteesAgendaItemViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesAgendaItemViewResult)
+    async RunmjCommitteesAgendaItemViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesAgendaItemViewResult)
-    async RunCommitteesAgendaItemDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesAgendaItemViewResult)
+    async RunmjCommitteesAgendaItemDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Agenda Items';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesAgendaItem_, { nullable: true })
-    async CommitteesAgendaItem(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesAgendaItem_ | null> {
+    @Query(() => mjCommitteesAgendaItem_, { nullable: true })
+    async mjCommitteesAgendaItem(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesAgendaItem_ | null> {
         this.CheckUserReadPermissions('Committees: Agenda Items', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwAgendaItems] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAgendaItems] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Agenda Items', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesMotion_])
-    async Committees_Motions_AgendaItemIDArray(@Root() committeesagendaitem_: CommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMotion_])
+    async Committees_Motions_AgendaItemIDArray(@Root() mjcommitteesagendaitem_: mjCommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Motions', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMotions] WHERE [AgendaItemID]='${committeesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMotions] WHERE [AgendaItemID]='${mjcommitteesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesAgendaItem_])
-    async Committees_AgendaItems_ParentAgendaItemIDArray(@Root() committeesagendaitem_: CommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesAgendaItem_])
+    async Committees_AgendaItems_ParentAgendaItemIDArray(@Root() mjcommitteesagendaitem_: mjCommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Agenda Items', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwAgendaItems] WHERE [ParentAgendaItemID]='${committeesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAgendaItems] WHERE [ParentAgendaItemID]='${mjcommitteesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Agenda Items', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesActionItem_])
-    async Committees_ActionItems_AgendaItemIDArray(@Root() committeesagendaitem_: CommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwActionItems] WHERE [AgendaItemID]='${committeesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesArtifact_])
-    async Committees_Artifacts_AgendaItemIDArray(@Root() committeesagendaitem_: CommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_AgendaItemIDArray(@Root() mjcommitteesagendaitem_: mjCommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [AgendaItemID]='${committeesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [AgendaItemID]='${mjcommitteesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesAgendaItem_)
-    async CreateCommitteesAgendaItem(
-        @Arg('input', () => CreateCommitteesAgendaItemInput) input: CreateCommitteesAgendaItemInput,
+    @FieldResolver(() => [mjCommitteesActionItem_])
+    async Committees_ActionItems_AgendaItemIDArray(@Root() mjcommitteesagendaitem_: mjCommitteesAgendaItem_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [AgendaItemID]='${mjcommitteesagendaitem_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjCommitteesAgendaItem_)
+    async CreatemjCommitteesAgendaItem(
+        @Arg('input', () => CreatemjCommitteesAgendaItemInput) input: CreatemjCommitteesAgendaItemInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -572,9 +560,9 @@ export class CommitteesAgendaItemResolver extends ResolverBase {
         return this.CreateRecord('Committees: Agenda Items', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesAgendaItem_)
-    async UpdateCommitteesAgendaItem(
-        @Arg('input', () => UpdateCommitteesAgendaItemInput) input: UpdateCommitteesAgendaItemInput,
+    @Mutation(() => mjCommitteesAgendaItem_)
+    async UpdatemjCommitteesAgendaItem(
+        @Arg('input', () => UpdatemjCommitteesAgendaItemInput) input: UpdatemjCommitteesAgendaItemInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -582,8 +570,8 @@ export class CommitteesAgendaItemResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Agenda Items', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesAgendaItem_)
-    async DeleteCommitteesAgendaItem(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesAgendaItem_)
+    async DeletemjCommitteesAgendaItem(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Agenda Items', key, options, provider, userPayload, pubSub);
@@ -595,7 +583,7 @@ export class CommitteesAgendaItemResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Artifact Types
 //****************************************************************************
 @ObjectType({ description: `Categories of committee artifacts with optional extension entity for type-specific fields` })
-export class CommitteesArtifactType_ {
+export class mjCommitteesArtifactType_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -627,8 +615,8 @@ export class CommitteesArtifactType_ {
     @MaxLength(510)
     ExtendedEntity?: string;
         
-    @Field(() => [CommitteesArtifact_])
-    Committees_Artifacts_ArtifactTypeIDArray: CommitteesArtifact_[]; // Link to Committees_Artifacts
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_ArtifactTypeIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
     
 }
 
@@ -636,7 +624,7 @@ export class CommitteesArtifactType_ {
 // INPUT TYPE for Committees: Artifact Types
 //****************************************************************************
 @InputType()
-export class CreateCommitteesArtifactTypeInput {
+export class CreatemjCommitteesArtifactTypeInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -658,7 +646,7 @@ export class CreateCommitteesArtifactTypeInput {
 // INPUT TYPE for Committees: Artifact Types
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesArtifactTypeInput {
+export class UpdatemjCommitteesArtifactTypeInput {
     @Field()
     ID: string;
 
@@ -682,9 +670,9 @@ export class UpdateCommitteesArtifactTypeInput {
 // RESOLVER for Committees: Artifact Types
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesArtifactTypeViewResult {
-    @Field(() => [CommitteesArtifactType_])
-    Results: CommitteesArtifactType_[];
+export class RunmjCommitteesArtifactTypeViewResult {
+    @Field(() => [mjCommitteesArtifactType_])
+    Results: mjCommitteesArtifactType_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -705,51 +693,51 @@ export class RunCommitteesArtifactTypeViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesArtifactType_)
-export class CommitteesArtifactTypeResolver extends ResolverBase {
-    @Query(() => RunCommitteesArtifactTypeViewResult)
-    async RunCommitteesArtifactTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesArtifactType_)
+export class mjCommitteesArtifactTypeResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesArtifactTypeViewResult)
+    async RunmjCommitteesArtifactTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesArtifactTypeViewResult)
-    async RunCommitteesArtifactTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesArtifactTypeViewResult)
+    async RunmjCommitteesArtifactTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesArtifactTypeViewResult)
-    async RunCommitteesArtifactTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesArtifactTypeViewResult)
+    async RunmjCommitteesArtifactTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Artifact Types';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesArtifactType_, { nullable: true })
-    async CommitteesArtifactType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesArtifactType_ | null> {
+    @Query(() => mjCommitteesArtifactType_, { nullable: true })
+    async mjCommitteesArtifactType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesArtifactType_ | null> {
         this.CheckUserReadPermissions('Committees: Artifact Types', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifactTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifact Types', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifactTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifact Types', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Artifact Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesArtifact_])
-    async Committees_Artifacts_ArtifactTypeIDArray(@Root() committeesartifacttype_: CommitteesArtifactType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_ArtifactTypeIDArray(@Root() mjcommitteesartifacttype_: mjCommitteesArtifactType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [ArtifactTypeID]='${committeesartifacttype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [ArtifactTypeID]='${mjcommitteesartifacttype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesArtifactType_)
-    async CreateCommitteesArtifactType(
-        @Arg('input', () => CreateCommitteesArtifactTypeInput) input: CreateCommitteesArtifactTypeInput,
+    @Mutation(() => mjCommitteesArtifactType_)
+    async CreatemjCommitteesArtifactType(
+        @Arg('input', () => CreatemjCommitteesArtifactTypeInput) input: CreatemjCommitteesArtifactTypeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -757,9 +745,9 @@ export class CommitteesArtifactTypeResolver extends ResolverBase {
         return this.CreateRecord('Committees: Artifact Types', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesArtifactType_)
-    async UpdateCommitteesArtifactType(
-        @Arg('input', () => UpdateCommitteesArtifactTypeInput) input: UpdateCommitteesArtifactTypeInput,
+    @Mutation(() => mjCommitteesArtifactType_)
+    async UpdatemjCommitteesArtifactType(
+        @Arg('input', () => UpdatemjCommitteesArtifactTypeInput) input: UpdatemjCommitteesArtifactTypeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -767,8 +755,8 @@ export class CommitteesArtifactTypeResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Artifact Types', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesArtifactType_)
-    async DeleteCommitteesArtifactType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesArtifactType_)
+    async DeletemjCommitteesArtifactType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Artifact Types', key, options, provider, userPayload, pubSub);
@@ -780,7 +768,7 @@ export class CommitteesArtifactTypeResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Artifacts
 //****************************************************************************
 @ObjectType({ description: `Links to external documents and files from various providers` })
-export class CommitteesArtifact_ {
+export class mjCommitteesArtifact_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -833,7 +821,7 @@ export class CommitteesArtifact_ {
         
     @Field({nullable: true}) 
     @MaxLength(16)
-    UploadedByUserID?: string;
+    UploadedByPersonID?: string;
         
     @Field() 
     @MaxLength(10)
@@ -851,12 +839,8 @@ export class CommitteesArtifact_ {
     @MaxLength(200)
     ArtifactType: string;
         
-    @Field({nullable: true}) 
-    @MaxLength(200)
-    UploadedByUser?: string;
-        
-    @Field(() => [CommitteesMinute_])
-    Committees_Minutes_ArtifactIDArray: CommitteesMinute_[]; // Link to Committees_Minutes
+    @Field(() => [mjCommitteesMinute_])
+    Committees_Minutes_ArtifactIDArray: mjCommitteesMinute_[]; // Link to Committees_Minutes
     
 }
 
@@ -864,7 +848,7 @@ export class CommitteesArtifact_ {
 // INPUT TYPE for Committees: Artifacts
 //****************************************************************************
 @InputType()
-export class CreateCommitteesArtifactInput {
+export class CreatemjCommitteesArtifactInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -905,7 +889,7 @@ export class CreateCommitteesArtifactInput {
     FileSize: number | null;
 
     @Field({ nullable: true })
-    UploadedByUserID: string | null;
+    UploadedByPersonID: string | null;
 }
     
 
@@ -913,7 +897,7 @@ export class CreateCommitteesArtifactInput {
 // INPUT TYPE for Committees: Artifacts
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesArtifactInput {
+export class UpdatemjCommitteesArtifactInput {
     @Field()
     ID: string;
 
@@ -954,7 +938,7 @@ export class UpdateCommitteesArtifactInput {
     FileSize?: number | null;
 
     @Field({ nullable: true })
-    UploadedByUserID?: string | null;
+    UploadedByPersonID?: string | null;
 
     @Field(() => [KeyValuePairInput], { nullable: true })
     OldValues___?: KeyValuePairInput[];
@@ -964,9 +948,9 @@ export class UpdateCommitteesArtifactInput {
 // RESOLVER for Committees: Artifacts
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesArtifactViewResult {
-    @Field(() => [CommitteesArtifact_])
-    Results: CommitteesArtifact_[];
+export class RunmjCommitteesArtifactViewResult {
+    @Field(() => [mjCommitteesArtifact_])
+    Results: mjCommitteesArtifact_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -987,51 +971,51 @@ export class RunCommitteesArtifactViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesArtifact_)
-export class CommitteesArtifactResolver extends ResolverBase {
-    @Query(() => RunCommitteesArtifactViewResult)
-    async RunCommitteesArtifactViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesArtifact_)
+export class mjCommitteesArtifactResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesArtifactViewResult)
+    async RunmjCommitteesArtifactViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesArtifactViewResult)
-    async RunCommitteesArtifactViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesArtifactViewResult)
+    async RunmjCommitteesArtifactViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesArtifactViewResult)
-    async RunCommitteesArtifactDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesArtifactViewResult)
+    async RunmjCommitteesArtifactDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Artifacts';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesArtifact_, { nullable: true })
-    async CommitteesArtifact(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesArtifact_ | null> {
+    @Query(() => mjCommitteesArtifact_, { nullable: true })
+    async mjCommitteesArtifact(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesArtifact_ | null> {
         this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Artifacts', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesMinute_])
-    async Committees_Minutes_ArtifactIDArray(@Root() committeesartifact_: CommitteesArtifact_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMinute_])
+    async Committees_Minutes_ArtifactIDArray(@Root() mjcommitteesartifact_: mjCommitteesArtifact_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Minutes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMinutes] WHERE [ArtifactID]='${committeesartifact_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMinutes] WHERE [ArtifactID]='${mjcommitteesartifact_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Minutes', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesArtifact_)
-    async CreateCommitteesArtifact(
-        @Arg('input', () => CreateCommitteesArtifactInput) input: CreateCommitteesArtifactInput,
+    @Mutation(() => mjCommitteesArtifact_)
+    async CreatemjCommitteesArtifact(
+        @Arg('input', () => CreatemjCommitteesArtifactInput) input: CreatemjCommitteesArtifactInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1039,9 +1023,9 @@ export class CommitteesArtifactResolver extends ResolverBase {
         return this.CreateRecord('Committees: Artifacts', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesArtifact_)
-    async UpdateCommitteesArtifact(
-        @Arg('input', () => UpdateCommitteesArtifactInput) input: UpdateCommitteesArtifactInput,
+    @Mutation(() => mjCommitteesArtifact_)
+    async UpdatemjCommitteesArtifact(
+        @Arg('input', () => UpdatemjCommitteesArtifactInput) input: UpdatemjCommitteesArtifactInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1049,8 +1033,8 @@ export class CommitteesArtifactResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Artifacts', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesArtifact_)
-    async DeleteCommitteesArtifact(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesArtifact_)
+    async DeletemjCommitteesArtifact(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Artifacts', key, options, provider, userPayload, pubSub);
@@ -1062,7 +1046,7 @@ export class CommitteesArtifactResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Attendances
 //****************************************************************************
 @ObjectType({ description: `Meeting attendance records for committee members` })
-export class CommitteesAttendance_ {
+export class mjCommitteesAttendance_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -1073,7 +1057,7 @@ export class CommitteesAttendance_ {
         
     @Field() 
     @MaxLength(16)
-    UserID: string;
+    PersonID: string;
         
     @Field({description: `Attendance status: Expected, Present, Absent, Excused, Partial`}) 
     @MaxLength(100)
@@ -1099,17 +1083,13 @@ export class CommitteesAttendance_ {
     @MaxLength(10)
     _mj__UpdatedAt: Date;
         
-    @Field() 
-    @MaxLength(200)
-    User: string;
-        
 }
 
 //****************************************************************************
 // INPUT TYPE for Committees: Attendances
 //****************************************************************************
 @InputType()
-export class CreateCommitteesAttendanceInput {
+export class CreatemjCommitteesAttendanceInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -1117,7 +1097,7 @@ export class CreateCommitteesAttendanceInput {
     MeetingID?: string;
 
     @Field({ nullable: true })
-    UserID?: string;
+    PersonID?: string;
 
     @Field({ nullable: true })
     AttendanceStatus?: string;
@@ -1137,7 +1117,7 @@ export class CreateCommitteesAttendanceInput {
 // INPUT TYPE for Committees: Attendances
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesAttendanceInput {
+export class UpdatemjCommitteesAttendanceInput {
     @Field()
     ID: string;
 
@@ -1145,7 +1125,7 @@ export class UpdateCommitteesAttendanceInput {
     MeetingID?: string;
 
     @Field({ nullable: true })
-    UserID?: string;
+    PersonID?: string;
 
     @Field({ nullable: true })
     AttendanceStatus?: string;
@@ -1167,9 +1147,9 @@ export class UpdateCommitteesAttendanceInput {
 // RESOLVER for Committees: Attendances
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesAttendanceViewResult {
-    @Field(() => [CommitteesAttendance_])
-    Results: CommitteesAttendance_[];
+export class RunmjCommitteesAttendanceViewResult {
+    @Field(() => [mjCommitteesAttendance_])
+    Results: mjCommitteesAttendance_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -1190,40 +1170,40 @@ export class RunCommitteesAttendanceViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesAttendance_)
-export class CommitteesAttendanceResolver extends ResolverBase {
-    @Query(() => RunCommitteesAttendanceViewResult)
-    async RunCommitteesAttendanceViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesAttendance_)
+export class mjCommitteesAttendanceResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesAttendanceViewResult)
+    async RunmjCommitteesAttendanceViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesAttendanceViewResult)
-    async RunCommitteesAttendanceViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesAttendanceViewResult)
+    async RunmjCommitteesAttendanceViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesAttendanceViewResult)
-    async RunCommitteesAttendanceDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesAttendanceViewResult)
+    async RunmjCommitteesAttendanceDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Attendances';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesAttendance_, { nullable: true })
-    async CommitteesAttendance(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesAttendance_ | null> {
+    @Query(() => mjCommitteesAttendance_, { nullable: true })
+    async mjCommitteesAttendance(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesAttendance_ | null> {
         this.CheckUserReadPermissions('Committees: Attendances', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwAttendances] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Attendances', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAttendances] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Attendances', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Attendances', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @Mutation(() => CommitteesAttendance_)
-    async CreateCommitteesAttendance(
-        @Arg('input', () => CreateCommitteesAttendanceInput) input: CreateCommitteesAttendanceInput,
+    @Mutation(() => mjCommitteesAttendance_)
+    async CreatemjCommitteesAttendance(
+        @Arg('input', () => CreatemjCommitteesAttendanceInput) input: CreatemjCommitteesAttendanceInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1231,9 +1211,9 @@ export class CommitteesAttendanceResolver extends ResolverBase {
         return this.CreateRecord('Committees: Attendances', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesAttendance_)
-    async UpdateCommitteesAttendance(
-        @Arg('input', () => UpdateCommitteesAttendanceInput) input: UpdateCommitteesAttendanceInput,
+    @Mutation(() => mjCommitteesAttendance_)
+    async UpdatemjCommitteesAttendance(
+        @Arg('input', () => UpdatemjCommitteesAttendanceInput) input: UpdatemjCommitteesAttendanceInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1241,8 +1221,8 @@ export class CommitteesAttendanceResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Attendances', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesAttendance_)
-    async DeleteCommitteesAttendance(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesAttendance_)
+    async DeletemjCommitteesAttendance(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Attendances', key, options, provider, userPayload, pubSub);
@@ -1254,7 +1234,7 @@ export class CommitteesAttendanceResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Committees
 //****************************************************************************
 @ObjectType({ description: `Core committee records with hierarchy support` })
-export class CommitteesCommittee_ {
+export class mjCommitteesCommittee_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -1317,26 +1297,30 @@ export class CommitteesCommittee_ {
     ParentCommittee?: string;
         
     @Field({nullable: true}) 
+    @MaxLength(510)
+    Organization?: string;
+        
+    @Field({nullable: true}) 
     @MaxLength(16)
     RootParentCommitteeID?: string;
         
-    @Field(() => [CommitteesTerm_])
-    Committees_Terms_CommitteeIDArray: CommitteesTerm_[]; // Link to Committees_Terms
+    @Field(() => [mjCommitteesMeeting_])
+    Committees_Meetings_CommitteeIDArray: mjCommitteesMeeting_[]; // Link to Committees_Meetings
     
-    @Field(() => [CommitteesMembership_])
-    Committees_Memberships_CommitteeIDArray: CommitteesMembership_[]; // Link to Committees_Memberships
+    @Field(() => [mjCommitteesCommittee_])
+    Committees_Committees_ParentCommitteeIDArray: mjCommitteesCommittee_[]; // Link to Committees_Committees
     
-    @Field(() => [CommitteesActionItem_])
-    Committees_ActionItems_CommitteeIDArray: CommitteesActionItem_[]; // Link to Committees_ActionItems
+    @Field(() => [mjCommitteesActionItem_])
+    Committees_ActionItems_CommitteeIDArray: mjCommitteesActionItem_[]; // Link to Committees_ActionItems
     
-    @Field(() => [CommitteesArtifact_])
-    Committees_Artifacts_CommitteeIDArray: CommitteesArtifact_[]; // Link to Committees_Artifacts
+    @Field(() => [mjCommitteesTerm_])
+    Committees_Terms_CommitteeIDArray: mjCommitteesTerm_[]; // Link to Committees_Terms
     
-    @Field(() => [CommitteesMeeting_])
-    Committees_Meetings_CommitteeIDArray: CommitteesMeeting_[]; // Link to Committees_Meetings
+    @Field(() => [mjCommitteesMembership_])
+    Committees_Memberships_CommitteeIDArray: mjCommitteesMembership_[]; // Link to Committees_Memberships
     
-    @Field(() => [CommitteesCommittee_])
-    Committees_Committees_ParentCommitteeIDArray: CommitteesCommittee_[]; // Link to Committees_Committees
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_CommitteeIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
     
 }
 
@@ -1344,7 +1328,7 @@ export class CommitteesCommittee_ {
 // INPUT TYPE for Committees: Committees
 //****************************************************************************
 @InputType()
-export class CreateCommitteesCommitteeInput {
+export class CreatemjCommitteesCommitteeInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -1387,7 +1371,7 @@ export class CreateCommitteesCommitteeInput {
 // INPUT TYPE for Committees: Committees
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesCommitteeInput {
+export class UpdatemjCommitteesCommitteeInput {
     @Field()
     ID: string;
 
@@ -1432,9 +1416,9 @@ export class UpdateCommitteesCommitteeInput {
 // RESOLVER for Committees: Committees
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesCommitteeViewResult {
-    @Field(() => [CommitteesCommittee_])
-    Results: CommitteesCommittee_[];
+export class RunmjCommitteesCommitteeViewResult {
+    @Field(() => [mjCommitteesCommittee_])
+    Results: mjCommitteesCommittee_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -1455,106 +1439,106 @@ export class RunCommitteesCommitteeViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesCommittee_)
-export class CommitteesCommitteeResolver extends ResolverBase {
-    @Query(() => RunCommitteesCommitteeViewResult)
-    async RunCommitteesCommitteeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesCommittee_)
+export class mjCommitteesCommitteeResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesCommitteeViewResult)
+    async RunmjCommitteesCommitteeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesCommitteeViewResult)
-    async RunCommitteesCommitteeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesCommitteeViewResult)
+    async RunmjCommitteesCommitteeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesCommitteeViewResult)
-    async RunCommitteesCommitteeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesCommitteeViewResult)
+    async RunmjCommitteesCommitteeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Committees';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesCommittee_, { nullable: true })
-    async CommitteesCommittee(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesCommittee_ | null> {
+    @Query(() => mjCommitteesCommittee_, { nullable: true })
+    async mjCommitteesCommittee(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesCommittee_ | null> {
         this.CheckUserReadPermissions('Committees: Committees', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwCommittees] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwCommittees] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Committees', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesTerm_])
-    async Committees_Terms_CommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Terms', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwTerms] WHERE [CommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Terms', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Terms', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesMembership_])
-    async Committees_Memberships_CommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Memberships', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMemberships] WHERE [CommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Memberships', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesActionItem_])
-    async Committees_ActionItems_CommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwActionItems] WHERE [CommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesArtifact_])
-    async Committees_Artifacts_CommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [CommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesMeeting_])
-    async Committees_Meetings_CommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMeeting_])
+    async Committees_Meetings_CommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Meetings', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMeetings] WHERE [CommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Meetings', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMeetings] WHERE [CommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Meetings', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Meetings', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesCommittee_])
-    async Committees_Committees_ParentCommitteeIDArray(@Root() committeescommittee_: CommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesCommittee_])
+    async Committees_Committees_ParentCommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Committees', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwCommittees] WHERE [ParentCommitteeID]='${committeescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwCommittees] WHERE [ParentCommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Committees', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesCommittee_)
-    async CreateCommitteesCommittee(
-        @Arg('input', () => CreateCommitteesCommitteeInput) input: CreateCommitteesCommitteeInput,
+    @FieldResolver(() => [mjCommitteesActionItem_])
+    async Committees_ActionItems_CommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [CommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesTerm_])
+    async Committees_Terms_CommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Terms', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwTerms] WHERE [CommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Terms', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Terms', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesMembership_])
+    async Committees_Memberships_CommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Memberships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMemberships] WHERE [CommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Memberships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_CommitteeIDArray(@Root() mjcommitteescommittee_: mjCommitteesCommittee_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [CommitteeID]='${mjcommitteescommittee_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjCommitteesCommittee_)
+    async CreatemjCommitteesCommittee(
+        @Arg('input', () => CreatemjCommitteesCommitteeInput) input: CreatemjCommitteesCommitteeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1562,9 +1546,9 @@ export class CommitteesCommitteeResolver extends ResolverBase {
         return this.CreateRecord('Committees: Committees', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesCommittee_)
-    async UpdateCommitteesCommittee(
-        @Arg('input', () => UpdateCommitteesCommitteeInput) input: UpdateCommitteesCommitteeInput,
+    @Mutation(() => mjCommitteesCommittee_)
+    async UpdatemjCommitteesCommittee(
+        @Arg('input', () => UpdatemjCommitteesCommitteeInput) input: UpdatemjCommitteesCommitteeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1572,8 +1556,8 @@ export class CommitteesCommitteeResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Committees', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesCommittee_)
-    async DeleteCommitteesCommittee(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesCommittee_)
+    async DeletemjCommitteesCommittee(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Committees', key, options, provider, userPayload, pubSub);
@@ -1585,7 +1569,7 @@ export class CommitteesCommitteeResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Meetings
 //****************************************************************************
 @ObjectType({ description: `Committee meeting records with scheduling and video conferencing info` })
-export class CommitteesMeeting_ {
+export class mjCommitteesMeeting_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -1661,23 +1645,23 @@ export class CommitteesMeeting_ {
     @MaxLength(510)
     Committee: string;
         
-    @Field(() => [CommitteesMinute_])
-    Committees_Minutes_ApprovedByMeetingIDArray: CommitteesMinute_[]; // Link to Committees_Minutes
+    @Field(() => [mjCommitteesMinute_])
+    Committees_Minutes_ApprovedByMeetingIDArray: mjCommitteesMinute_[]; // Link to Committees_Minutes
     
-    @Field(() => [CommitteesAttendance_])
-    Committees_Attendances_MeetingIDArray: CommitteesAttendance_[]; // Link to Committees_Attendances
+    @Field(() => [mjCommitteesAttendance_])
+    Committees_Attendances_MeetingIDArray: mjCommitteesAttendance_[]; // Link to Committees_Attendances
     
-    @Field(() => [CommitteesMotion_])
-    Committees_Motions_MeetingIDArray: CommitteesMotion_[]; // Link to Committees_Motions
+    @Field(() => [mjCommitteesAgendaItem_])
+    Committees_AgendaItems_MeetingIDArray: mjCommitteesAgendaItem_[]; // Link to Committees_AgendaItems
     
-    @Field(() => [CommitteesAgendaItem_])
-    Committees_AgendaItems_MeetingIDArray: CommitteesAgendaItem_[]; // Link to Committees_AgendaItems
+    @Field(() => [mjCommitteesMotion_])
+    Committees_Motions_MeetingIDArray: mjCommitteesMotion_[]; // Link to Committees_Motions
     
-    @Field(() => [CommitteesActionItem_])
-    Committees_ActionItems_MeetingIDArray: CommitteesActionItem_[]; // Link to Committees_ActionItems
+    @Field(() => [mjCommitteesActionItem_])
+    Committees_ActionItems_MeetingIDArray: mjCommitteesActionItem_[]; // Link to Committees_ActionItems
     
-    @Field(() => [CommitteesArtifact_])
-    Committees_Artifacts_MeetingIDArray: CommitteesArtifact_[]; // Link to Committees_Artifacts
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_MeetingIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
     
 }
 
@@ -1685,7 +1669,7 @@ export class CommitteesMeeting_ {
 // INPUT TYPE for Committees: Meetings
 //****************************************************************************
 @InputType()
-export class CreateCommitteesMeetingInput {
+export class CreatemjCommitteesMeetingInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -1740,7 +1724,7 @@ export class CreateCommitteesMeetingInput {
 // INPUT TYPE for Committees: Meetings
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesMeetingInput {
+export class UpdatemjCommitteesMeetingInput {
     @Field()
     ID: string;
 
@@ -1797,9 +1781,9 @@ export class UpdateCommitteesMeetingInput {
 // RESOLVER for Committees: Meetings
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesMeetingViewResult {
-    @Field(() => [CommitteesMeeting_])
-    Results: CommitteesMeeting_[];
+export class RunmjCommitteesMeetingViewResult {
+    @Field(() => [mjCommitteesMeeting_])
+    Results: mjCommitteesMeeting_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -1820,106 +1804,106 @@ export class RunCommitteesMeetingViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesMeeting_)
-export class CommitteesMeetingResolver extends ResolverBase {
-    @Query(() => RunCommitteesMeetingViewResult)
-    async RunCommitteesMeetingViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesMeeting_)
+export class mjCommitteesMeetingResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesMeetingViewResult)
+    async RunmjCommitteesMeetingViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMeetingViewResult)
-    async RunCommitteesMeetingViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMeetingViewResult)
+    async RunmjCommitteesMeetingViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMeetingViewResult)
-    async RunCommitteesMeetingDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMeetingViewResult)
+    async RunmjCommitteesMeetingDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Meetings';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesMeeting_, { nullable: true })
-    async CommitteesMeeting(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesMeeting_ | null> {
+    @Query(() => mjCommitteesMeeting_, { nullable: true })
+    async mjCommitteesMeeting(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesMeeting_ | null> {
         this.CheckUserReadPermissions('Committees: Meetings', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMeetings] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Meetings', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMeetings] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Meetings', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Meetings', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesMinute_])
-    async Committees_Minutes_ApprovedByMeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMinute_])
+    async Committees_Minutes_ApprovedByMeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Minutes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMinutes] WHERE [ApprovedByMeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMinutes] WHERE [ApprovedByMeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Minutes', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesAttendance_])
-    async Committees_Attendances_MeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesAttendance_])
+    async Committees_Attendances_MeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Attendances', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwAttendances] WHERE [MeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Attendances', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAttendances] WHERE [MeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Attendances', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Attendances', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesMotion_])
-    async Committees_Motions_MeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Motions', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMotions] WHERE [MeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @FieldResolver(() => [CommitteesAgendaItem_])
-    async Committees_AgendaItems_MeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesAgendaItem_])
+    async Committees_AgendaItems_MeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Agenda Items', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwAgendaItems] WHERE [MeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAgendaItems] WHERE [MeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Agenda Items', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesActionItem_])
-    async Committees_ActionItems_MeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMotion_])
+    async Committees_Motions_MeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Motions', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMotions] WHERE [MeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesActionItem_])
+    async Committees_ActionItems_MeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Action Items', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwActionItems] WHERE [MeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [MeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesArtifact_])
-    async Committees_Artifacts_MeetingIDArray(@Root() committeesmeeting_: CommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_MeetingIDArray(@Root() mjcommitteesmeeting_: mjCommitteesMeeting_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwArtifacts] WHERE [MeetingID]='${committeesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [MeetingID]='${mjcommitteesmeeting_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesMeeting_)
-    async CreateCommitteesMeeting(
-        @Arg('input', () => CreateCommitteesMeetingInput) input: CreateCommitteesMeetingInput,
+    @Mutation(() => mjCommitteesMeeting_)
+    async CreatemjCommitteesMeeting(
+        @Arg('input', () => CreatemjCommitteesMeetingInput) input: CreatemjCommitteesMeetingInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1927,9 +1911,9 @@ export class CommitteesMeetingResolver extends ResolverBase {
         return this.CreateRecord('Committees: Meetings', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesMeeting_)
-    async UpdateCommitteesMeeting(
-        @Arg('input', () => UpdateCommitteesMeetingInput) input: UpdateCommitteesMeetingInput,
+    @Mutation(() => mjCommitteesMeeting_)
+    async UpdatemjCommitteesMeeting(
+        @Arg('input', () => UpdatemjCommitteesMeetingInput) input: UpdatemjCommitteesMeetingInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -1937,8 +1921,8 @@ export class CommitteesMeetingResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Meetings', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesMeeting_)
-    async DeleteCommitteesMeeting(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesMeeting_)
+    async DeletemjCommitteesMeeting(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Meetings', key, options, provider, userPayload, pubSub);
@@ -1949,8 +1933,8 @@ export class CommitteesMeetingResolver extends ResolverBase {
 //****************************************************************************
 // ENTITY CLASS for Committees: Memberships
 //****************************************************************************
-@ObjectType({ description: `User assignments to committees with roles and terms` })
-export class CommitteesMembership_ {
+@ObjectType({ description: `Person assignments to committees with roles and terms` })
+export class mjCommitteesMembership_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -1961,7 +1945,7 @@ export class CommitteesMembership_ {
         
     @Field() 
     @MaxLength(16)
-    UserID: string;
+    PersonID: string;
         
     @Field() 
     @MaxLength(16)
@@ -2004,24 +1988,20 @@ export class CommitteesMembership_ {
         
     @Field() 
     @MaxLength(200)
-    User: string;
-        
-    @Field() 
-    @MaxLength(200)
     Role: string;
         
     @Field({nullable: true}) 
     @MaxLength(200)
     Term?: string;
         
-    @Field(() => [CommitteesVote_])
-    Committees_Votes_MembershipIDArray: CommitteesVote_[]; // Link to Committees_Votes
+    @Field(() => [mjCommitteesMotion_])
+    Committees_Motions_MovedByMembershipIDArray: mjCommitteesMotion_[]; // Link to Committees_Motions
     
-    @Field(() => [CommitteesMotion_])
-    Committees_Motions_SecondedByMembershipIDArray: CommitteesMotion_[]; // Link to Committees_Motions
+    @Field(() => [mjCommitteesVote_])
+    Committees_Votes_MembershipIDArray: mjCommitteesVote_[]; // Link to Committees_Votes
     
-    @Field(() => [CommitteesMotion_])
-    Committees_Motions_MovedByMembershipIDArray: CommitteesMotion_[]; // Link to Committees_Motions
+    @Field(() => [mjCommitteesMotion_])
+    Committees_Motions_SecondedByMembershipIDArray: mjCommitteesMotion_[]; // Link to Committees_Motions
     
 }
 
@@ -2029,7 +2009,7 @@ export class CommitteesMembership_ {
 // INPUT TYPE for Committees: Memberships
 //****************************************************************************
 @InputType()
-export class CreateCommitteesMembershipInput {
+export class CreatemjCommitteesMembershipInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -2037,7 +2017,7 @@ export class CreateCommitteesMembershipInput {
     CommitteeID?: string;
 
     @Field({ nullable: true })
-    UserID?: string;
+    PersonID?: string;
 
     @Field({ nullable: true })
     RoleID?: string;
@@ -2066,7 +2046,7 @@ export class CreateCommitteesMembershipInput {
 // INPUT TYPE for Committees: Memberships
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesMembershipInput {
+export class UpdatemjCommitteesMembershipInput {
     @Field()
     ID: string;
 
@@ -2074,7 +2054,7 @@ export class UpdateCommitteesMembershipInput {
     CommitteeID?: string;
 
     @Field({ nullable: true })
-    UserID?: string;
+    PersonID?: string;
 
     @Field({ nullable: true })
     RoleID?: string;
@@ -2105,9 +2085,9 @@ export class UpdateCommitteesMembershipInput {
 // RESOLVER for Committees: Memberships
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesMembershipViewResult {
-    @Field(() => [CommitteesMembership_])
-    Results: CommitteesMembership_[];
+export class RunmjCommitteesMembershipViewResult {
+    @Field(() => [mjCommitteesMembership_])
+    Results: mjCommitteesMembership_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -2128,73 +2108,73 @@ export class RunCommitteesMembershipViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesMembership_)
-export class CommitteesMembershipResolver extends ResolverBase {
-    @Query(() => RunCommitteesMembershipViewResult)
-    async RunCommitteesMembershipViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesMembership_)
+export class mjCommitteesMembershipResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesMembershipViewResult)
+    async RunmjCommitteesMembershipViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMembershipViewResult)
-    async RunCommitteesMembershipViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMembershipViewResult)
+    async RunmjCommitteesMembershipViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMembershipViewResult)
-    async RunCommitteesMembershipDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMembershipViewResult)
+    async RunmjCommitteesMembershipDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Memberships';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesMembership_, { nullable: true })
-    async CommitteesMembership(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesMembership_ | null> {
+    @Query(() => mjCommitteesMembership_, { nullable: true })
+    async mjCommitteesMembership(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesMembership_ | null> {
         this.CheckUserReadPermissions('Committees: Memberships', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMemberships] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMemberships] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Memberships', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesVote_])
-    async Committees_Votes_MembershipIDArray(@Root() committeesmembership_: CommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMotion_])
+    async Committees_Motions_MovedByMembershipIDArray(@Root() mjcommitteesmembership_: mjCommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Motions', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMotions] WHERE [MovedByMembershipID]='${mjcommitteesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesVote_])
+    async Committees_Votes_MembershipIDArray(@Root() mjcommitteesmembership_: mjCommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Votes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwVotes] WHERE [MembershipID]='${committeesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwVotes] WHERE [MembershipID]='${mjcommitteesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Votes', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesMotion_])
-    async Committees_Motions_SecondedByMembershipIDArray(@Root() committeesmembership_: CommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMotion_])
+    async Committees_Motions_SecondedByMembershipIDArray(@Root() mjcommitteesmembership_: mjCommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Motions', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMotions] WHERE [SecondedByMembershipID]='${committeesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMotions] WHERE [SecondedByMembershipID]='${mjcommitteesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @FieldResolver(() => [CommitteesMotion_])
-    async Committees_Motions_MovedByMembershipIDArray(@Root() committeesmembership_: CommitteesMembership_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
-        this.CheckUserReadPermissions('Committees: Motions', userPayload);
-        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
-        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMotions] WHERE [MovedByMembershipID]='${committeesmembership_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
-        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
-        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Motions', rows, this.GetUserFromPayload(userPayload));
-        return result;
-    }
-        
-    @Mutation(() => CommitteesMembership_)
-    async CreateCommitteesMembership(
-        @Arg('input', () => CreateCommitteesMembershipInput) input: CreateCommitteesMembershipInput,
+    @Mutation(() => mjCommitteesMembership_)
+    async CreatemjCommitteesMembership(
+        @Arg('input', () => CreatemjCommitteesMembershipInput) input: CreatemjCommitteesMembershipInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2202,9 +2182,9 @@ export class CommitteesMembershipResolver extends ResolverBase {
         return this.CreateRecord('Committees: Memberships', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesMembership_)
-    async UpdateCommitteesMembership(
-        @Arg('input', () => UpdateCommitteesMembershipInput) input: UpdateCommitteesMembershipInput,
+    @Mutation(() => mjCommitteesMembership_)
+    async UpdatemjCommitteesMembership(
+        @Arg('input', () => UpdatemjCommitteesMembershipInput) input: UpdatemjCommitteesMembershipInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2212,8 +2192,8 @@ export class CommitteesMembershipResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Memberships', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesMembership_)
-    async DeleteCommitteesMembership(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesMembership_)
+    async DeletemjCommitteesMembership(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Memberships', key, options, provider, userPayload, pubSub);
@@ -2225,7 +2205,7 @@ export class CommitteesMembershipResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Minutes
 //****************************************************************************
 @ObjectType({ description: `Extension entity for Minutes artifacts with approval tracking` })
-export class CommitteesMinute_ {
+export class mjCommitteesMinute_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -2263,7 +2243,7 @@ export class CommitteesMinute_ {
 // INPUT TYPE for Committees: Minutes
 //****************************************************************************
 @InputType()
-export class CreateCommitteesMinuteInput {
+export class CreatemjCommitteesMinuteInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -2288,7 +2268,7 @@ export class CreateCommitteesMinuteInput {
 // INPUT TYPE for Committees: Minutes
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesMinuteInput {
+export class UpdatemjCommitteesMinuteInput {
     @Field()
     ID: string;
 
@@ -2315,9 +2295,9 @@ export class UpdateCommitteesMinuteInput {
 // RESOLVER for Committees: Minutes
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesMinuteViewResult {
-    @Field(() => [CommitteesMinute_])
-    Results: CommitteesMinute_[];
+export class RunmjCommitteesMinuteViewResult {
+    @Field(() => [mjCommitteesMinute_])
+    Results: mjCommitteesMinute_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -2338,40 +2318,40 @@ export class RunCommitteesMinuteViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesMinute_)
-export class CommitteesMinuteResolver extends ResolverBase {
-    @Query(() => RunCommitteesMinuteViewResult)
-    async RunCommitteesMinuteViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesMinute_)
+export class mjCommitteesMinuteResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesMinuteViewResult)
+    async RunmjCommitteesMinuteViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMinuteViewResult)
-    async RunCommitteesMinuteViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMinuteViewResult)
+    async RunmjCommitteesMinuteViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMinuteViewResult)
-    async RunCommitteesMinuteDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMinuteViewResult)
+    async RunmjCommitteesMinuteDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Minutes';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesMinute_, { nullable: true })
-    async CommitteesMinute(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesMinute_ | null> {
+    @Query(() => mjCommitteesMinute_, { nullable: true })
+    async mjCommitteesMinute(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesMinute_ | null> {
         this.CheckUserReadPermissions('Committees: Minutes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMinutes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMinutes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Minutes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Minutes', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @Mutation(() => CommitteesMinute_)
-    async CreateCommitteesMinute(
-        @Arg('input', () => CreateCommitteesMinuteInput) input: CreateCommitteesMinuteInput,
+    @Mutation(() => mjCommitteesMinute_)
+    async CreatemjCommitteesMinute(
+        @Arg('input', () => CreatemjCommitteesMinuteInput) input: CreatemjCommitteesMinuteInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2379,9 +2359,9 @@ export class CommitteesMinuteResolver extends ResolverBase {
         return this.CreateRecord('Committees: Minutes', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesMinute_)
-    async UpdateCommitteesMinute(
-        @Arg('input', () => UpdateCommitteesMinuteInput) input: UpdateCommitteesMinuteInput,
+    @Mutation(() => mjCommitteesMinute_)
+    async UpdatemjCommitteesMinute(
+        @Arg('input', () => UpdatemjCommitteesMinuteInput) input: UpdatemjCommitteesMinuteInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2389,8 +2369,8 @@ export class CommitteesMinuteResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Minutes', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesMinute_)
-    async DeleteCommitteesMinute(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesMinute_)
+    async DeletemjCommitteesMinute(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Minutes', key, options, provider, userPayload, pubSub);
@@ -2402,7 +2382,7 @@ export class CommitteesMinuteResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Motions
 //****************************************************************************
 @ObjectType({ description: `Formal motions put to vote during committee meetings` })
-export class CommitteesMotion_ {
+export class mjCommitteesMotion_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -2461,8 +2441,8 @@ export class CommitteesMotion_ {
     @MaxLength(10)
     _mj__UpdatedAt: Date;
         
-    @Field(() => [CommitteesVote_])
-    Committees_Votes_MotionIDArray: CommitteesVote_[]; // Link to Committees_Votes
+    @Field(() => [mjCommitteesVote_])
+    Committees_Votes_MotionIDArray: mjCommitteesVote_[]; // Link to Committees_Votes
     
 }
 
@@ -2470,7 +2450,7 @@ export class CommitteesMotion_ {
 // INPUT TYPE for Committees: Motions
 //****************************************************************************
 @InputType()
-export class CreateCommitteesMotionInput {
+export class CreatemjCommitteesMotionInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -2519,7 +2499,7 @@ export class CreateCommitteesMotionInput {
 // INPUT TYPE for Committees: Motions
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesMotionInput {
+export class UpdatemjCommitteesMotionInput {
     @Field()
     ID: string;
 
@@ -2570,9 +2550,9 @@ export class UpdateCommitteesMotionInput {
 // RESOLVER for Committees: Motions
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesMotionViewResult {
-    @Field(() => [CommitteesMotion_])
-    Results: CommitteesMotion_[];
+export class RunmjCommitteesMotionViewResult {
+    @Field(() => [mjCommitteesMotion_])
+    Results: mjCommitteesMotion_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -2593,51 +2573,51 @@ export class RunCommitteesMotionViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesMotion_)
-export class CommitteesMotionResolver extends ResolverBase {
-    @Query(() => RunCommitteesMotionViewResult)
-    async RunCommitteesMotionViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesMotion_)
+export class mjCommitteesMotionResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesMotionViewResult)
+    async RunmjCommitteesMotionViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMotionViewResult)
-    async RunCommitteesMotionViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMotionViewResult)
+    async RunmjCommitteesMotionViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesMotionViewResult)
-    async RunCommitteesMotionDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesMotionViewResult)
+    async RunmjCommitteesMotionDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Motions';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesMotion_, { nullable: true })
-    async CommitteesMotion(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesMotion_ | null> {
+    @Query(() => mjCommitteesMotion_, { nullable: true })
+    async mjCommitteesMotion(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesMotion_ | null> {
         this.CheckUserReadPermissions('Committees: Motions', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMotions] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMotions] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Motions', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Motions', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesVote_])
-    async Committees_Votes_MotionIDArray(@Root() committeesmotion_: CommitteesMotion_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesVote_])
+    async Committees_Votes_MotionIDArray(@Root() mjcommitteesmotion_: mjCommitteesMotion_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Votes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwVotes] WHERE [MotionID]='${committeesmotion_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwVotes] WHERE [MotionID]='${mjcommitteesmotion_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Votes', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesMotion_)
-    async CreateCommitteesMotion(
-        @Arg('input', () => CreateCommitteesMotionInput) input: CreateCommitteesMotionInput,
+    @Mutation(() => mjCommitteesMotion_)
+    async CreatemjCommitteesMotion(
+        @Arg('input', () => CreatemjCommitteesMotionInput) input: CreatemjCommitteesMotionInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2645,9 +2625,9 @@ export class CommitteesMotionResolver extends ResolverBase {
         return this.CreateRecord('Committees: Motions', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesMotion_)
-    async UpdateCommitteesMotion(
-        @Arg('input', () => UpdateCommitteesMotionInput) input: UpdateCommitteesMotionInput,
+    @Mutation(() => mjCommitteesMotion_)
+    async UpdatemjCommitteesMotion(
+        @Arg('input', () => UpdatemjCommitteesMotionInput) input: UpdatemjCommitteesMotionInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2655,8 +2635,8 @@ export class CommitteesMotionResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Motions', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesMotion_)
-    async DeleteCommitteesMotion(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesMotion_)
+    async DeletemjCommitteesMotion(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Motions', key, options, provider, userPayload, pubSub);
@@ -2668,7 +2648,7 @@ export class CommitteesMotionResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Roles
 //****************************************************************************
 @ObjectType({ description: `Roles that members can hold on committees` })
-export class CommitteesRole_ {
+export class mjCommitteesRole_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -2700,8 +2680,8 @@ export class CommitteesRole_ {
     @MaxLength(10)
     _mj__UpdatedAt: Date;
         
-    @Field(() => [CommitteesMembership_])
-    Committees_Memberships_RoleIDArray: CommitteesMembership_[]; // Link to Committees_Memberships
+    @Field(() => [mjCommitteesMembership_])
+    Committees_Memberships_RoleIDArray: mjCommitteesMembership_[]; // Link to Committees_Memberships
     
 }
 
@@ -2709,7 +2689,7 @@ export class CommitteesRole_ {
 // INPUT TYPE for Committees: Roles
 //****************************************************************************
 @InputType()
-export class CreateCommitteesRoleInput {
+export class CreatemjCommitteesRoleInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -2737,7 +2717,7 @@ export class CreateCommitteesRoleInput {
 // INPUT TYPE for Committees: Roles
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesRoleInput {
+export class UpdatemjCommitteesRoleInput {
     @Field()
     ID: string;
 
@@ -2767,9 +2747,9 @@ export class UpdateCommitteesRoleInput {
 // RESOLVER for Committees: Roles
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesRoleViewResult {
-    @Field(() => [CommitteesRole_])
-    Results: CommitteesRole_[];
+export class RunmjCommitteesRoleViewResult {
+    @Field(() => [mjCommitteesRole_])
+    Results: mjCommitteesRole_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -2790,51 +2770,51 @@ export class RunCommitteesRoleViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesRole_)
-export class CommitteesRoleResolver extends ResolverBase {
-    @Query(() => RunCommitteesRoleViewResult)
-    async RunCommitteesRoleViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesRole_)
+export class mjCommitteesRoleResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesRoleViewResult)
+    async RunmjCommitteesRoleViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesRoleViewResult)
-    async RunCommitteesRoleViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesRoleViewResult)
+    async RunmjCommitteesRoleViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesRoleViewResult)
-    async RunCommitteesRoleDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesRoleViewResult)
+    async RunmjCommitteesRoleDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Roles';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesRole_, { nullable: true })
-    async CommitteesRole(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesRole_ | null> {
+    @Query(() => mjCommitteesRole_, { nullable: true })
+    async mjCommitteesRole(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesRole_ | null> {
         this.CheckUserReadPermissions('Committees: Roles', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwRoles] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Roles', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwRoles] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Roles', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Roles', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesMembership_])
-    async Committees_Memberships_RoleIDArray(@Root() committeesrole_: CommitteesRole_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMembership_])
+    async Committees_Memberships_RoleIDArray(@Root() mjcommitteesrole_: mjCommitteesRole_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Memberships', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMemberships] WHERE [RoleID]='${committeesrole_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMemberships] WHERE [RoleID]='${mjcommitteesrole_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Memberships', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesRole_)
-    async CreateCommitteesRole(
-        @Arg('input', () => CreateCommitteesRoleInput) input: CreateCommitteesRoleInput,
+    @Mutation(() => mjCommitteesRole_)
+    async CreatemjCommitteesRole(
+        @Arg('input', () => CreatemjCommitteesRoleInput) input: CreatemjCommitteesRoleInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2842,9 +2822,9 @@ export class CommitteesRoleResolver extends ResolverBase {
         return this.CreateRecord('Committees: Roles', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesRole_)
-    async UpdateCommitteesRole(
-        @Arg('input', () => UpdateCommitteesRoleInput) input: UpdateCommitteesRoleInput,
+    @Mutation(() => mjCommitteesRole_)
+    async UpdatemjCommitteesRole(
+        @Arg('input', () => UpdatemjCommitteesRoleInput) input: UpdatemjCommitteesRoleInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -2852,8 +2832,8 @@ export class CommitteesRoleResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Roles', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesRole_)
-    async DeleteCommitteesRole(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesRole_)
+    async DeletemjCommitteesRole(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Roles', key, options, provider, userPayload, pubSub);
@@ -2865,7 +2845,7 @@ export class CommitteesRoleResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Terms
 //****************************************************************************
 @ObjectType({ description: `Time periods for committee membership cycles` })
-export class CommitteesTerm_ {
+export class mjCommitteesTerm_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -2902,8 +2882,8 @@ export class CommitteesTerm_ {
     @MaxLength(510)
     Committee: string;
         
-    @Field(() => [CommitteesMembership_])
-    Committees_Memberships_TermIDArray: CommitteesMembership_[]; // Link to Committees_Memberships
+    @Field(() => [mjCommitteesMembership_])
+    Committees_Memberships_TermIDArray: mjCommitteesMembership_[]; // Link to Committees_Memberships
     
 }
 
@@ -2911,7 +2891,7 @@ export class CommitteesTerm_ {
 // INPUT TYPE for Committees: Terms
 //****************************************************************************
 @InputType()
-export class CreateCommitteesTermInput {
+export class CreatemjCommitteesTermInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -2936,7 +2916,7 @@ export class CreateCommitteesTermInput {
 // INPUT TYPE for Committees: Terms
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesTermInput {
+export class UpdatemjCommitteesTermInput {
     @Field()
     ID: string;
 
@@ -2963,9 +2943,9 @@ export class UpdateCommitteesTermInput {
 // RESOLVER for Committees: Terms
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesTermViewResult {
-    @Field(() => [CommitteesTerm_])
-    Results: CommitteesTerm_[];
+export class RunmjCommitteesTermViewResult {
+    @Field(() => [mjCommitteesTerm_])
+    Results: mjCommitteesTerm_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -2986,51 +2966,51 @@ export class RunCommitteesTermViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesTerm_)
-export class CommitteesTermResolver extends ResolverBase {
-    @Query(() => RunCommitteesTermViewResult)
-    async RunCommitteesTermViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesTerm_)
+export class mjCommitteesTermResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesTermViewResult)
+    async RunmjCommitteesTermViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesTermViewResult)
-    async RunCommitteesTermViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesTermViewResult)
+    async RunmjCommitteesTermViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesTermViewResult)
-    async RunCommitteesTermDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesTermViewResult)
+    async RunmjCommitteesTermDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Terms';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesTerm_, { nullable: true })
-    async CommitteesTerm(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesTerm_ | null> {
+    @Query(() => mjCommitteesTerm_, { nullable: true })
+    async mjCommitteesTerm(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesTerm_ | null> {
         this.CheckUserReadPermissions('Committees: Terms', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwTerms] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Terms', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwTerms] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Terms', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Terms', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesMembership_])
-    async Committees_Memberships_TermIDArray(@Root() committeesterm_: CommitteesTerm_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesMembership_])
+    async Committees_Memberships_TermIDArray(@Root() mjcommitteesterm_: mjCommitteesTerm_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Memberships', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwMemberships] WHERE [TermID]='${committeesterm_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMemberships] WHERE [TermID]='${mjcommitteesterm_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Memberships', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesTerm_)
-    async CreateCommitteesTerm(
-        @Arg('input', () => CreateCommitteesTermInput) input: CreateCommitteesTermInput,
+    @Mutation(() => mjCommitteesTerm_)
+    async CreatemjCommitteesTerm(
+        @Arg('input', () => CreatemjCommitteesTermInput) input: CreatemjCommitteesTermInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3038,9 +3018,9 @@ export class CommitteesTermResolver extends ResolverBase {
         return this.CreateRecord('Committees: Terms', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesTerm_)
-    async UpdateCommitteesTerm(
-        @Arg('input', () => UpdateCommitteesTermInput) input: UpdateCommitteesTermInput,
+    @Mutation(() => mjCommitteesTerm_)
+    async UpdatemjCommitteesTerm(
+        @Arg('input', () => UpdatemjCommitteesTermInput) input: UpdatemjCommitteesTermInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3048,8 +3028,8 @@ export class CommitteesTermResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Terms', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesTerm_)
-    async DeleteCommitteesTerm(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesTerm_)
+    async DeletemjCommitteesTerm(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Terms', key, options, provider, userPayload, pubSub);
@@ -3061,7 +3041,7 @@ export class CommitteesTermResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Types
 //****************************************************************************
 @ObjectType({ description: `Categories of committees such as Board, Standing, Ad Hoc, Workgroup` })
-export class CommitteesType_ {
+export class mjCommitteesType_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -3091,8 +3071,8 @@ export class CommitteesType_ {
     @MaxLength(10)
     _mj__UpdatedAt: Date;
         
-    @Field(() => [CommitteesCommittee_])
-    Committees_Committees_TypeIDArray: CommitteesCommittee_[]; // Link to Committees_Committees
+    @Field(() => [mjCommitteesCommittee_])
+    Committees_Committees_TypeIDArray: mjCommitteesCommittee_[]; // Link to Committees_Committees
     
 }
 
@@ -3100,7 +3080,7 @@ export class CommitteesType_ {
 // INPUT TYPE for Committees: Types
 //****************************************************************************
 @InputType()
-export class CreateCommitteesTypeInput {
+export class CreatemjCommitteesTypeInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -3125,7 +3105,7 @@ export class CreateCommitteesTypeInput {
 // INPUT TYPE for Committees: Types
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesTypeInput {
+export class UpdatemjCommitteesTypeInput {
     @Field()
     ID: string;
 
@@ -3152,9 +3132,9 @@ export class UpdateCommitteesTypeInput {
 // RESOLVER for Committees: Types
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesTypeViewResult {
-    @Field(() => [CommitteesType_])
-    Results: CommitteesType_[];
+export class RunmjCommitteesTypeViewResult {
+    @Field(() => [mjCommitteesType_])
+    Results: mjCommitteesType_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -3175,51 +3155,51 @@ export class RunCommitteesTypeViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesType_)
-export class CommitteesTypeResolver extends ResolverBase {
-    @Query(() => RunCommitteesTypeViewResult)
-    async RunCommitteesTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesType_)
+export class mjCommitteesTypeResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesTypeViewResult)
+    async RunmjCommitteesTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesTypeViewResult)
-    async RunCommitteesTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesTypeViewResult)
+    async RunmjCommitteesTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesTypeViewResult)
-    async RunCommitteesTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesTypeViewResult)
+    async RunmjCommitteesTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Types';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesType_, { nullable: true })
-    async CommitteesType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesType_ | null> {
+    @Query(() => mjCommitteesType_, { nullable: true })
+    async mjCommitteesType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesType_ | null> {
         this.CheckUserReadPermissions('Committees: Types', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Types', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Types', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @FieldResolver(() => [CommitteesCommittee_])
-    async Committees_Committees_TypeIDArray(@Root() committeestype_: CommitteesType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @FieldResolver(() => [mjCommitteesCommittee_])
+    async Committees_Committees_TypeIDArray(@Root() mjcommitteestype_: mjCommitteesType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
         this.CheckUserReadPermissions('Committees: Committees', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwCommittees] WHERE [TypeID]='${committeestype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwCommittees] WHERE [TypeID]='${mjcommitteestype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Committees', rows, this.GetUserFromPayload(userPayload));
         return result;
     }
         
-    @Mutation(() => CommitteesType_)
-    async CreateCommitteesType(
-        @Arg('input', () => CreateCommitteesTypeInput) input: CreateCommitteesTypeInput,
+    @Mutation(() => mjCommitteesType_)
+    async CreatemjCommitteesType(
+        @Arg('input', () => CreatemjCommitteesTypeInput) input: CreatemjCommitteesTypeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3227,9 +3207,9 @@ export class CommitteesTypeResolver extends ResolverBase {
         return this.CreateRecord('Committees: Types', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesType_)
-    async UpdateCommitteesType(
-        @Arg('input', () => UpdateCommitteesTypeInput) input: UpdateCommitteesTypeInput,
+    @Mutation(() => mjCommitteesType_)
+    async UpdatemjCommitteesType(
+        @Arg('input', () => UpdatemjCommitteesTypeInput) input: UpdatemjCommitteesTypeInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3237,8 +3217,8 @@ export class CommitteesTypeResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Types', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesType_)
-    async DeleteCommitteesType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesType_)
+    async DeletemjCommitteesType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Types', key, options, provider, userPayload, pubSub);
@@ -3250,7 +3230,7 @@ export class CommitteesTypeResolver extends ResolverBase {
 // ENTITY CLASS for Committees: Votes
 //****************************************************************************
 @ObjectType({ description: `Individual vote records for committee motions` })
-export class CommitteesVote_ {
+export class mjCommitteesVote_ {
     @Field() 
     @MaxLength(16)
     ID: string;
@@ -3285,7 +3265,7 @@ export class CommitteesVote_ {
 // INPUT TYPE for Committees: Votes
 //****************************************************************************
 @InputType()
-export class CreateCommitteesVoteInput {
+export class CreatemjCommitteesVoteInput {
     @Field({ nullable: true })
     ID?: string;
 
@@ -3307,7 +3287,7 @@ export class CreateCommitteesVoteInput {
 // INPUT TYPE for Committees: Votes
 //****************************************************************************
 @InputType()
-export class UpdateCommitteesVoteInput {
+export class UpdatemjCommitteesVoteInput {
     @Field()
     ID: string;
 
@@ -3331,9 +3311,9 @@ export class UpdateCommitteesVoteInput {
 // RESOLVER for Committees: Votes
 //****************************************************************************
 @ObjectType()
-export class RunCommitteesVoteViewResult {
-    @Field(() => [CommitteesVote_])
-    Results: CommitteesVote_[];
+export class RunmjCommitteesVoteViewResult {
+    @Field(() => [mjCommitteesVote_])
+    Results: mjCommitteesVote_[];
 
     @Field(() => String, {nullable: true})
     UserViewRunID?: string;
@@ -3354,40 +3334,40 @@ export class RunCommitteesVoteViewResult {
     Success: boolean;
 }
 
-@Resolver(CommitteesVote_)
-export class CommitteesVoteResolver extends ResolverBase {
-    @Query(() => RunCommitteesVoteViewResult)
-    async RunCommitteesVoteViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+@Resolver(mjCommitteesVote_)
+export class mjCommitteesVoteResolver extends ResolverBase {
+    @Query(() => RunmjCommitteesVoteViewResult)
+    async RunmjCommitteesVoteViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesVoteViewResult)
-    async RunCommitteesVoteViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesVoteViewResult)
+    async RunmjCommitteesVoteViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
     }
 
-    @Query(() => RunCommitteesVoteViewResult)
-    async RunCommitteesVoteDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Query(() => RunmjCommitteesVoteViewResult)
+    async RunmjCommitteesVoteDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         input.EntityName = 'Committees: Votes';
         return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
     }
-    @Query(() => CommitteesVote_, { nullable: true })
-    async CommitteesVote(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<CommitteesVote_ | null> {
+    @Query(() => mjCommitteesVote_, { nullable: true })
+    async mjCommitteesVote(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjCommitteesVote_ | null> {
         this.CheckUserReadPermissions('Committees: Votes', userPayload);
         const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
         const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
-        const sSQL = `SELECT * FROM [Committees].[vwVotes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwVotes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Votes', userPayload, EntityPermissionType.Read, 'AND');
         const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
         const result = await this.MapFieldNamesToCodeNames('Committees: Votes', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
         return result;
     }
     
-    @Mutation(() => CommitteesVote_)
-    async CreateCommitteesVote(
-        @Arg('input', () => CreateCommitteesVoteInput) input: CreateCommitteesVoteInput,
+    @Mutation(() => mjCommitteesVote_)
+    async CreatemjCommitteesVote(
+        @Arg('input', () => CreatemjCommitteesVoteInput) input: CreatemjCommitteesVoteInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3395,9 +3375,9 @@ export class CommitteesVoteResolver extends ResolverBase {
         return this.CreateRecord('Committees: Votes', input, provider, userPayload, pubSub)
     }
         
-    @Mutation(() => CommitteesVote_)
-    async UpdateCommitteesVote(
-        @Arg('input', () => UpdateCommitteesVoteInput) input: UpdateCommitteesVoteInput,
+    @Mutation(() => mjCommitteesVote_)
+    async UpdatemjCommitteesVote(
+        @Arg('input', () => UpdatemjCommitteesVoteInput) input: UpdatemjCommitteesVoteInput,
         @Ctx() { providers, userPayload }: AppContext,
         @PubSub() pubSub: PubSubEngine
     ) {
@@ -3405,11 +3385,2317 @@ export class CommitteesVoteResolver extends ResolverBase {
         return this.UpdateRecord('Committees: Votes', input, provider, userPayload, pubSub);
     }
     
-    @Mutation(() => CommitteesVote_)
-    async DeleteCommitteesVote(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+    @Mutation(() => mjCommitteesVote_)
+    async DeletemjCommitteesVote(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
         const provider = GetReadWriteProvider(providers);
         const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
         return this.DeleteRecord('Committees: Votes', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Address Links
+//****************************************************************************
+@ObjectType({ description: `Polymorphic link table connecting Address records to any entity record in the system via EntityID and RecordID` })
+export class mjBizAppsCommonAddressLink_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field() 
+    @MaxLength(16)
+    AddressID: string;
+        
+    @Field() 
+    @MaxLength(16)
+    EntityID: string;
+        
+    @Field({description: `Primary key value(s) of the linked record. NVARCHAR(700) to support concatenated composite keys for entities without single-valued primary keys`}) 
+    @MaxLength(1400)
+    RecordID: string;
+        
+    @Field() 
+    @MaxLength(16)
+    AddressTypeID: string;
+        
+    @Field(() => Boolean, {description: `Whether this is the primary address for the linked record. Only one address per entity record should be marked primary`}) 
+    IsPrimary: boolean;
+        
+    @Field(() => Int, {nullable: true, description: `Sort order override for this specific link. When NULL, falls back to AddressType.DefaultRank. Lower values appear first`}) 
+    Rank?: number;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field() 
+    @MaxLength(510)
+    Entity: string;
+        
+    @Field() 
+    @MaxLength(200)
+    AddressType: string;
+        
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Address Links
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonAddressLinkInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    AddressID?: string;
+
+    @Field({ nullable: true })
+    EntityID?: string;
+
+    @Field({ nullable: true })
+    RecordID?: string;
+
+    @Field({ nullable: true })
+    AddressTypeID?: string;
+
+    @Field(() => Boolean, { nullable: true })
+    IsPrimary?: boolean;
+
+    @Field(() => Int, { nullable: true })
+    Rank: number | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Address Links
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonAddressLinkInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    AddressID?: string;
+
+    @Field({ nullable: true })
+    EntityID?: string;
+
+    @Field({ nullable: true })
+    RecordID?: string;
+
+    @Field({ nullable: true })
+    AddressTypeID?: string;
+
+    @Field(() => Boolean, { nullable: true })
+    IsPrimary?: boolean;
+
+    @Field(() => Int, { nullable: true })
+    Rank?: number | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Address Links
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonAddressLinkViewResult {
+    @Field(() => [mjBizAppsCommonAddressLink_])
+    Results: mjBizAppsCommonAddressLink_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonAddressLink_)
+export class mjBizAppsCommonAddressLinkResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonAddressLinkViewResult)
+    async RunmjBizAppsCommonAddressLinkViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressLinkViewResult)
+    async RunmjBizAppsCommonAddressLinkViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressLinkViewResult)
+    async RunmjBizAppsCommonAddressLinkDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Address Links';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonAddressLink_, { nullable: true })
+    async mjBizAppsCommonAddressLink(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonAddressLink_ | null> {
+        this.CheckUserReadPermissions('Common: Address Links', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwAddressLinks] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Address Links', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Address Links', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @Mutation(() => mjBizAppsCommonAddressLink_)
+    async CreatemjBizAppsCommonAddressLink(
+        @Arg('input', () => CreatemjBizAppsCommonAddressLinkInput) input: CreatemjBizAppsCommonAddressLinkInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Address Links', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonAddressLink_)
+    async UpdatemjBizAppsCommonAddressLink(
+        @Arg('input', () => UpdatemjBizAppsCommonAddressLinkInput) input: UpdatemjBizAppsCommonAddressLinkInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Address Links', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonAddressLink_)
+    async DeletemjBizAppsCommonAddressLink(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Address Links', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Address Types
+//****************************************************************************
+@ObjectType({ description: `Categories of addresses such as Home, Work, Mailing, Billing` })
+export class mjBizAppsCommonAddressType_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Display name for the address type`}) 
+    @MaxLength(200)
+    Name: string;
+        
+    @Field({nullable: true, description: `Detailed description of this address type`}) 
+    Description?: string;
+        
+    @Field(() => Int, {description: `Default sort order for this address type in dropdown lists. Lower values appear first. Can be overridden per-record via AddressLink.Rank`}) 
+    DefaultRank: number;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field(() => [mjBizAppsCommonAddressLink_])
+    Common_AddressLinks_AddressTypeIDArray: mjBizAppsCommonAddressLink_[]; // Link to Common_AddressLinks
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Address Types
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonAddressTypeInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description: string | null;
+
+    @Field(() => Int, { nullable: true })
+    DefaultRank?: number;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Address Types
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonAddressTypeInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description?: string | null;
+
+    @Field(() => Int, { nullable: true })
+    DefaultRank?: number;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Address Types
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonAddressTypeViewResult {
+    @Field(() => [mjBizAppsCommonAddressType_])
+    Results: mjBizAppsCommonAddressType_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonAddressType_)
+export class mjBizAppsCommonAddressTypeResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonAddressTypeViewResult)
+    async RunmjBizAppsCommonAddressTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressTypeViewResult)
+    async RunmjBizAppsCommonAddressTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressTypeViewResult)
+    async RunmjBizAppsCommonAddressTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Address Types';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonAddressType_, { nullable: true })
+    async mjBizAppsCommonAddressType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonAddressType_ | null> {
+        this.CheckUserReadPermissions('Common: Address Types', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwAddressTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Address Types', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Address Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonAddressLink_])
+    async Common_AddressLinks_AddressTypeIDArray(@Root() mjbizappscommonaddresstype_: mjBizAppsCommonAddressType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Address Links', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwAddressLinks] WHERE [AddressTypeID]='${mjbizappscommonaddresstype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Address Links', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Address Links', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonAddressType_)
+    async CreatemjBizAppsCommonAddressType(
+        @Arg('input', () => CreatemjBizAppsCommonAddressTypeInput) input: CreatemjBizAppsCommonAddressTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Address Types', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonAddressType_)
+    async UpdatemjBizAppsCommonAddressType(
+        @Arg('input', () => UpdatemjBizAppsCommonAddressTypeInput) input: UpdatemjBizAppsCommonAddressTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Address Types', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonAddressType_)
+    async DeletemjBizAppsCommonAddressType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Address Types', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Addresses
+//****************************************************************************
+@ObjectType({ description: `Standalone physical address records linked to entities via AddressLink for sharing across people and organizations` })
+export class mjBizAppsCommonAddress_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Street address line 1`}) 
+    @MaxLength(510)
+    Line1: string;
+        
+    @Field({nullable: true, description: `Street address line 2 (suite, apt, etc.)`}) 
+    @MaxLength(510)
+    Line2?: string;
+        
+    @Field({nullable: true, description: `Street address line 3 (additional detail)`}) 
+    @MaxLength(510)
+    Line3?: string;
+        
+    @Field({description: `City or locality name`}) 
+    @MaxLength(200)
+    City: string;
+        
+    @Field({nullable: true, description: `State, province, or region`}) 
+    @MaxLength(200)
+    StateProvince?: string;
+        
+    @Field({nullable: true, description: `Postal or ZIP code`}) 
+    @MaxLength(40)
+    PostalCode?: string;
+        
+    @Field({description: `Country code or name, defaults to US`}) 
+    @MaxLength(200)
+    Country: string;
+        
+    @Field(() => Float, {nullable: true, description: `Geographic latitude for mapping`}) 
+    Latitude?: number;
+        
+    @Field(() => Float, {nullable: true, description: `Geographic longitude for mapping`}) 
+    Longitude?: number;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field(() => [mjBizAppsCommonAddressLink_])
+    Common_AddressLinks_AddressIDArray: mjBizAppsCommonAddressLink_[]; // Link to Common_AddressLinks
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Addresses
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonAddressInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Line1?: string;
+
+    @Field({ nullable: true })
+    Line2: string | null;
+
+    @Field({ nullable: true })
+    Line3: string | null;
+
+    @Field({ nullable: true })
+    City?: string;
+
+    @Field({ nullable: true })
+    StateProvince: string | null;
+
+    @Field({ nullable: true })
+    PostalCode: string | null;
+
+    @Field({ nullable: true })
+    Country?: string;
+
+    @Field(() => Float, { nullable: true })
+    Latitude: number | null;
+
+    @Field(() => Float, { nullable: true })
+    Longitude: number | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Addresses
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonAddressInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Line1?: string;
+
+    @Field({ nullable: true })
+    Line2?: string | null;
+
+    @Field({ nullable: true })
+    Line3?: string | null;
+
+    @Field({ nullable: true })
+    City?: string;
+
+    @Field({ nullable: true })
+    StateProvince?: string | null;
+
+    @Field({ nullable: true })
+    PostalCode?: string | null;
+
+    @Field({ nullable: true })
+    Country?: string;
+
+    @Field(() => Float, { nullable: true })
+    Latitude?: number | null;
+
+    @Field(() => Float, { nullable: true })
+    Longitude?: number | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Addresses
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonAddressViewResult {
+    @Field(() => [mjBizAppsCommonAddress_])
+    Results: mjBizAppsCommonAddress_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonAddress_)
+export class mjBizAppsCommonAddressResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonAddressViewResult)
+    async RunmjBizAppsCommonAddressViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressViewResult)
+    async RunmjBizAppsCommonAddressViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonAddressViewResult)
+    async RunmjBizAppsCommonAddressDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Addresses';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonAddress_, { nullable: true })
+    async mjBizAppsCommonAddress(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonAddress_ | null> {
+        this.CheckUserReadPermissions('Common: Addresses', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwAddresses] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Addresses', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Addresses', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonAddressLink_])
+    async Common_AddressLinks_AddressIDArray(@Root() mjbizappscommonaddress_: mjBizAppsCommonAddress_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Address Links', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwAddressLinks] WHERE [AddressID]='${mjbizappscommonaddress_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Address Links', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Address Links', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonAddress_)
+    async CreatemjBizAppsCommonAddress(
+        @Arg('input', () => CreatemjBizAppsCommonAddressInput) input: CreatemjBizAppsCommonAddressInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Addresses', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonAddress_)
+    async UpdatemjBizAppsCommonAddress(
+        @Arg('input', () => UpdatemjBizAppsCommonAddressInput) input: UpdatemjBizAppsCommonAddressInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Addresses', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonAddress_)
+    async DeletemjBizAppsCommonAddress(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Addresses', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Contact Methods
+//****************************************************************************
+@ObjectType({ description: `Additional contact methods for people and organizations beyond the primary email and phone fields` })
+export class mjBizAppsCommonContactMethod_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    PersonID?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    OrganizationID?: string;
+        
+    @Field() 
+    @MaxLength(16)
+    ContactTypeID: string;
+        
+    @Field({description: `The contact value: phone number, email address, URL, social media handle, etc.`}) 
+    @MaxLength(1000)
+    Value: string;
+        
+    @Field({nullable: true, description: `Descriptive label such as Work cell, Personal Gmail, Corporate LinkedIn`}) 
+    @MaxLength(200)
+    Label?: string;
+        
+    @Field(() => Boolean, {description: `Whether this is the primary contact method of its type for the linked person or organization`}) 
+    IsPrimary: boolean;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    Organization?: string;
+        
+    @Field() 
+    @MaxLength(200)
+    ContactType: string;
+        
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Contact Methods
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonContactMethodInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    PersonID: string | null;
+
+    @Field({ nullable: true })
+    OrganizationID: string | null;
+
+    @Field({ nullable: true })
+    ContactTypeID?: string;
+
+    @Field({ nullable: true })
+    Value?: string;
+
+    @Field({ nullable: true })
+    Label: string | null;
+
+    @Field(() => Boolean, { nullable: true })
+    IsPrimary?: boolean;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Contact Methods
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonContactMethodInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    PersonID?: string | null;
+
+    @Field({ nullable: true })
+    OrganizationID?: string | null;
+
+    @Field({ nullable: true })
+    ContactTypeID?: string;
+
+    @Field({ nullable: true })
+    Value?: string;
+
+    @Field({ nullable: true })
+    Label?: string | null;
+
+    @Field(() => Boolean, { nullable: true })
+    IsPrimary?: boolean;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Contact Methods
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonContactMethodViewResult {
+    @Field(() => [mjBizAppsCommonContactMethod_])
+    Results: mjBizAppsCommonContactMethod_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonContactMethod_)
+export class mjBizAppsCommonContactMethodResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonContactMethodViewResult)
+    async RunmjBizAppsCommonContactMethodViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonContactMethodViewResult)
+    async RunmjBizAppsCommonContactMethodViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonContactMethodViewResult)
+    async RunmjBizAppsCommonContactMethodDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Contact Methods';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonContactMethod_, { nullable: true })
+    async mjBizAppsCommonContactMethod(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonContactMethod_ | null> {
+        this.CheckUserReadPermissions('Common: Contact Methods', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwContactMethods] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Contact Methods', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Contact Methods', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @Mutation(() => mjBizAppsCommonContactMethod_)
+    async CreatemjBizAppsCommonContactMethod(
+        @Arg('input', () => CreatemjBizAppsCommonContactMethodInput) input: CreatemjBizAppsCommonContactMethodInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Contact Methods', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonContactMethod_)
+    async UpdatemjBizAppsCommonContactMethod(
+        @Arg('input', () => UpdatemjBizAppsCommonContactMethodInput) input: UpdatemjBizAppsCommonContactMethodInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Contact Methods', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonContactMethod_)
+    async DeletemjBizAppsCommonContactMethod(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Contact Methods', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Contact Types
+//****************************************************************************
+@ObjectType({ description: `Categories of contact methods such as Phone, Mobile, Email, LinkedIn, Website` })
+export class mjBizAppsCommonContactType_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Display name for the contact type`}) 
+    @MaxLength(200)
+    Name: string;
+        
+    @Field({nullable: true, description: `Detailed description of this contact type`}) 
+    Description?: string;
+        
+    @Field({nullable: true, description: `Font Awesome icon class for UI display`}) 
+    @MaxLength(200)
+    IconClass?: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field(() => [mjBizAppsCommonContactMethod_])
+    Common_ContactMethods_ContactTypeIDArray: mjBizAppsCommonContactMethod_[]; // Link to Common_ContactMethods
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Contact Types
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonContactTypeInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description: string | null;
+
+    @Field({ nullable: true })
+    IconClass: string | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Contact Types
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonContactTypeInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description?: string | null;
+
+    @Field({ nullable: true })
+    IconClass?: string | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Contact Types
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonContactTypeViewResult {
+    @Field(() => [mjBizAppsCommonContactType_])
+    Results: mjBizAppsCommonContactType_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonContactType_)
+export class mjBizAppsCommonContactTypeResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonContactTypeViewResult)
+    async RunmjBizAppsCommonContactTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonContactTypeViewResult)
+    async RunmjBizAppsCommonContactTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonContactTypeViewResult)
+    async RunmjBizAppsCommonContactTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Contact Types';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonContactType_, { nullable: true })
+    async mjBizAppsCommonContactType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonContactType_ | null> {
+        this.CheckUserReadPermissions('Common: Contact Types', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwContactTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Contact Types', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Contact Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonContactMethod_])
+    async Common_ContactMethods_ContactTypeIDArray(@Root() mjbizappscommoncontacttype_: mjBizAppsCommonContactType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Contact Methods', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwContactMethods] WHERE [ContactTypeID]='${mjbizappscommoncontacttype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Contact Methods', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Contact Methods', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonContactType_)
+    async CreatemjBizAppsCommonContactType(
+        @Arg('input', () => CreatemjBizAppsCommonContactTypeInput) input: CreatemjBizAppsCommonContactTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Contact Types', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonContactType_)
+    async UpdatemjBizAppsCommonContactType(
+        @Arg('input', () => UpdatemjBizAppsCommonContactTypeInput) input: UpdatemjBizAppsCommonContactTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Contact Types', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonContactType_)
+    async DeletemjBizAppsCommonContactType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Contact Types', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Organization Types
+//****************************************************************************
+@ObjectType({ description: `Categories of organizations such as Company, Non-Profit, Association, Government` })
+export class mjBizAppsCommonOrganizationType_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Display name for the organization type`}) 
+    @MaxLength(200)
+    Name: string;
+        
+    @Field({nullable: true, description: `Detailed description of this organization type`}) 
+    Description?: string;
+        
+    @Field({nullable: true, description: `Font Awesome icon class for UI display`}) 
+    @MaxLength(200)
+    IconClass?: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field(() => [mjBizAppsCommonOrganization_])
+    Common_Organizations_OrganizationTypeIDArray: mjBizAppsCommonOrganization_[]; // Link to Common_Organizations
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Organization Types
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonOrganizationTypeInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description: string | null;
+
+    @Field({ nullable: true })
+    IconClass: string | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Organization Types
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonOrganizationTypeInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description?: string | null;
+
+    @Field({ nullable: true })
+    IconClass?: string | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Organization Types
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonOrganizationTypeViewResult {
+    @Field(() => [mjBizAppsCommonOrganizationType_])
+    Results: mjBizAppsCommonOrganizationType_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonOrganizationType_)
+export class mjBizAppsCommonOrganizationTypeResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonOrganizationTypeViewResult)
+    async RunmjBizAppsCommonOrganizationTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonOrganizationTypeViewResult)
+    async RunmjBizAppsCommonOrganizationTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonOrganizationTypeViewResult)
+    async RunmjBizAppsCommonOrganizationTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Organization Types';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonOrganizationType_, { nullable: true })
+    async mjBizAppsCommonOrganizationType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonOrganizationType_ | null> {
+        this.CheckUserReadPermissions('Common: Organization Types', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwOrganizationTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Organization Types', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Organization Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonOrganization_])
+    async Common_Organizations_OrganizationTypeIDArray(@Root() mjbizappscommonorganizationtype_: mjBizAppsCommonOrganizationType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Organizations', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwOrganizations] WHERE [OrganizationTypeID]='${mjbizappscommonorganizationtype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Organizations', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Organizations', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonOrganizationType_)
+    async CreatemjBizAppsCommonOrganizationType(
+        @Arg('input', () => CreatemjBizAppsCommonOrganizationTypeInput) input: CreatemjBizAppsCommonOrganizationTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Organization Types', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonOrganizationType_)
+    async UpdatemjBizAppsCommonOrganizationType(
+        @Arg('input', () => UpdatemjBizAppsCommonOrganizationTypeInput) input: UpdatemjBizAppsCommonOrganizationTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Organization Types', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonOrganizationType_)
+    async DeletemjBizAppsCommonOrganizationType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Organization Types', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Organizations
+//****************************************************************************
+@ObjectType({ description: `Companies, associations, government bodies, and other organizations with hierarchy support` })
+export class mjBizAppsCommonOrganization_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Common or display name of the organization`}) 
+    @MaxLength(510)
+    Name: string;
+        
+    @Field({nullable: true, description: `Full legal name if different from display name`}) 
+    @MaxLength(510)
+    LegalName?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    OrganizationTypeID?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    ParentID?: string;
+        
+    @Field({nullable: true, description: `Primary website URL`}) 
+    @MaxLength(2000)
+    Website?: string;
+        
+    @Field({nullable: true, description: `URL to organization logo image`}) 
+    @MaxLength(2000)
+    LogoURL?: string;
+        
+    @Field({nullable: true, description: `Description of the organization purpose and scope`}) 
+    Description?: string;
+        
+    @Field({nullable: true, description: `Primary contact email address`}) 
+    @MaxLength(510)
+    Email?: string;
+        
+    @Field({nullable: true, description: `Primary phone number`}) 
+    @MaxLength(100)
+    Phone?: string;
+        
+    @Field({nullable: true, description: `Date the organization was founded or incorporated`}) 
+    @MaxLength(3)
+    FoundedDate?: Date;
+        
+    @Field({nullable: true, description: `Tax identification number such as EIN`}) 
+    @MaxLength(100)
+    TaxID?: string;
+        
+    @Field({description: `Current status: Active, Inactive, or Dissolved`}) 
+    @MaxLength(100)
+    Status: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field({nullable: true}) 
+    @MaxLength(200)
+    OrganizationType?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    Parent?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    RootParentID?: string;
+        
+    @Field(() => [mjBizAppsCommonOrganization_])
+    Common_Organizations_ParentIDArray: mjBizAppsCommonOrganization_[]; // Link to Common_Organizations
+    
+    @Field(() => [mjBizAppsCommonContactMethod_])
+    Common_ContactMethods_OrganizationIDArray: mjBizAppsCommonContactMethod_[]; // Link to Common_ContactMethods
+    
+    @Field(() => [mjCommitteesCommittee_])
+    Committees_Committees_OrganizationIDArray: mjCommitteesCommittee_[]; // Link to Committees_Committees
+    
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Common_Relationships_ToOrganizationIDArray: mjBizAppsCommonRelationship_[]; // Link to Common_Relationships
+    
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Common_Relationships_FromOrganizationIDArray: mjBizAppsCommonRelationship_[]; // Link to Common_Relationships
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Organizations
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonOrganizationInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    LegalName: string | null;
+
+    @Field({ nullable: true })
+    OrganizationTypeID: string | null;
+
+    @Field({ nullable: true })
+    ParentID: string | null;
+
+    @Field({ nullable: true })
+    Website: string | null;
+
+    @Field({ nullable: true })
+    LogoURL: string | null;
+
+    @Field({ nullable: true })
+    Description: string | null;
+
+    @Field({ nullable: true })
+    Email: string | null;
+
+    @Field({ nullable: true })
+    Phone: string | null;
+
+    @Field({ nullable: true })
+    FoundedDate: Date | null;
+
+    @Field({ nullable: true })
+    TaxID: string | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Organizations
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonOrganizationInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    LegalName?: string | null;
+
+    @Field({ nullable: true })
+    OrganizationTypeID?: string | null;
+
+    @Field({ nullable: true })
+    ParentID?: string | null;
+
+    @Field({ nullable: true })
+    Website?: string | null;
+
+    @Field({ nullable: true })
+    LogoURL?: string | null;
+
+    @Field({ nullable: true })
+    Description?: string | null;
+
+    @Field({ nullable: true })
+    Email?: string | null;
+
+    @Field({ nullable: true })
+    Phone?: string | null;
+
+    @Field({ nullable: true })
+    FoundedDate?: Date | null;
+
+    @Field({ nullable: true })
+    TaxID?: string | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Organizations
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonOrganizationViewResult {
+    @Field(() => [mjBizAppsCommonOrganization_])
+    Results: mjBizAppsCommonOrganization_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonOrganization_)
+export class mjBizAppsCommonOrganizationResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonOrganizationViewResult)
+    async RunmjBizAppsCommonOrganizationViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonOrganizationViewResult)
+    async RunmjBizAppsCommonOrganizationViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonOrganizationViewResult)
+    async RunmjBizAppsCommonOrganizationDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Organizations';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonOrganization_, { nullable: true })
+    async mjBizAppsCommonOrganization(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonOrganization_ | null> {
+        this.CheckUserReadPermissions('Common: Organizations', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwOrganizations] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Organizations', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Organizations', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonOrganization_])
+    async Common_Organizations_ParentIDArray(@Root() mjbizappscommonorganization_: mjBizAppsCommonOrganization_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Organizations', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwOrganizations] WHERE [ParentID]='${mjbizappscommonorganization_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Organizations', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Organizations', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjBizAppsCommonContactMethod_])
+    async Common_ContactMethods_OrganizationIDArray(@Root() mjbizappscommonorganization_: mjBizAppsCommonOrganization_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Contact Methods', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwContactMethods] WHERE [OrganizationID]='${mjbizappscommonorganization_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Contact Methods', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Contact Methods', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesCommittee_])
+    async Committees_Committees_OrganizationIDArray(@Root() mjbizappscommonorganization_: mjBizAppsCommonOrganization_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Committees', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwCommittees] WHERE [OrganizationID]='${mjbizappscommonorganization_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Committees', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Committees', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjBizAppsCommonRelationship_])
+    async Common_Relationships_ToOrganizationIDArray(@Root() mjbizappscommonorganization_: mjBizAppsCommonOrganization_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [ToOrganizationID]='${mjbizappscommonorganization_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Relationships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjBizAppsCommonRelationship_])
+    async Common_Relationships_FromOrganizationIDArray(@Root() mjbizappscommonorganization_: mjBizAppsCommonOrganization_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [FromOrganizationID]='${mjbizappscommonorganization_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Relationships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonOrganization_)
+    async CreatemjBizAppsCommonOrganization(
+        @Arg('input', () => CreatemjBizAppsCommonOrganizationInput) input: CreatemjBizAppsCommonOrganizationInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Organizations', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonOrganization_)
+    async UpdatemjBizAppsCommonOrganization(
+        @Arg('input', () => UpdatemjBizAppsCommonOrganizationInput) input: UpdatemjBizAppsCommonOrganizationInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Organizations', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonOrganization_)
+    async DeletemjBizAppsCommonOrganization(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Organizations', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: People
+//****************************************************************************
+@ObjectType({ description: `Individual people, optionally linked to MJ system user accounts` })
+export class mjBizAppsCommonPerson_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `First (given) name`}) 
+    @MaxLength(200)
+    FirstName: string;
+        
+    @Field({description: `Last (family) name`}) 
+    @MaxLength(200)
+    LastName: string;
+        
+    @Field({nullable: true, description: `Middle name or initial`}) 
+    @MaxLength(200)
+    MiddleName?: string;
+        
+    @Field({nullable: true, description: `Name prefix such as Dr., Mr., Ms., Rev.`}) 
+    @MaxLength(40)
+    Prefix?: string;
+        
+    @Field({nullable: true, description: `Name suffix such as Jr., III, PhD, Esq.`}) 
+    @MaxLength(40)
+    Suffix?: string;
+        
+    @Field({nullable: true, description: `Nickname or preferred name the person goes by`}) 
+    @MaxLength(200)
+    PreferredName?: string;
+        
+    @Field({nullable: true, description: `Professional or job title, e.g. VP of Engineering, Board Director`}) 
+    @MaxLength(400)
+    Title?: string;
+        
+    @Field({nullable: true, description: `Primary email address for this person`}) 
+    @MaxLength(510)
+    Email?: string;
+        
+    @Field({nullable: true, description: `Primary phone number for this person`}) 
+    @MaxLength(100)
+    Phone?: string;
+        
+    @Field({nullable: true, description: `Date of birth`}) 
+    @MaxLength(3)
+    DateOfBirth?: Date;
+        
+    @Field({nullable: true, description: `Gender identity`}) 
+    @MaxLength(100)
+    Gender?: string;
+        
+    @Field({nullable: true, description: `URL to profile photo or avatar image`}) 
+    @MaxLength(2000)
+    PhotoURL?: string;
+        
+    @Field({nullable: true, description: `Biographical text or notes about this person`}) 
+    Bio?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    LinkedUserID?: string;
+        
+    @Field({description: `Current status: Active, Inactive, or Deceased`}) 
+    @MaxLength(100)
+    Status: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field({nullable: true}) 
+    @MaxLength(200)
+    LinkedUser?: string;
+        
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Common_Relationships_FromPersonIDArray: mjBizAppsCommonRelationship_[]; // Link to Common_Relationships
+    
+    @Field(() => [mjCommitteesAttendance_])
+    Committees_Attendances_PersonIDArray: mjCommitteesAttendance_[]; // Link to Committees_Attendances
+    
+    @Field(() => [mjBizAppsCommonContactMethod_])
+    Common_ContactMethods_PersonIDArray: mjBizAppsCommonContactMethod_[]; // Link to Common_ContactMethods
+    
+    @Field(() => [mjCommitteesAgendaItem_])
+    Committees_AgendaItems_PresenterPersonIDArray: mjCommitteesAgendaItem_[]; // Link to Committees_AgendaItems
+    
+    @Field(() => [mjCommitteesActionItem_])
+    Committees_ActionItems_AssignedByPersonIDArray: mjCommitteesActionItem_[]; // Link to Committees_ActionItems
+    
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Common_Relationships_ToPersonIDArray: mjBizAppsCommonRelationship_[]; // Link to Common_Relationships
+    
+    @Field(() => [mjCommitteesMembership_])
+    Committees_Memberships_PersonIDArray: mjCommitteesMembership_[]; // Link to Committees_Memberships
+    
+    @Field(() => [mjCommitteesArtifact_])
+    Committees_Artifacts_UploadedByPersonIDArray: mjCommitteesArtifact_[]; // Link to Committees_Artifacts
+    
+    @Field(() => [mjCommitteesActionItem_])
+    Committees_ActionItems_AssignedToPersonIDArray: mjCommitteesActionItem_[]; // Link to Committees_ActionItems
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: People
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonPersonInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    FirstName?: string;
+
+    @Field({ nullable: true })
+    LastName?: string;
+
+    @Field({ nullable: true })
+    MiddleName: string | null;
+
+    @Field({ nullable: true })
+    Prefix: string | null;
+
+    @Field({ nullable: true })
+    Suffix: string | null;
+
+    @Field({ nullable: true })
+    PreferredName: string | null;
+
+    @Field({ nullable: true })
+    Title: string | null;
+
+    @Field({ nullable: true })
+    Email: string | null;
+
+    @Field({ nullable: true })
+    Phone: string | null;
+
+    @Field({ nullable: true })
+    DateOfBirth: Date | null;
+
+    @Field({ nullable: true })
+    Gender: string | null;
+
+    @Field({ nullable: true })
+    PhotoURL: string | null;
+
+    @Field({ nullable: true })
+    Bio: string | null;
+
+    @Field({ nullable: true })
+    LinkedUserID: string | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: People
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonPersonInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    FirstName?: string;
+
+    @Field({ nullable: true })
+    LastName?: string;
+
+    @Field({ nullable: true })
+    MiddleName?: string | null;
+
+    @Field({ nullable: true })
+    Prefix?: string | null;
+
+    @Field({ nullable: true })
+    Suffix?: string | null;
+
+    @Field({ nullable: true })
+    PreferredName?: string | null;
+
+    @Field({ nullable: true })
+    Title?: string | null;
+
+    @Field({ nullable: true })
+    Email?: string | null;
+
+    @Field({ nullable: true })
+    Phone?: string | null;
+
+    @Field({ nullable: true })
+    DateOfBirth?: Date | null;
+
+    @Field({ nullable: true })
+    Gender?: string | null;
+
+    @Field({ nullable: true })
+    PhotoURL?: string | null;
+
+    @Field({ nullable: true })
+    Bio?: string | null;
+
+    @Field({ nullable: true })
+    LinkedUserID?: string | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: People
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonPersonViewResult {
+    @Field(() => [mjBizAppsCommonPerson_])
+    Results: mjBizAppsCommonPerson_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonPerson_)
+export class mjBizAppsCommonPersonResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonPersonViewResult)
+    async RunmjBizAppsCommonPersonViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonPersonViewResult)
+    async RunmjBizAppsCommonPersonViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonPersonViewResult)
+    async RunmjBizAppsCommonPersonDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: People';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonPerson_, { nullable: true })
+    async mjBizAppsCommonPerson(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonPerson_ | null> {
+        this.CheckUserReadPermissions('Common: People', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwPeople] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: People', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: People', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonRelationship_])
+    async Common_Relationships_FromPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [FromPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Relationships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesAttendance_])
+    async Committees_Attendances_PersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Attendances', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAttendances] WHERE [PersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Attendances', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Attendances', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjBizAppsCommonContactMethod_])
+    async Common_ContactMethods_PersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Contact Methods', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwContactMethods] WHERE [PersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Contact Methods', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Contact Methods', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesAgendaItem_])
+    async Committees_AgendaItems_PresenterPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Agenda Items', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwAgendaItems] WHERE [PresenterPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Agenda Items', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Agenda Items', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesActionItem_])
+    async Committees_ActionItems_AssignedByPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [AssignedByPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjBizAppsCommonRelationship_])
+    async Common_Relationships_ToPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [ToPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Relationships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesMembership_])
+    async Committees_Memberships_PersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Memberships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwMemberships] WHERE [PersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Memberships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Memberships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesArtifact_])
+    async Committees_Artifacts_UploadedByPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Artifacts', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwArtifacts] WHERE [UploadedByPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Artifacts', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Artifacts', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @FieldResolver(() => [mjCommitteesActionItem_])
+    async Committees_ActionItems_AssignedToPersonIDArray(@Root() mjbizappscommonperson_: mjBizAppsCommonPerson_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Committees: Action Items', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_Committees].[vwActionItems] WHERE [AssignedToPersonID]='${mjbizappscommonperson_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Committees: Action Items', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Committees: Action Items', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonPerson_)
+    async CreatemjBizAppsCommonPerson(
+        @Arg('input', () => CreatemjBizAppsCommonPersonInput) input: CreatemjBizAppsCommonPersonInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: People', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonPerson_)
+    async UpdatemjBizAppsCommonPerson(
+        @Arg('input', () => UpdatemjBizAppsCommonPersonInput) input: UpdatemjBizAppsCommonPersonInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: People', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonPerson_)
+    async DeletemjBizAppsCommonPerson(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: People', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Relationship Types
+//****************************************************************************
+@ObjectType({ description: `Defines types of relationships between people and organizations with directionality and labeling` })
+export class mjBizAppsCommonRelationshipType_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field({description: `Display name for the relationship type, e.g. Employee, Spouse, Partner`}) 
+    @MaxLength(200)
+    Name: string;
+        
+    @Field({nullable: true, description: `Detailed description of this relationship type`}) 
+    Description?: string;
+        
+    @Field({description: `Which entity types this relationship connects: PersonToPerson, PersonToOrganization, or OrganizationToOrganization`}) 
+    @MaxLength(100)
+    Category: string;
+        
+    @Field(() => Boolean, {description: `Whether the relationship has a direction. False for symmetric relationships like Spouse or Partner`}) 
+    IsDirectional: boolean;
+        
+    @Field({nullable: true, description: `Label describing the From-to-To direction, e.g. is employee of, is parent of`}) 
+    @MaxLength(200)
+    ForwardLabel?: string;
+        
+    @Field({nullable: true, description: `Label describing the To-to-From direction, e.g. employs, is child of`}) 
+    @MaxLength(200)
+    ReverseLabel?: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Common_Relationships_RelationshipTypeIDArray: mjBizAppsCommonRelationship_[]; // Link to Common_Relationships
+    
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Relationship Types
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonRelationshipTypeInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description: string | null;
+
+    @Field({ nullable: true })
+    Category?: string;
+
+    @Field(() => Boolean, { nullable: true })
+    IsDirectional?: boolean;
+
+    @Field({ nullable: true })
+    ForwardLabel: string | null;
+
+    @Field({ nullable: true })
+    ReverseLabel: string | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Relationship Types
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonRelationshipTypeInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    Name?: string;
+
+    @Field({ nullable: true })
+    Description?: string | null;
+
+    @Field({ nullable: true })
+    Category?: string;
+
+    @Field(() => Boolean, { nullable: true })
+    IsDirectional?: boolean;
+
+    @Field({ nullable: true })
+    ForwardLabel?: string | null;
+
+    @Field({ nullable: true })
+    ReverseLabel?: string | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Relationship Types
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonRelationshipTypeViewResult {
+    @Field(() => [mjBizAppsCommonRelationshipType_])
+    Results: mjBizAppsCommonRelationshipType_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonRelationshipType_)
+export class mjBizAppsCommonRelationshipTypeResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonRelationshipTypeViewResult)
+    async RunmjBizAppsCommonRelationshipTypeViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonRelationshipTypeViewResult)
+    async RunmjBizAppsCommonRelationshipTypeViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonRelationshipTypeViewResult)
+    async RunmjBizAppsCommonRelationshipTypeDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Relationship Types';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonRelationshipType_, { nullable: true })
+    async mjBizAppsCommonRelationshipType(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonRelationshipType_ | null> {
+        this.CheckUserReadPermissions('Common: Relationship Types', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationshipTypes] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationship Types', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Relationship Types', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @FieldResolver(() => [mjBizAppsCommonRelationship_])
+    async Common_Relationships_RelationshipTypeIDArray(@Root() mjbizappscommonrelationshiptype_: mjBizAppsCommonRelationshipType_, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [RelationshipTypeID]='${mjbizappscommonrelationshiptype_.ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.ArrayMapFieldNamesToCodeNames('Common: Relationships', rows, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+        
+    @Mutation(() => mjBizAppsCommonRelationshipType_)
+    async CreatemjBizAppsCommonRelationshipType(
+        @Arg('input', () => CreatemjBizAppsCommonRelationshipTypeInput) input: CreatemjBizAppsCommonRelationshipTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Relationship Types', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonRelationshipType_)
+    async UpdatemjBizAppsCommonRelationshipType(
+        @Arg('input', () => UpdatemjBizAppsCommonRelationshipTypeInput) input: UpdatemjBizAppsCommonRelationshipTypeInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Relationship Types', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonRelationshipType_)
+    async DeletemjBizAppsCommonRelationshipType(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Relationship Types', key, options, provider, userPayload, pubSub);
+    }
+    
+}
+
+//****************************************************************************
+// ENTITY CLASS for Common: Relationships
+//****************************************************************************
+@ObjectType({ description: `Typed, directional links between people and organizations supporting Person-to-Person, Person-to-Organization, and Organization-to-Organization relationships` })
+export class mjBizAppsCommonRelationship_ {
+    @Field() 
+    @MaxLength(16)
+    ID: string;
+        
+    @Field() 
+    @MaxLength(16)
+    RelationshipTypeID: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    FromPersonID?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    FromOrganizationID?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    ToPersonID?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(16)
+    ToOrganizationID?: string;
+        
+    @Field({nullable: true, description: `Contextual title for this specific relationship, e.g. CEO, Primary Contact, Founding Member`}) 
+    @MaxLength(510)
+    Title?: string;
+        
+    @Field({nullable: true, description: `Date the relationship began`}) 
+    @MaxLength(3)
+    StartDate?: Date;
+        
+    @Field({nullable: true, description: `Date the relationship ended, if applicable`}) 
+    @MaxLength(3)
+    EndDate?: Date;
+        
+    @Field({description: `Current status: Active, Inactive, or Ended`}) 
+    @MaxLength(100)
+    Status: string;
+        
+    @Field({nullable: true, description: `Additional notes about this relationship`}) 
+    Notes?: string;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__CreatedAt: Date;
+        
+    @Field() 
+    @MaxLength(10)
+    _mj__UpdatedAt: Date;
+        
+    @Field() 
+    @MaxLength(200)
+    RelationshipType: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    FromOrganization?: string;
+        
+    @Field({nullable: true}) 
+    @MaxLength(510)
+    ToOrganization?: string;
+        
+}
+
+//****************************************************************************
+// INPUT TYPE for Common: Relationships
+//****************************************************************************
+@InputType()
+export class CreatemjBizAppsCommonRelationshipInput {
+    @Field({ nullable: true })
+    ID?: string;
+
+    @Field({ nullable: true })
+    RelationshipTypeID?: string;
+
+    @Field({ nullable: true })
+    FromPersonID: string | null;
+
+    @Field({ nullable: true })
+    FromOrganizationID: string | null;
+
+    @Field({ nullable: true })
+    ToPersonID: string | null;
+
+    @Field({ nullable: true })
+    ToOrganizationID: string | null;
+
+    @Field({ nullable: true })
+    Title: string | null;
+
+    @Field({ nullable: true })
+    StartDate: Date | null;
+
+    @Field({ nullable: true })
+    EndDate: Date | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+
+    @Field({ nullable: true })
+    Notes: string | null;
+}
+    
+
+//****************************************************************************
+// INPUT TYPE for Common: Relationships
+//****************************************************************************
+@InputType()
+export class UpdatemjBizAppsCommonRelationshipInput {
+    @Field()
+    ID: string;
+
+    @Field({ nullable: true })
+    RelationshipTypeID?: string;
+
+    @Field({ nullable: true })
+    FromPersonID?: string | null;
+
+    @Field({ nullable: true })
+    FromOrganizationID?: string | null;
+
+    @Field({ nullable: true })
+    ToPersonID?: string | null;
+
+    @Field({ nullable: true })
+    ToOrganizationID?: string | null;
+
+    @Field({ nullable: true })
+    Title?: string | null;
+
+    @Field({ nullable: true })
+    StartDate?: Date | null;
+
+    @Field({ nullable: true })
+    EndDate?: Date | null;
+
+    @Field({ nullable: true })
+    Status?: string;
+
+    @Field({ nullable: true })
+    Notes?: string | null;
+
+    @Field(() => [KeyValuePairInput], { nullable: true })
+    OldValues___?: KeyValuePairInput[];
+}
+    
+//****************************************************************************
+// RESOLVER for Common: Relationships
+//****************************************************************************
+@ObjectType()
+export class RunmjBizAppsCommonRelationshipViewResult {
+    @Field(() => [mjBizAppsCommonRelationship_])
+    Results: mjBizAppsCommonRelationship_[];
+
+    @Field(() => String, {nullable: true})
+    UserViewRunID?: string;
+
+    @Field(() => Int, {nullable: true})
+    RowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    TotalRowCount: number;
+
+    @Field(() => Int, {nullable: true})
+    ExecutionTime: number;
+
+    @Field({nullable: true})
+    ErrorMessage?: string;
+
+    @Field(() => Boolean, {nullable: false})
+    Success: boolean;
+}
+
+@Resolver(mjBizAppsCommonRelationship_)
+export class mjBizAppsCommonRelationshipResolver extends ResolverBase {
+    @Query(() => RunmjBizAppsCommonRelationshipViewResult)
+    async RunmjBizAppsCommonRelationshipViewByID(@Arg('input', () => RunViewByIDInput) input: RunViewByIDInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByIDGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonRelationshipViewResult)
+    async RunmjBizAppsCommonRelationshipViewByName(@Arg('input', () => RunViewByNameInput) input: RunViewByNameInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        return super.RunViewByNameGeneric(input, provider, userPayload, pubSub);
+    }
+
+    @Query(() => RunmjBizAppsCommonRelationshipViewResult)
+    async RunmjBizAppsCommonRelationshipDynamicView(@Arg('input', () => RunDynamicViewInput) input: RunDynamicViewInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        input.EntityName = 'Common: Relationships';
+        return super.RunDynamicViewGeneric(input, provider, userPayload, pubSub);
+    }
+    @Query(() => mjBizAppsCommonRelationship_, { nullable: true })
+    async mjBizAppsCommonRelationship(@Arg('ID', () => String) ID: string, @Ctx() { dataSources, userPayload, providers }: AppContext, @PubSub() pubSub: PubSubEngine): Promise<mjBizAppsCommonRelationship_ | null> {
+        this.CheckUserReadPermissions('Common: Relationships', userPayload);
+        const provider = GetReadOnlyProvider(providers, { allowFallbackToReadWrite: true });
+        const connPool = GetReadOnlyDataSource(dataSources, { allowFallbackToReadWrite: true });
+        const sSQL = `SELECT * FROM [__mj_BizAppsCommon].[vwRelationships] WHERE [ID]='${ID}' ` + this.getRowLevelSecurityWhereClause(provider, 'Common: Relationships', userPayload, EntityPermissionType.Read, 'AND');
+        const rows = await SQLServerDataProvider.ExecuteSQLWithPool(connPool, sSQL, undefined, this.GetUserFromPayload(userPayload));
+        const result = await this.MapFieldNamesToCodeNames('Common: Relationships', rows && rows.length > 0 ? rows[0] : {}, this.GetUserFromPayload(userPayload));
+        return result;
+    }
+    
+    @Mutation(() => mjBizAppsCommonRelationship_)
+    async CreatemjBizAppsCommonRelationship(
+        @Arg('input', () => CreatemjBizAppsCommonRelationshipInput) input: CreatemjBizAppsCommonRelationshipInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.CreateRecord('Common: Relationships', input, provider, userPayload, pubSub)
+    }
+        
+    @Mutation(() => mjBizAppsCommonRelationship_)
+    async UpdatemjBizAppsCommonRelationship(
+        @Arg('input', () => UpdatemjBizAppsCommonRelationshipInput) input: UpdatemjBizAppsCommonRelationshipInput,
+        @Ctx() { providers, userPayload }: AppContext,
+        @PubSub() pubSub: PubSubEngine
+    ) {
+        const provider = GetReadWriteProvider(providers);
+        return this.UpdateRecord('Common: Relationships', input, provider, userPayload, pubSub);
+    }
+    
+    @Mutation(() => mjBizAppsCommonRelationship_)
+    async DeletemjBizAppsCommonRelationship(@Arg('ID', () => String) ID: string, @Arg('options___', () => DeleteOptionsInput) options: DeleteOptionsInput, @Ctx() { providers, userPayload }: AppContext, @PubSub() pubSub: PubSubEngine) {
+        const provider = GetReadWriteProvider(providers);
+        const key = new CompositeKey([{FieldName: 'ID', Value: ID}]);
+        return this.DeleteRecord('Common: Relationships', key, options, provider, userPayload, pubSub);
     }
     
 }

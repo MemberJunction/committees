@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- References Section -->
+    <!-- Assignment & Context Section -->
     <mj-collapsible-panel
-        SectionKey="references"
-        SectionName="References"
-        Icon="fa fa-link"
+        SectionKey="assignmentContext"
+        SectionName="Assignment & Context"
+        Icon="fa fa-user-friends"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -37,6 +37,24 @@
             [Record]="record"
             [ShowLabel]="true"
             FieldName="AgendaItemID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+            LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="AssignedToPersonID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+            LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="AssignedByPersonID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
@@ -87,39 +105,11 @@
 
     </mj-collapsible-panel>
 
-    <!-- Assignment Section -->
+    <!-- Schedule & Completion Section -->
     <mj-collapsible-panel
-        SectionKey="assignment"
-        SectionName="Assignment"
-        Icon="fa fa-user-check"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="AssignedToUserID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-            LinkType="Record"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="AssignedByUserID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-            LinkType="Record"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Timeline Section -->
-    <mj-collapsible-panel
-        SectionKey="timeline"
-        SectionName="Timeline"
-        Icon="fa fa-calendar-alt"
+        SectionKey="scheduleCompletion"
+        SectionName="Schedule & Completion"
+        Icon="fa fa-calendar"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -183,7 +173,7 @@
     <mj-collapsible-panel
         SectionKey="committeesArtifacts"
         SectionName="Committees: Artifacts"
-        Icon="fa fa-file"
+        Icon="fa fa-paperclip"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

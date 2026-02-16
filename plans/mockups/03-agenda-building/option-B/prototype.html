@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Spreadsheet Grid - Agenda Building</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .toolbar-right {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #f5576c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e0475d;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .btn-icon {
+            padding: 0.6rem;
+            background: transparent;
+            border: 1px solid #d1d5db;
+            color: #6b7280;
+        }
+
+        .btn-icon:hover {
+            background: #f8fafc;
+            border-color: #9ca3af;
+        }
+
+        .meeting-info {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .meeting-info strong {
+            color: #374151;
+        }
+
+        .grid-container {
+            background: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .grid-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        th.col-title {
+            min-width: 250px;
+        }
+
+        th.col-type {
+            min-width: 120px;
+        }
+
+        th.col-time {
+            min-width: 100px;
+        }
+
+        th.col-duration {
+            min-width: 100px;
+        }
+
+        th.col-presenter {
+            min-width: 150px;
+        }
+
+        th.col-docs {
+            min-width: 80px;
+        }
+
+        th.col-actions {
+            min-width: 120px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        tbody tr.child-row {
+            background: #fafbfc;
+        }
+
+        tbody tr.child-row:hover {
+            background: #f3f4f6;
+        }
+
+        td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .indent-1 {
+            padding-left: 2rem;
+        }
+
+        .indent-2 {
+            padding-left: 3.5rem;
+        }
+
+        .cell-editable {
+            cursor: text;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            min-height: 38px;
+        }
+
+        .cell-editable:hover {
+            background: white;
+            border-color: #d1d5db;
+        }
+
+        .cell-editable:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        input.cell-input,
+        select.cell-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        input.cell-input:focus,
+        select.cell-select:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .row-actions button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .row-actions button:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .row-actions button.delete:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .drag-handle {
+            cursor: move;
+            color: #9ca3af;
+            padding: 0.25rem;
+        }
+
+        .drag-handle:hover {
+            color: #6b7280;
+        }
+
+        .row-dragging {
+            opacity: 0.5;
+        }
+
+        .drop-target {
+            border-top: 2px solid #f5576c;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .type-presentation {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .type-discussion {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .type-decision {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .type-information {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .type-break {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .doc-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-left,
+            .toolbar-right {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>Option B: Spreadsheet Grid View</h1>
+                <div class="subtitle">Building Agenda for: Technology Committee - March 2026 Meeting</div>
+            </div>
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Comparison
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="grid-container">
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-primary" onclick="addRow()">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                    <button class="btn btn-secondary" onclick="addChildRow()">
+                        <i class="fas fa-level-down-alt"></i> Add Sub-Item
+                    </button>
+                    <button class="btn-icon" onclick="alert('Template selection would appear')" title="Load from template">
+                        <i class="fas fa-file-alt"></i>
+                    </button>
+                    <button class="btn-icon" onclick="alert('Import from previous meeting')" title="Import">
+                        <i class="fas fa-file-import"></i>
+                    </button>
+                </div>
+                <div class="toolbar-right">
+                    <div class="meeting-info">
+                        <strong>Meeting Date:</strong> March 15, 2026 at 9:00 AM
+                    </div>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button class="btn btn-primary" onclick="alert('Publish agenda to members')">
+                        <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid-wrapper">
+                <table id="agendaTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"></th>
+                            <th style="width: 40px;">#</th>
+                            <th class="col-title">Title</th>
+                            <th class="col-type">Type</th>
+                            <th class="col-time">Start Time</th>
+                            <th class="col-duration">Duration</th>
+                            <th class="col-presenter">Presenter</th>
+                            <th class="col-docs">Docs</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agendaBody">
+                        <tr data-id="1" data-level="0">
+                            <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                            <td>1</td>
+                            <td>
+                                <div class="cell-editable" contenteditable="true" data-field="title">
+                                    Call to Order & Welcome
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information" selected>Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:00 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="5" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith" selected>Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('Attach documents')" title="Attach documents">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="2" data-level="0">
+                            <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                            <td>2</td>
+                            <td>
+                                <div class="cell-editable" contenteditable="true" data-field="title">
+                                    Budget Review for Q1 2026
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation" selected>Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:05 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="30" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe" selected>John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('2 documents attached')" title="2 documents">
+                                    <i class="fas fa-paperclip"></i> 2
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="2.1" data-level="1" data-parent="2" class="child-row">
+                            <td><i class="fas fa-grip-vertical drag-handle" style="margin-left: 1.5rem;"></i></td>
+                            <td>2.1</td>
+                            <td>
+                                <div class="cell-editable indent-1" contenteditable="true" data-field="title">
+                                    Revenue Budget Overview
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation" selected>Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:05 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="10" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe" selected>John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('Attach documents')" title="Attach documents">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="2.2" data-level="1" data-parent="2" class="child-row">
+                            <td><i class="fas fa-grip-vertical drag-handle" style="margin-left: 1.5rem;"></i></td>
+                            <td>2.2</td>
+                            <td>
+                                <div class="cell-editable indent-1" contenteditable="true" data-field="title">
+                                    Expense Budget Overview
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation" selected>Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:15 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="10" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe" selected>John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('Attach documents')" title="Attach documents">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="2.3" data-level="1" data-parent="2" class="child-row">
+                            <td><i class="fas fa-grip-vertical drag-handle" style="margin-left: 1.5rem;"></i></td>
+                            <td>2.3</td>
+                            <td>
+                                <div class="cell-editable indent-1" contenteditable="true" data-field="title">
+                                    Q&A and Discussion
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion" selected>Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:25 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="10" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith" selected>Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                    <option value="all">All Members</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('Attach documents')" title="Attach documents">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="3" data-level="0">
+                            <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                            <td>3</td>
+                            <td>
+                                <div class="cell-editable" contenteditable="true" data-field="title">
+                                    Security Infrastructure Review
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion" selected>Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:35 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="20" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith">Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson" selected>Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('1 document attached')" title="1 document">
+                                    <i class="fas fa-paperclip"></i> 1
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="4" data-level="0">
+                            <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                            <td>4</td>
+                            <td>
+                                <div class="cell-editable" contenteditable="true" data-field="title">
+                                    Break
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision">Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break" selected>Break</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="9:55 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="10" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="" selected>-</option>
+                                </select>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-id="5" data-level="0">
+                            <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                            <td>5</td>
+                            <td>
+                                <div class="cell-editable" contenteditable="true" data-field="title">
+                                    Approval: Cloud Migration Phase 2
+                                </div>
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="type">
+                                    <option value="presentation">Presentation</option>
+                                    <option value="discussion">Discussion</option>
+                                    <option value="decision" selected>Decision</option>
+                                    <option value="information">Information</option>
+                                    <option value="break">Break</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="cell-input" value="10:05 AM" data-field="startTime">
+                            </td>
+                            <td>
+                                <input type="number" class="cell-input" value="25" min="1" data-field="duration" style="width: 80px;">
+                            </td>
+                            <td>
+                                <select class="cell-select" data-field="presenter">
+                                    <option value="jane-smith" selected>Jane Smith - CTO</option>
+                                    <option value="john-doe">John Doe - CFO</option>
+                                    <option value="bob-johnson">Bob Johnson - Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="alert('3 documents attached')" title="3 documents">
+                                    <i class="fas fa-paperclip"></i> 3
+                                </button>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <button onclick="duplicateRow(this)" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="deleteRow(this)" class="delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Total Items:</span>
+                    <span class="stat-value" id="totalItems">9</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Duration:</span>
+                    <span class="stat-value" id="totalDuration">110 minutes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Estimated End Time:</span>
+                    <span class="stat-value" id="endTime">10:50 AM</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Last Saved:</span>
+                    <span class="stat-value">Just now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rowCounter = 6;
+
+        function addRow() {
+            const tbody = document.getElementById('agendaBody');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-id', rowCounter);
+            newRow.setAttribute('data-level', '0');
+
+            newRow.innerHTML = `
+                <td><i class="fas fa-grip-vertical drag-handle"></i></td>
+                <td>${rowCounter}</td>
+                <td>
+                    <div class="cell-editable" contenteditable="true" data-field="title">
+                        New Agenda Item
+                    </div>
+                </td>
+                <td>
+                    <select class="cell-select" data-field="type">
+                        <option value="presentation">Presentation</option>
+                        <option value="discussion" selected>Discussion</option>
+                        <option value="decision">Decision</option>
+                        <option value="information">Information</option>
+                        <option value="break">Break</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" class="cell-input" value="TBD" data-field="startTime">
+                </td>
+                <td>
+                    <input type="number" class="cell-input" value="15" min="1" data-field="duration" style="width: 80px;">
+                </td>
+                <td>
+                    <select class="cell-select" data-field="presenter">
+                        <option value="">Select presenter...</option>
+                        <option value="jane-smith">Jane Smith - CTO</option>
+                        <option value="john-doe">John Doe - CFO</option>
+                        <option value="bob-johnson">Bob Johnson - Director</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn-icon" onclick="alert('Attach documents')" title="Attach documents">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <button onclick="duplicateRow(this)" title="Duplicate">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button onclick="deleteRow(this)" class="delete" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            tbody.appendChild(newRow);
+            rowCounter++;
+            updateStats();
+        }
+
+        function addChildRow() {
+            alert('Select a parent row first, then click Add Sub-Item.\n\nIn the full implementation, you would:\n1. Select a parent row\n2. Click Add Sub-Item\n3. The new row would be inserted as a child of the selected parent');
+        }
+
+        function duplicateRow(button) {
+            const row = button.closest('tr');
+            const newRow = row.cloneNode(true);
+            row.parentNode.insertBefore(newRow, row.nextSibling);
+            updateStats();
+        }
+
+        function deleteRow(button) {
+            if (confirm('Delete this agenda item?')) {
+                button.closest('tr').remove();
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            const rows = document.querySelectorAll('#agendaBody tr');
+            document.getElementById('totalItems').textContent = rows.length;
+
+            let totalMinutes = 0;
+            rows.forEach(row => {
+                const durationInput = row.querySelector('input[data-field="duration"]');
+                if (durationInput) {
+                    totalMinutes += parseInt(durationInput.value) || 0;
+                }
+            });
+
+            document.getElementById('totalDuration').textContent = `${totalMinutes} minutes`;
+
+            // Calculate end time (simplified)
+            const startHour = 9;
+            const startMinute = 0;
+            const endMinutes = startHour * 60 + startMinute + totalMinutes;
+            const endHour = Math.floor(endMinutes / 60);
+            const endMin = endMinutes % 60;
+            document.getElementById('endTime').textContent =
+                `${endHour > 12 ? endHour - 12 : endHour}:${endMin.toString().padStart(2, '0')} ${endHour >= 12 ? 'PM' : 'AM'}`;
+        }
+
+        // Auto-save simulation
+        let saveTimer;
+        document.addEventListener('input', function() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(function() {
+                const lastSaved = document.querySelector('.stats-bar .stat-item:last-child .stat-value');
+                lastSaved.textContent = 'Just now';
+            }, 1000);
+        });
+
+        // Enable drag and drop (simplified)
+        let draggedRow = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tbody = document.getElementById('agendaBody');
+
+            tbody.addEventListener('dragstart', function(e) {
+                if (e.target.classList.contains('drag-handle')) {
+                    draggedRow = e.target.closest('tr');
+                    draggedRow.classList.add('row-dragging');
+                }
+            });
+
+            tbody.addEventListener('dragend', function(e) {
+                if (draggedRow) {
+                    draggedRow.classList.remove('row-dragging');
+                    draggedRow = null;
+                }
+                document.querySelectorAll('.drop-target').forEach(el => {
+                    el.classList.remove('drop-target');
+                });
+            });
+
+            tbody.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(tbody, e.clientY);
+                document.querySelectorAll('.drop-target').forEach(el => {
+                    el.classList.remove('drop-target');
+                });
+
+                if (afterElement) {
+                    afterElement.classList.add('drop-target');
+                }
+            });
+
+            tbody.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(tbody, e.clientY);
+
+                if (draggedRow && afterElement) {
+                    tbody.insertBefore(draggedRow, afterElement);
+                }
+
+                document.querySelectorAll('.drop-target').forEach(el => {
+                    el.classList.remove('drop-target');
+                });
+            });
+
+            // Make drag handles draggable
+            document.querySelectorAll('.drag-handle').forEach(handle => {
+                handle.parentElement.setAttribute('draggable', 'true');
+            });
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('tr:not(.row-dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    </script>
+</body>
+</html>

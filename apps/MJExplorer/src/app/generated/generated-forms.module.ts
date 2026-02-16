@@ -32,6 +32,16 @@ import { RoleFormComponent } from "./Entities/Role/role.form.component";
 import { TermFormComponent } from "./Entities/Term/term.form.component";
 import { TypeFormComponent } from "./Entities/Type/type.form.component";
 import { VoteFormComponent } from "./Entities/Vote/vote.form.component";
+import { AddressLinkFormComponent } from "./Entities/AddressLink/addresslink.form.component";
+import { AddressTypeFormComponent } from "./Entities/AddressType/addresstype.form.component";
+import { AddressFormComponent } from "./Entities/Address/address.form.component";
+import { ContactMethodFormComponent } from "./Entities/ContactMethod/contactmethod.form.component";
+import { ContactTypeFormComponent } from "./Entities/ContactType/contacttype.form.component";
+import { OrganizationTypeFormComponent } from "./Entities/OrganizationType/organizationtype.form.component";
+import { OrganizationFormComponent } from "./Entities/Organization/organization.form.component";
+import { PersonFormComponent } from "./Entities/Person/person.form.component";
+import { RelationshipTypeFormComponent } from "./Entities/RelationshipType/relationshiptype.form.component";
+import { RelationshipFormComponent } from "./Entities/Relationship/relationship.form.component";
    
 
 @NgModule({
@@ -49,7 +59,13 @@ declarations: [
     RoleFormComponent,
     TermFormComponent,
     TypeFormComponent,
-    VoteFormComponent],
+    VoteFormComponent,
+    AddressLinkFormComponent,
+    AddressTypeFormComponent,
+    AddressFormComponent,
+    ContactMethodFormComponent,
+    ContactTypeFormComponent,
+    OrganizationTypeFormComponent],
 imports: [
     CommonModule,
     FormsModule,
@@ -69,9 +85,33 @@ export class GeneratedForms_SubModule_0 { }
 
 @NgModule({
 declarations: [
+    OrganizationFormComponent,
+    PersonFormComponent,
+    RelationshipTypeFormComponent,
+    RelationshipFormComponent],
+imports: [
+    CommonModule,
+    FormsModule,
+    LayoutModule,
+    BaseFormsModule,
+    EntityViewerModule,
+    LinkDirectivesModule,
+    MJTabStripModule,
+    ContainerDirectivesModule
+],
+exports: [
+]
+})
+export class GeneratedForms_SubModule_1 { }
+    
+
+
+@NgModule({
+declarations: [
 ],
 imports: [
-    GeneratedForms_SubModule_0
+    GeneratedForms_SubModule_0,
+    GeneratedForms_SubModule_1
 ]
 })
 export class GeneratedFormsModule { }

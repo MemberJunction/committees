@@ -8,21 +8,39 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Term Schedule Section -->
+    <!-- Committee Association Section -->
     <mj-collapsible-panel
-        SectionKey="termSchedule"
-        SectionName="Term Schedule"
-        Icon="fa fa-calendar-alt"
+        SectionKey="committeeAssociation"
+        SectionName="Committee Association"
+        Icon="fa fa-users"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
             [Record]="record"
-            [ShowLabel]="true"
+            [ShowLabel]="false"
             FieldName="CommitteeID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
             LinkType="Record"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Term Details Section -->
+    <mj-collapsible-panel
+        SectionKey="termDetails"
+        SectionName="Term Details"
+        Icon="fa fa-calendar"
+        [Form]="this"
+        [FormContext]="formContext">
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="Name"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
         ></mj-form-field>
         <mj-form-field 
             [Record]="record"
@@ -37,24 +55,6 @@
             [ShowLabel]="true"
             FieldName="EndDate"
             Type="datepicker"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Term Basics Section -->
-    <mj-collapsible-panel
-        SectionKey="termBasics"
-        SectionName="Term Basics"
-        Icon="fa fa-info-circle"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="Name"
-            Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>

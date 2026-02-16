@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Comprehensive Form Committee Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            font-size: 2em;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #718096;
+            font-size: 1.05em;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3em;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .section-icon {
+            font-size: 1.2em;
+        }
+
+        .collapse-icon {
+            color: #718096;
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section.collapsed .section-content {
+            display: none;
+        }
+
+        .section-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .required {
+            color: #e53e3e;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .hint-text {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 6px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-item input,
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-item label,
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .member-selector {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f7fafc;
+        }
+
+        .member-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .member-search input {
+            padding-right: 40px;
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            pointer-events: none;
+        }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .member-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .member-card:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .member-card.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .member-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: #2d3748;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .member-email {
+            font-size: 0.85em;
+            color: #718096;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .selected-count {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .role-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f7fafc;
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .role-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05em;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .role-badge.required {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .role-badge.optional {
+            background: #e6fffa;
+            color: #234e52;
+        }
+
+        .role-description {
+            font-size: 0.9em;
+            color: #718096;
+            margin-bottom: 12px;
+        }
+
+        .role-card select {
+            background: white;
+        }
+
+        .sticky-actions {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .action-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .validation-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .validation-status.valid {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .validation-status.invalid {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #48bb78;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 3em;
+            color: white;
+        }
+
+        .success-title {
+            font-size: 2em;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #718096;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .committee-summary {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .committee-summary h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .summary-value {
+            color: #2d3748;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .member-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sticky-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .action-info {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Create New Committee</h1>
+            <p>Complete all sections below to set up your committee</p>
+        </div>
+
+        <form class="form-container" id="committeeForm">
+            <!-- Basic Information Section -->
+            <div class="section" id="sectionBasic">
+                <div class="section-header" onclick="toggleSection('sectionBasic')">
+                    <div class="section-title">
+                        <span class="section-icon">📋</span>
+                        <span>Basic Information</span>
+                    </div>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="committeeName">Committee Name <span class="required">*</span></label>
+                            <input type="text" id="committeeName" placeholder="e.g., Finance Committee" required>
+                            <div class="hint-text">Choose a clear, descriptive name</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="privacy">Privacy Level <span class="required">*</span></label>
+                            <select id="privacy" required>
+                                <option value="">Select privacy level...</option>
+                                <option value="Public">Public - Visible to all</option>
+                                <option value="Members Only">Members Only - Committee members can view</option>
+                                <option value="Board Only">Board Only - Board members only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label for="committeePurpose">Purpose <span class="required">*</span></label>
+                            <textarea id="committeePurpose" placeholder="Describe the committee's mission and objectives..." required></textarea>
+                            <div class="hint-text">Briefly explain what this committee does</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Status <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="statusActive" name="status" value="Active" checked>
+                                    <label for="statusActive">Active</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="statusInactive" name="status" value="Inactive">
+                                    <label for="statusInactive">Inactive</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="statusArchived" name="status" value="Archived">
+                                    <label for="statusArchived">Archived</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="charter">Charter Document (Optional)</label>
+                            <input type="file" id="charter" accept=".pdf,.doc,.docx">
+                            <div class="hint-text">Upload formal charter if available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meeting Configuration Section -->
+            <div class="section" id="sectionMeetings">
+                <div class="section-header" onclick="toggleSection('sectionMeetings')">
+                    <div class="section-title">
+                        <span class="section-icon">📅</span>
+                        <span>Meeting Configuration</span>
+                    </div>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frequency">Meeting Frequency <span class="required">*</span></label>
+                            <select id="frequency" required>
+                                <option value="">Select frequency...</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Bi-weekly">Bi-weekly</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Quarterly">Quarterly</option>
+                                <option value="Ad-hoc">Ad-hoc (as needed)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Default Duration <span class="required">*</span></label>
+                            <select id="duration" required>
+                                <option value="">Select duration...</option>
+                                <option value="30 minutes">30 minutes</option>
+                                <option value="1 hour">1 hour</option>
+                                <option value="1.5 hours">1.5 hours</option>
+                                <option value="2 hours">2 hours</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">Default Location</label>
+                            <input type="text" id="location" placeholder="e.g., Conference Room A or Zoom link">
+                            <div class="hint-text">Physical location or virtual meeting link</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule">Typical Day/Time</label>
+                            <input type="text" id="schedule" placeholder="e.g., First Monday at 2:00 PM">
+                            <div class="hint-text">When does this committee usually meet?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members Section -->
+            <div class="section" id="sectionMembers">
+                <div class="section-header" onclick="toggleSection('sectionMembers')">
+                    <div class="section-title">
+                        <span class="section-icon">👥</span>
+                        <span>Add Members</span>
+                        <span class="selected-count" id="selectedCount">0 selected</span>
+                    </div>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="member-selector">
+                        <div class="member-search">
+                            <input type="text" id="memberSearch" placeholder="Search members by name or email...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <div class="member-grid" id="memberGrid">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="hint-text" style="margin-top: 10px;">Select at least 2 members to continue</div>
+                </div>
+            </div>
+
+            <!-- Roles Section -->
+            <div class="section" id="sectionRoles">
+                <div class="section-header" onclick="toggleSection('sectionRoles')">
+                    <div class="section-title">
+                        <span class="section-icon">🎯</span>
+                        <span>Assign Roles</span>
+                    </div>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="role-grid">
+                        <div class="role-card">
+                            <div class="role-header">
+                                <span class="role-title">Committee Chair</span>
+                                <span class="role-badge required">Required</span>
+                            </div>
+                            <div class="role-description">Leads the committee and presides over meetings</div>
+                            <select id="roleChair" required>
+                                <option value="">Select chair...</option>
+                            </select>
+                        </div>
+
+                        <div class="role-card">
+                            <div class="role-header">
+                                <span class="role-title">Vice Chair</span>
+                                <span class="role-badge optional">Optional</span>
+                            </div>
+                            <div class="role-description">Assists the chair and serves in their absence</div>
+                            <select id="roleViceChair">
+                                <option value="">Select vice chair (optional)...</option>
+                            </select>
+                        </div>
+
+                        <div class="role-card">
+                            <div class="role-header">
+                                <span class="role-title">Secretary</span>
+                                <span class="role-badge optional">Optional</span>
+                            </div>
+                            <div class="role-description">Records minutes and manages documentation</div>
+                            <select id="roleSecretary">
+                                <option value="">Select secretary (optional)...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hint-text" style="margin-top: 15px;">All other selected members will be assigned as regular committee members.</div>
+                </div>
+            </div>
+
+            <!-- Sticky Action Bar -->
+            <div class="sticky-actions">
+                <div class="action-info">
+                    <div class="validation-status" id="validationStatus">
+                        <span id="validationIcon">⚠️</span>
+                        <span id="validationText">Complete required fields</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Create Committee</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Committee Created Successfully!</h2>
+            <p class="success-message">
+                Your committee has been created and is ready for use. Members will be notified of their assignments.
+            </p>
+
+            <div class="committee-summary">
+                <h3 id="successCommitteeName">Committee Name</h3>
+                <div class="summary-grid">
+                    <span class="summary-label">Members:</span>
+                    <span class="summary-value" id="successMemberCount">0</span>
+                    <span class="summary-label">Chair:</span>
+                    <span class="summary-value" id="successChair">-</span>
+                    <span class="summary-label">Meeting Frequency:</span>
+                    <span class="summary-value" id="successFrequency">-</span>
+                    <span class="summary-label">Status:</span>
+                    <span class="summary-value" id="successStatus">-</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn btn-primary" onclick="location.reload()">Create Another Committee</button>
+            </div>
+            <a href="../index.html" class="back-link">← Back to Options</a>
+        </div>
+    </div>
+
+    <script>
+        // Mock member data
+        const availableMembers = [
+            { id: 1, name: 'Sarah Johnson', email: 'sarah.johnson@example.com', initials: 'SJ' },
+            { id: 2, name: 'Michael Chen', email: 'michael.chen@example.com', initials: 'MC' },
+            { id: 3, name: 'Emily Rodriguez', email: 'emily.rodriguez@example.com', initials: 'ER' },
+            { id: 4, name: 'David Kim', email: 'david.kim@example.com', initials: 'DK' },
+            { id: 5, name: 'Jennifer Williams', email: 'jennifer.williams@example.com', initials: 'JW' },
+            { id: 6, name: 'Robert Brown', email: 'robert.brown@example.com', initials: 'RB' },
+            { id: 7, name: 'Lisa Anderson', email: 'lisa.anderson@example.com', initials: 'LA' },
+            { id: 8, name: 'James Martinez', email: 'james.martinez@example.com', initials: 'JM' },
+            { id: 9, name: 'Patricia Taylor', email: 'patricia.taylor@example.com', initials: 'PT' },
+            { id: 10, name: 'Christopher Lee', email: 'christopher.lee@example.com', initials: 'CL' }
+        ];
+
+        let selectedMembers = new Set();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMemberGrid();
+            setupMemberSearch();
+            setupFormValidation();
+        });
+
+        function renderMemberGrid(filter = '') {
+            const memberGrid = document.getElementById('memberGrid');
+            const filtered = availableMembers.filter(m =>
+                m.name.toLowerCase().includes(filter.toLowerCase()) ||
+                m.email.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            memberGrid.innerHTML = filtered.map(member => `
+                <div class="member-card ${selectedMembers.has(member.id) ? 'selected' : ''}"
+                     onclick="toggleMember(${member.id})">
+                    <input type="checkbox" ${selectedMembers.has(member.id) ? 'checked' : ''}
+                           onchange="event.stopPropagation(); toggleMember(${member.id})">
+                    <div class="member-avatar">${member.initials}</div>
+                    <div class="member-info">
+                        <div class="member-name">${member.name}</div>
+                        <div class="member-email">${member.email}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupMemberSearch() {
+            const searchInput = document.getElementById('memberSearch');
+            searchInput.addEventListener('input', (e) => {
+                renderMemberGrid(e.target.value);
+            });
+        }
+
+        function toggleMember(memberId) {
+            if (selectedMembers.has(memberId)) {
+                selectedMembers.delete(memberId);
+            } else {
+                selectedMembers.add(memberId);
+            }
+            updateSelectedMembers();
+            renderMemberGrid(document.getElementById('memberSearch').value);
+        }
+
+        function updateSelectedMembers() {
+            document.getElementById('selectedCount').textContent = `${selectedMembers.size} selected`;
+            updateRoleDropdowns();
+            validateForm();
+        }
+
+        function updateRoleDropdowns() {
+            const roleChair = document.getElementById('roleChair');
+            const roleViceChair = document.getElementById('roleViceChair');
+            const roleSecretary = document.getElementById('roleSecretary');
+
+            const options = Array.from(selectedMembers).map(id => {
+                const member = availableMembers.find(m => m.id === id);
+                return `<option value="${member.id}">${member.name}</option>`;
+            }).join('');
+
+            roleChair.innerHTML = '<option value="">Select chair...</option>' + options;
+            roleViceChair.innerHTML = '<option value="">Select vice chair (optional)...</option>' + options;
+            roleSecretary.innerHTML = '<option value="">Select secretary (optional)...</option>' + options;
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('collapsed');
+        }
+
+        function setupFormValidation() {
+            const form = document.getElementById('committeeForm');
+            const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+            inputs.forEach(input => {
+                input.addEventListener('input', validateForm);
+                input.addEventListener('change', validateForm);
+            });
+
+            // Initial validation
+            validateForm();
+        }
+
+        function validateForm() {
+            const name = document.getElementById('committeeName').value.trim();
+            const purpose = document.getElementById('committeePurpose').value.trim();
+            const privacy = document.getElementById('privacy').value;
+            const frequency = document.getElementById('frequency').value;
+            const duration = document.getElementById('duration').value;
+            const chair = document.getElementById('roleChair').value;
+
+            const isValid = name && purpose && privacy && frequency && duration &&
+                           selectedMembers.size >= 2 && chair;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const validationStatus = document.getElementById('validationStatus');
+            const validationIcon = document.getElementById('validationIcon');
+            const validationText = document.getElementById('validationText');
+
+            if (isValid) {
+                submitBtn.disabled = false;
+                validationStatus.className = 'validation-status valid';
+                validationIcon.textContent = '✓';
+                validationText.textContent = 'Ready to create committee';
+            } else {
+                submitBtn.disabled = true;
+                validationStatus.className = 'validation-status invalid';
+                validationIcon.textContent = '⚠️';
+                validationText.textContent = 'Complete required fields';
+            }
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+                document.getElementById('committeeForm').reset();
+                selectedMembers.clear();
+                updateSelectedMembers();
+                renderMemberGrid();
+            }
+        }
+
+        document.getElementById('committeeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            createCommittee();
+        });
+
+        function createCommittee() {
+            // Show success modal
+            const modal = document.getElementById('successModal');
+            modal.classList.add('active');
+
+            // Populate success modal
+            document.getElementById('successCommitteeName').textContent = document.getElementById('committeeName').value;
+            document.getElementById('successMemberCount').textContent = selectedMembers.size;
+
+            const chairId = parseInt(document.getElementById('roleChair').value);
+            const chair = availableMembers.find(m => m.id === chairId);
+            document.getElementById('successChair').textContent = chair.name;
+
+            document.getElementById('successFrequency').textContent = document.getElementById('frequency').value;
+            document.getElementById('successStatus').textContent = document.querySelector('input[name="status"]:checked').value;
+        }
+
+        // Close modal on background click
+        document.getElementById('successModal').addEventListener('click', (e) => {
+            if (e.target.id === 'successModal') {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

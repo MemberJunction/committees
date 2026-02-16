@@ -16,8 +16,8 @@ export class TermFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'termSchedule', sectionName: 'Term Schedule', isExpanded: true },
-            { sectionKey: 'termBasics', sectionName: 'Term Basics', isExpanded: true },
+            { sectionKey: 'committeeAssociation', sectionName: 'Committee Association', isExpanded: true },
+            { sectionKey: 'termDetails', sectionName: 'Term Details', isExpanded: true },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesMemberships', sectionName: 'Committees: Memberships', isExpanded: false }
         ]);

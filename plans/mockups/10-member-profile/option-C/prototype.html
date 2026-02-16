@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Dashboard Widgets - Member Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f2f5;
+        }
+
+        .prototype-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .prototype-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .profile-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .profile-banner-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #667eea;
+            border: 4px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 2rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .widget:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .widget-header h3 {
+            color: #667eea;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .widget-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .widget-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .widget-btn:hover {
+            color: #667eea;
+        }
+
+        /* Widget size variants */
+        .widget-small {
+            grid-column: span 3;
+        }
+
+        .widget-medium {
+            grid-column: span 4;
+        }
+
+        .widget-large {
+            grid-column: span 6;
+        }
+
+        .widget-full {
+            grid-column: span 12;
+        }
+
+        /* Stats Widget */
+        .stat-widget {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: #4caf50;
+        }
+
+        .stat-change.negative {
+            color: #f44336;
+        }
+
+        /* Committees Widget */
+        .committee-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .committee-item {
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .committee-item:hover {
+            border-left-color: #764ba2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .committee-item h4 {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .committee-item p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+
+        .badge-active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-upcoming {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .badge-completed {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Action Items Widget */
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-item {
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .action-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .action-item h4 {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-meta {
+            display: flex;
+            gap: 1rem;
+            color: #999;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .action-check {
+            margin-top: 0.75rem;
+        }
+
+        .action-check label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #667eea;
+        }
+
+        /* Calendar Widget */
+        .mini-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .cal-day.header {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .cal-day.today {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .cal-day.has-meeting {
+            background: #fff3e0;
+            color: #e65100;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cal-day.has-meeting:hover {
+            background: #ff9800;
+            color: white;
+        }
+
+        /* Upcoming Meetings */
+        .meeting-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .meeting-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .meeting-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .meeting-date-box {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .meeting-date-box .day {
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .meeting-date-box .month {
+            font-size: 0.7rem;
+            opacity: 0.9;
+        }
+
+        .meeting-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .meeting-details p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Achievements Widget */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .achievement.earned {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .achievement.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        /* Settings Widget */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .setting-item:hover {
+            background: #f8f9fa;
+        }
+
+        .setting-item label {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: #667eea;
+        }
+
+        .toggle::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 26px;
+        }
+
+        /* Chart Widget */
+        .chart-placeholder {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: #667eea;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .view-all-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .view-all-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .view-all-link a:hover {
+            color: #764ba2;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        @media (max-width: 1200px) {
+            .widget-small,
+            .widget-medium,
+            .widget-large {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                gap: 1rem;
+            }
+
+            .widget-small,
+            .widget-medium,
+            .widget-large,
+            .widget-full {
+                grid-column: span 12;
+            }
+
+            .profile-banner-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .achievement-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-header">
+        <h1>Option C: Dashboard Widgets Interface</h1>
+        <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Comparison</a>
+    </div>
+
+    <div class="profile-banner">
+        <div class="profile-banner-inner">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h2>Sarah Johnson</h2>
+                <p>Senior Product Manager | Engineering Department</p>
+                <div class="profile-meta">
+                    <span><i class="fas fa-envelope"></i> sarah.johnson@company.com</span>
+                    <span><i class="fas fa-phone"></i> (555) 123-4567</span>
+                    <span><i class="fas fa-calendar"></i> Joined Jan 2024</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Engagement Score -->
+            <div class="widget widget-small stat-widget">
+                <div class="stat-value">92</div>
+                <div class="stat-label">Engagement Score</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i> +5 from last month
+                </div>
+            </div>
+
+            <!-- Active Committees -->
+            <div class="widget widget-small stat-widget">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Active Committees</div>
+                <div class="stat-change">
+                    <i class="fas fa-check"></i> All active
+                </div>
+            </div>
+
+            <!-- Meeting Attendance -->
+            <div class="widget widget-small stat-widget">
+                <div class="stat-value">95%</div>
+                <div class="stat-label">Attendance Rate</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i> +2% this quarter
+                </div>
+            </div>
+
+            <!-- Completed Actions -->
+            <div class="widget widget-small stat-widget">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Completed Actions</div>
+                <div class="stat-change">
+                    <i class="fas fa-check"></i> 4 pending
+                </div>
+            </div>
+
+            <!-- My Committees -->
+            <div class="widget widget-medium">
+                <div class="widget-header">
+                    <h3><i class="fas fa-users"></i> My Committees</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Add Committee">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="widget-btn" title="Expand" onclick="openModal('committees-modal')">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="committee-list">
+                    <div class="committee-item">
+                        <h4>Product Strategy Committee</h4>
+                        <p>Chair • 5 active items</p>
+                        <span class="badge badge-active">Active</span>
+                    </div>
+                    <div class="committee-item">
+                        <h4>Engineering Excellence</h4>
+                        <p>Member • 3 active items</p>
+                        <span class="badge badge-active">Active</span>
+                    </div>
+                    <div class="committee-item">
+                        <h4>Innovation Council</h4>
+                        <p>Member • 2 active items</p>
+                        <span class="badge badge-active">Active</span>
+                    </div>
+                </div>
+                <div class="view-all-link">
+                    <a href="#" onclick="openModal('committees-modal'); return false;">
+                        View All Committees <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="widget widget-medium">
+                <div class="widget-header">
+                    <h3><i class="fas fa-tasks"></i> My Action Items</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Expand" onclick="openModal('actions-modal')">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="action-list">
+                    <div class="action-item">
+                        <h4>Complete Q2 roadmap presentation</h4>
+                        <div class="action-meta">
+                            <span><i class="fas fa-calendar"></i> Due Feb 17</span>
+                            <span><i class="fas fa-flag"></i> High</span>
+                        </div>
+                        <div class="action-check">
+                            <label>
+                                <input type="checkbox"> Mark as complete
+                            </label>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <h4>Review engineering best practices</h4>
+                        <div class="action-meta">
+                            <span><i class="fas fa-calendar"></i> Due Feb 19</span>
+                            <span><i class="fas fa-flag"></i> Medium</span>
+                        </div>
+                        <div class="action-check">
+                            <label>
+                                <input type="checkbox"> Mark as complete
+                            </label>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <h4>Evaluate innovation proposals</h4>
+                        <div class="action-meta">
+                            <span><i class="fas fa-calendar"></i> Due Feb 24</span>
+                            <span><i class="fas fa-flag"></i> Medium</span>
+                        </div>
+                        <div class="action-check">
+                            <label>
+                                <input type="checkbox"> Mark as complete
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-all-link">
+                    <a href="#" onclick="openModal('actions-modal'); return false;">
+                        View All Action Items <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Upcoming Meetings -->
+            <div class="widget widget-medium">
+                <div class="widget-header">
+                    <h3><i class="fas fa-calendar"></i> Upcoming Meetings</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Expand" onclick="openModal('meetings-modal')">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="meeting-list">
+                    <div class="meeting-item">
+                        <div class="meeting-date-box">
+                            <div class="day">18</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-details">
+                            <h4>Product Strategy - Monthly Review</h4>
+                            <p><i class="fas fa-clock"></i> 2:00 PM - 3:30 PM</p>
+                            <p><i class="fas fa-map-marker-alt"></i> Conference Room A</p>
+                        </div>
+                    </div>
+                    <div class="meeting-item">
+                        <div class="meeting-date-box">
+                            <div class="day">20</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-details">
+                            <h4>Engineering Excellence Workshop</h4>
+                            <p><i class="fas fa-clock"></i> 10:00 AM - 12:00 PM</p>
+                            <p><i class="fas fa-map-marker-alt"></i> Virtual</p>
+                        </div>
+                    </div>
+                    <div class="meeting-item">
+                        <div class="meeting-date-box">
+                            <div class="day">25</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-details">
+                            <h4>Innovation Council Review</h4>
+                            <p><i class="fas fa-clock"></i> 3:00 PM - 5:00 PM</p>
+                            <p><i class="fas fa-map-marker-alt"></i> Innovation Lab</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <div class="widget widget-medium">
+                <div class="widget-header">
+                    <h3><i class="fas fa-calendar-alt"></i> February 2026</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Previous Month">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="widget-btn" title="Next Month">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mini-calendar">
+                    <div class="cal-day header">S</div>
+                    <div class="cal-day header">M</div>
+                    <div class="cal-day header">T</div>
+                    <div class="cal-day header">W</div>
+                    <div class="cal-day header">T</div>
+                    <div class="cal-day header">F</div>
+                    <div class="cal-day header">S</div>
+                    <div class="cal-day"></div>
+                    <div class="cal-day"></div>
+                    <div class="cal-day"></div>
+                    <div class="cal-day"></div>
+                    <div class="cal-day"></div>
+                    <div class="cal-day">1</div>
+                    <div class="cal-day">2</div>
+                    <div class="cal-day">3</div>
+                    <div class="cal-day">4</div>
+                    <div class="cal-day">5</div>
+                    <div class="cal-day">6</div>
+                    <div class="cal-day">7</div>
+                    <div class="cal-day">8</div>
+                    <div class="cal-day">9</div>
+                    <div class="cal-day">10</div>
+                    <div class="cal-day">11</div>
+                    <div class="cal-day">12</div>
+                    <div class="cal-day">13</div>
+                    <div class="cal-day">14</div>
+                    <div class="cal-day today">15</div>
+                    <div class="cal-day">16</div>
+                    <div class="cal-day">17</div>
+                    <div class="cal-day has-meeting" title="Product Strategy Meeting">18</div>
+                    <div class="cal-day">19</div>
+                    <div class="cal-day has-meeting" title="Engineering Excellence">20</div>
+                    <div class="cal-day">21</div>
+                    <div class="cal-day">22</div>
+                    <div class="cal-day">23</div>
+                    <div class="cal-day">24</div>
+                    <div class="cal-day has-meeting" title="Innovation Council">25</div>
+                    <div class="cal-day">26</div>
+                    <div class="cal-day">27</div>
+                    <div class="cal-day">28</div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="widget widget-medium">
+                <div class="widget-header">
+                    <h3><i class="fas fa-trophy"></i> Achievements</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Expand" onclick="openModal('achievements-modal')">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="achievement-grid">
+                    <div class="achievement earned">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-name">Perfect Attendance</div>
+                    </div>
+                    <div class="achievement earned">
+                        <div class="achievement-icon">⚡</div>
+                        <div class="achievement-name">Action Hero</div>
+                    </div>
+                    <div class="achievement earned">
+                        <div class="achievement-icon">🌟</div>
+                        <div class="achievement-name">Committee Champion</div>
+                    </div>
+                    <div class="achievement earned">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-name">Early Bird</div>
+                    </div>
+                </div>
+                <div class="view-all-link">
+                    <a href="#" onclick="openModal('achievements-modal'); return false;">
+                        View All Achievements <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Engagement Trend -->
+            <div class="widget widget-large">
+                <div class="widget-header">
+                    <h3><i class="fas fa-chart-line"></i> Engagement Trend</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Refresh">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Interactive engagement chart would display here<br>showing activity trends over time</p>
+                </div>
+            </div>
+
+            <!-- Quick Settings -->
+            <div class="widget widget-large">
+                <div class="widget-header">
+                    <h3><i class="fas fa-cog"></i> Quick Settings</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" title="Edit Profile">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <label>Email notifications for action items</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Meeting reminders</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Daily activity digest</label>
+                        <div class="toggle"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Mobile push notifications</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Weekly engagement report</label>
+                        <div class="toggle"></div>
+                    </div>
+                </div>
+                <div class="view-all-link">
+                    <a href="#" onclick="openModal('settings-modal'); return false;">
+                        View All Settings <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="committees-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>All Committees</h3>
+                <button class="modal-close" onclick="closeModal('committees-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="committee-list">
+                <div class="committee-item">
+                    <h4>Product Strategy Committee</h4>
+                    <p>Chair • Strategic planning and roadmap development</p>
+                    <span class="badge badge-active">Active</span>
+                    <div style="margin-top: 0.5rem; color: #999; font-size: 0.85rem;">
+                        <i class="fas fa-users"></i> 8 members |
+                        <i class="fas fa-tasks"></i> 5 active items |
+                        <i class="fas fa-calendar"></i> Next: Feb 18
+                    </div>
+                </div>
+                <div class="committee-item">
+                    <h4>Engineering Excellence</h4>
+                    <p>Member • Technical excellence and best practices</p>
+                    <span class="badge badge-active">Active</span>
+                    <div style="margin-top: 0.5rem; color: #999; font-size: 0.85rem;">
+                        <i class="fas fa-users"></i> 12 members |
+                        <i class="fas fa-tasks"></i> 3 active items |
+                        <i class="fas fa-calendar"></i> Next: Feb 20
+                    </div>
+                </div>
+                <div class="committee-item">
+                    <h4>Q1 Planning Committee</h4>
+                    <p>Co-Chair • Quarterly planning and resource allocation</p>
+                    <span class="badge badge-completed">Completed</span>
+                    <div style="margin-top: 0.5rem; color: #999; font-size: 0.85rem;">
+                        <i class="fas fa-users"></i> 6 members |
+                        <i class="fas fa-check"></i> Completed Jan 31
+                    </div>
+                </div>
+                <div class="committee-item">
+                    <h4>Innovation Council</h4>
+                    <p>Member • Evaluating innovative projects</p>
+                    <span class="badge badge-active">Active</span>
+                    <div style="margin-top: 0.5rem; color: #999; font-size: 0.85rem;">
+                        <i class="fas fa-users"></i> 10 members |
+                        <i class="fas fa-tasks"></i> 2 active items |
+                        <i class="fas fa-calendar"></i> Next: Feb 25
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="actions-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>All Action Items</h3>
+                <button class="modal-close" onclick="closeModal('actions-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="action-list">
+                <div class="action-item">
+                    <h4>Complete Q2 roadmap presentation</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Prepare comprehensive presentation covering Q2 product roadmap with resource requirements and timelines.</p>
+                    <div class="action-meta">
+                        <span><i class="fas fa-users"></i> Product Strategy Committee</span>
+                        <span><i class="fas fa-calendar"></i> Due Feb 17, 2026</span>
+                        <span><i class="fas fa-flag"></i> High Priority</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary btn-small">Mark Complete</button>
+                        <button class="btn btn-secondary btn-small">Update</button>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <h4>Review engineering best practices document</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Review and provide feedback on the updated engineering best practices documentation.</p>
+                    <div class="action-meta">
+                        <span><i class="fas fa-users"></i> Engineering Excellence</span>
+                        <span><i class="fas fa-calendar"></i> Due Feb 19, 2026</span>
+                        <span><i class="fas fa-flag"></i> Medium Priority</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary btn-small">Mark Complete</button>
+                        <button class="btn btn-secondary btn-small">Update</button>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <h4>Evaluate innovation proposals</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Review 5 innovation proposals submitted for Q2 and provide ratings and feedback.</p>
+                    <div class="action-meta">
+                        <span><i class="fas fa-users"></i> Innovation Council</span>
+                        <span><i class="fas fa-calendar"></i> Due Feb 24, 2026</span>
+                        <span><i class="fas fa-flag"></i> Medium Priority</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary btn-small">Mark Complete</button>
+                        <button class="btn btn-secondary btn-small">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="meetings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>All Meetings</h3>
+                <button class="modal-close" onclick="closeModal('meetings-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="meeting-list">
+                <div class="meeting-item">
+                    <div class="meeting-date-box">
+                        <div class="day">18</div>
+                        <div class="month">FEB</div>
+                    </div>
+                    <div class="meeting-details">
+                        <h4>Product Strategy Committee - Monthly Review</h4>
+                        <p><i class="fas fa-clock"></i> 2:00 PM - 3:30 PM</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Conference Room A</p>
+                        <p style="margin-top: 0.5rem;">Monthly review of product roadmap and strategic initiatives.</p>
+                        <div style="margin-top: 0.75rem;">
+                            <button class="btn btn-primary btn-small">Confirm Attendance</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="meeting-item">
+                    <div class="meeting-date-box">
+                        <div class="day">20</div>
+                        <div class="month">FEB</div>
+                    </div>
+                    <div class="meeting-details">
+                        <h4>Engineering Excellence - Best Practices Workshop</h4>
+                        <p><i class="fas fa-clock"></i> 10:00 AM - 12:00 PM</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Virtual</p>
+                        <p style="margin-top: 0.5rem;">Workshop on implementing engineering best practices across teams.</p>
+                        <div style="margin-top: 0.75rem;">
+                            <button class="btn btn-primary btn-small">Confirm Attendance</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="meeting-item">
+                    <div class="meeting-date-box">
+                        <div class="day">25</div>
+                        <div class="month">FEB</div>
+                    </div>
+                    <div class="meeting-details">
+                        <h4>Innovation Council - Q2 Proposal Review</h4>
+                        <p><i class="fas fa-clock"></i> 3:00 PM - 5:00 PM</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Innovation Lab</p>
+                        <p style="margin-top: 0.5rem;">Review and discussion of Q2 innovation proposals.</p>
+                        <div style="margin-top: 0.75rem;">
+                            <button class="btn btn-primary btn-small">Confirm Attendance</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>All Achievements</h3>
+                <button class="modal-close" onclick="closeModal('achievements-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="achievement-grid">
+                <div class="achievement earned">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-name">Perfect Attendance</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">100% meeting attendance in Q1</p>
+                </div>
+                <div class="achievement earned">
+                    <div class="achievement-icon">⚡</div>
+                    <div class="achievement-name">Action Hero</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Completed 50+ action items</p>
+                </div>
+                <div class="achievement earned">
+                    <div class="achievement-icon">🌟</div>
+                    <div class="achievement-name">Committee Champion</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Active in 5+ committees</p>
+                </div>
+                <div class="achievement earned">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-name">Early Bird</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Consistently early to meetings</p>
+                </div>
+                <div class="achievement locked">
+                    <div class="achievement-icon">🔒</div>
+                    <div class="achievement-name">Year Veteran</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Active for 1 year</p>
+                </div>
+                <div class="achievement locked">
+                    <div class="achievement-icon">🔒</div>
+                    <div class="achievement-name">Innovator</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Submit 10 ideas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Profile Settings</h3>
+                <button class="modal-close" onclick="closeModal('settings-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="margin-bottom: 2rem;">
+                <h4 style="color: #667eea; margin-bottom: 1rem;">Personal Information</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">First Name</label>
+                        <input type="text" value="Sarah" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Last Name</label>
+                        <input type="text" value="Johnson" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                    <input type="email" value="sarah.johnson@company.com" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;">
+                </div>
+            </div>
+            <div>
+                <h4 style="color: #667eea; margin-bottom: 1rem;">Notification Preferences</h4>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <label>Email notifications for new action items</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Email reminders for upcoming meetings</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Daily digest of committee activity</label>
+                        <div class="toggle"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Mobile push notifications</label>
+                        <div class="toggle active"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Weekly engagement report</label>
+                        <div class="toggle"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-primary">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Toggle switches
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+            });
+        });
+
+        // Action item checkboxes
+        document.querySelectorAll('.action-check input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const actionItem = e.target.closest('.action-item');
+                if (e.target.checked) {
+                    if (confirm('Mark this action item as complete?')) {
+                        actionItem.style.opacity = '0.5';
+                    } else {
+                        e.target.checked = false;
+                    }
+                } else {
+                    actionItem.style.opacity = '1';
+                }
+            });
+        });
+
+        // Meeting RSVP
+        document.querySelectorAll('.meeting-item .btn-primary, .meeting-list .btn-primary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.innerHTML = '<i class="fas fa-check"></i> Confirmed';
+                e.target.disabled = true;
+                e.target.style.opacity = '0.7';
+            });
+        });
+    </script>
+</body>
+</html>

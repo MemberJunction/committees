@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Assignment & Context Section -->
+    <!-- Agenda Hierarchy Section -->
     <mj-collapsible-panel
-        SectionKey="assignmentContext"
-        SectionName="Assignment & Context"
-        Icon="fa fa-user"
+        SectionKey="agendaHierarchy"
+        SectionName="Agenda Hierarchy"
+        Icon="fa fa-sitemap"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -27,30 +27,19 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="PresenterUserID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-            LinkType="Record"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Item Hierarchy Section -->
-    <mj-collapsible-panel
-        SectionKey="itemHierarchy"
-        SectionName="Item Hierarchy"
-        Icon="fa fa-sitemap"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
             FieldName="ParentAgendaItemID"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
             LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="Sequence"
+            Type="number"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
         ></mj-form-field>
         <mj-form-field 
             [Record]="record"
@@ -63,21 +52,13 @@
 
     </mj-collapsible-panel>
 
-    <!-- Agenda Item Details Section -->
+    <!-- Item Content Section -->
     <mj-collapsible-panel
-        SectionKey="agendaItemDetails"
-        SectionName="Agenda Item Details"
-        Icon="fa fa-align-left"
+        SectionKey="itemContent"
+        SectionName="Item Content"
+        Icon="fa fa-file-alt"
         [Form]="this"
         [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="Sequence"
-            Type="number"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
@@ -113,19 +94,38 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
+            FieldName="Status"
+            Type="select"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Presentation & Attachments Section -->
+    <mj-collapsible-panel
+        SectionKey="presentationAttachments"
+        SectionName="Presentation & Attachments"
+        Icon="fa fa-paperclip"
+        [Form]="this"
+        [FormContext]="formContext">
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="PresenterPersonID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+            LinkType="Record"
+        ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
             FieldName="RelatedDocumentURL"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
             LinkType="URL"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="Status"
-            Type="select"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
         ></mj-form-field>
         <mj-form-field 
             [Record]="record"
@@ -222,7 +222,7 @@
     <mj-collapsible-panel
         SectionKey="committeesActionItems"
         SectionName="Committees: Action Items"
-        Icon="fa fa-tasks"
+        Icon="fa fa-clipboard-list"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -247,7 +247,7 @@
     <mj-collapsible-panel
         SectionKey="committeesArtifacts"
         SectionName="Committees: Artifacts"
-        Icon="fa fa-file"
+        Icon="fa fa-paperclip"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

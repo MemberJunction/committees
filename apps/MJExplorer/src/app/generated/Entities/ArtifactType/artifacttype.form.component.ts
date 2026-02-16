@@ -16,8 +16,7 @@ export class ArtifactTypeFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'artifactTypeDefinition', sectionName: 'Artifact Type Definition', isExpanded: true },
-            { sectionKey: 'extensionConfiguration', sectionName: 'Extension Configuration', isExpanded: true },
+            { sectionKey: 'artifactTypeDetails', sectionName: 'Artifact Type Details', isExpanded: true },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
             { sectionKey: 'committeesArtifacts', sectionName: 'Committees: Artifacts', isExpanded: false }
         ]);

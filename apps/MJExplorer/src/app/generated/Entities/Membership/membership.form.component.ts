@@ -16,12 +16,11 @@ export class MembershipFormComponent extends BaseFormComponent {
     override async ngOnInit() {
         await super.ngOnInit();
         this.initSections([
-            { sectionKey: 'membershipCore', sectionName: 'Membership Core', isExpanded: true },
-            { sectionKey: 'scheduleStatus', sectionName: 'Schedule & Status', isExpanded: true },
-            { sectionKey: 'descriptiveDetails', sectionName: 'Descriptive Details', isExpanded: false },
+            { sectionKey: 'committeeAssignment', sectionName: 'Committee Assignment', isExpanded: true },
+            { sectionKey: 'membershipTimeline', sectionName: 'Membership Timeline', isExpanded: true },
             { sectionKey: 'systemMetadata', sectionName: 'System Metadata', isExpanded: false },
-            { sectionKey: 'committeesVotes', sectionName: 'Committees: Votes', isExpanded: false },
             { sectionKey: 'committeesMotions', sectionName: 'Committees: Motions', isExpanded: false },
+            { sectionKey: 'committeesVotes', sectionName: 'Committees: Votes', isExpanded: false },
             { sectionKey: 'committeesMotions1', sectionName: 'Committees: Motions', isExpanded: false }
         ]);
     }

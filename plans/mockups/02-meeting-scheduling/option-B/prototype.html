@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Interactive Prototype - Functional & Comprehensive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .help-btn, .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+
+        .help-btn:hover, .close-btn:hover {
+            color: #666;
+        }
+
+        .quick-actions {
+            padding: 1rem 2rem;
+            background: #f0f2ff;
+            border-bottom: 1px solid #d0d5ff;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 0.625rem 1rem;
+            background: white;
+            border: 1px solid #d0d5ff;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background: #f8f9ff;
+            border-color: #667eea;
+        }
+
+        .quick-action-btn select {
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label.required:after {
+            content: " *";
+            color: #f44336;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .schedule-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .panel-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .virtual-settings {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .virtual-setting-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .recurrence-panel {
+            display: none;
+        }
+
+        .recurrence-panel.active {
+            display: block;
+        }
+
+        .recurrence-settings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .recurrence-settings select, .recurrence-settings input {
+            padding: 0.375rem 0.5rem;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .color-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid #d0d0d0;
+            cursor: pointer;
+        }
+
+        .attendees-section {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .attendees-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .attendees-toggle {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .attendees-table {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 40px 2fr 2fr 1.5fr 1fr 100px;
+            padding: 0.75rem 1rem;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 40px 2fr 2fr 1.5fr 1fr 100px;
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: #f8f9ff;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .member-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .member-role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.625rem;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            color: #999;
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: #667eea;
+        }
+
+        .additional-attendees {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .additional-attendee-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.625rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .add-attendee-btns {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .add-btn {
+            padding: 0.5rem 0.875rem;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .bulk-actions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .section-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-box-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667eea;
+            margin-bottom: 1.25rem;
+        }
+
+        .notification-grid {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .notification-group {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .notification-group-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .reminder-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .actions-bar {
+            background: #f8f9fa;
+            border-top: 2px solid #e0e0e0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.625rem;
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #666;
+            border: 1px solid #d0d0d0;
+        }
+
+        .btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-draft {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-draft:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-schedule-later {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-schedule-later:hover {
+            background: #5568d3;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .keyboard-hint {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .success-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .success-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: left;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .success-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.875rem;
+            color: #555;
+        }
+
+        .success-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .next-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .next-step-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .next-step-card:hover {
+            background: #e8e9ea;
+            transform: translateY(-2px);
+            border-color: #667eea;
+        }
+
+        .next-step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .next-step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .next-step-desc {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        @media (max-width: 1200px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .schedule-row {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header, .table-row {
+                grid-template-columns: 30px 1fr;
+            }
+
+            .table-header > :not(:first-child):not(:nth-child(2)),
+            .table-row > :not(:first-child):not(:nth-child(2)) {
+                display: none;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <!-- Header -->
+        <div class="modal-header">
+            <div class="breadcrumb">
+                <a href="#">Finance Committee</a> > <strong>Schedule Meeting</strong>
+            </div>
+            <div class="header-actions">
+                <button class="help-btn" title="Help" onclick="alert('Keyboard shortcuts:\nCtrl+S: Save as draft\nCtrl+Enter: Schedule & send invites\nEsc: Cancel')">?</button>
+                <button class="close-btn" onclick="alert('Close prototype')">&times;</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions Bar -->
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="useTemplate()">
+                <span>📋</span>
+                <select onclick="event.stopPropagation()" onchange="if(this.value) useTemplate()">
+                    <option value="">Use Template</option>
+                    <option value="monthly">Monthly Finance Review</option>
+                    <option value="quarterly">Quarterly Planning</option>
+                    <option value="budget">Budget Review</option>
+                </select>
+            </button>
+            <button class="quick-action-btn" onclick="copyLastMeeting()">
+                <span>📅</span>
+                <span>Copy Last Meeting</span>
+            </button>
+            <button class="quick-action-btn" onclick="findAvailableTime()">
+                <span>⏱️</span>
+                <span>Find Available Time</span>
+            </button>
+        </div>
+
+        <!-- Form Content -->
+        <div id="formContent">
+            <div class="modal-body">
+                <!-- Two Column Layout: Basic + Advanced -->
+                <div class="two-column-layout">
+                    <!-- LEFT COLUMN: Basic Information -->
+                    <div>
+                        <div class="section-header">BASIC INFORMATION</div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Title</label>
+                            <input type="text" class="form-input" id="meetingTitle" value="Finance Committee - March 2026">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" id="meetingDescription">Quarterly financial review and budget planning</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Schedule</label>
+                            <div class="schedule-row">
+                                <div>
+                                    <input type="date" class="form-input" value="2026-03-15" id="meetingDate">
+                                    <div class="form-hint">Date</div>
+                                </div>
+                                <div>
+                                    <input type="time" class="form-input" value="14:00" id="meetingTime">
+                                    <div class="form-hint">Time</div>
+                                </div>
+                                <div>
+                                    <select class="form-select" id="meetingDuration">
+                                        <option value="30">30 min</option>
+                                        <option value="60" selected>1h</option>
+                                        <option value="90">1.5h</option>
+                                        <option value="120">2h</option>
+                                        <option value="180">3h</option>
+                                    </select>
+                                    <div class="form-hint">Duration</div>
+                                </div>
+                                <div>
+                                    <select class="form-select" id="meetingTimezone">
+                                        <option value="EST" selected>EST</option>
+                                        <option value="CST">CST</option>
+                                        <option value="MST">MST</option>
+                                        <option value="PST">PST</option>
+                                    </select>
+                                    <div class="form-hint">Timezone</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" id="recurringCheck" onchange="toggleRecurrence()">
+                                <span style="font-weight: 600;">Recurring Meeting</span>
+                            </label>
+                            <div class="panel recurrence-panel" id="recurringPanel">
+                                <div class="recurrence-settings">
+                                    <span>Every</span>
+                                    <select id="recurrenceFrequency">
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly" selected>Monthly</option>
+                                        <option value="quarterly">Quarterly</option>
+                                    </select>
+                                    <span>on</span>
+                                    <select id="recurrenceWeek">
+                                        <option value="1st">1st</option>
+                                        <option value="2nd">2nd</option>
+                                        <option value="3rd" selected>3rd</option>
+                                        <option value="last">Last</option>
+                                    </select>
+                                    <select id="recurrenceDay">
+                                        <option value="monday">Monday</option>
+                                        <option value="friday" selected>Friday</option>
+                                    </select>
+                                </div>
+                                <div class="recurrence-settings">
+                                    <span>Ends after</span>
+                                    <input type="number" value="4" min="1" max="99" style="width: 60px;">
+                                    <span>occurrences</span>
+                                </div>
+                                <div class="form-hint" style="margin-top: 0.5rem;">
+                                    Next: Mar 15, Apr 19, May 17, Jun 21
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Location</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="location" value="inperson" onchange="updateLocationPanel()">
+                                    <span>In Person</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="location" value="virtual" checked onchange="updateLocationPanel()">
+                                    <span>Virtual</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="location" value="hybrid" onchange="updateLocationPanel()">
+                                    <span>Hybrid</span>
+                                </label>
+                            </div>
+                            <div class="panel" id="locationPanel">
+                                <div class="panel-title">Virtual Platform</div>
+                                <div class="virtual-settings">
+                                    <div>
+                                        <select class="form-select" id="virtualPlatform">
+                                            <option value="zoom" selected>Zoom</option>
+                                            <option value="teams">Microsoft Teams</option>
+                                            <option value="meet">Google Meet</option>
+                                        </select>
+                                    </div>
+                                    <div class="virtual-setting-row">
+                                        <label style="flex: 1; font-size: 0.875rem;">Meeting ID:</label>
+                                        <input type="text" class="form-input" value="AUTO" disabled style="flex: 2;">
+                                    </div>
+                                    <div class="virtual-setting-row">
+                                        <label style="flex: 1; font-size: 0.875rem;">Passcode:</label>
+                                        <input type="text" class="form-input" value="AUTO" disabled style="flex: 2;">
+                                    </div>
+                                    <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem;">
+                                        <label class="checkbox-option" style="margin: 0;">
+                                            <input type="checkbox" checked>
+                                            <span>Waiting Room</span>
+                                        </label>
+                                        <label class="checkbox-option" style="margin: 0;">
+                                            <input type="checkbox" checked>
+                                            <span>Recording</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Advanced Options -->
+                    <div>
+                        <div class="section-header">ADVANCED OPTIONS</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Meeting ID</label>
+                            <input type="text" class="form-input" value="AUTO (on save)" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Visibility</label>
+                            <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                                <label class="radio-option">
+                                    <input type="radio" name="visibility" value="members" checked>
+                                    <span>Members Only</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="visibility" value="observers">
+                                    <span>Committee + Observers</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="visibility" value="org">
+                                    <span>Organization-Wide</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tags (comma-separated)</label>
+                            <input type="text" class="form-input" value="budget, Q1-2026, financial">
+                            <div class="form-hint">Press Enter or comma to add tag</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Color Code</label>
+                            <div class="color-selector">
+                                <div class="color-badge" style="background: #2196f3; border-color: #2196f3;" title="Blue (Finance)"></div>
+                                <span style="font-size: 0.875rem; color: #666;">Blue (Finance)</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Permissions</label>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox" checked>
+                                    <span>Members can invite guests</span>
+                                </label>
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox" checked>
+                                    <span>Allow anonymous RSVP</span>
+                                </label>
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox">
+                                    <span>Require attendance approval</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendees Section -->
+                <div class="attendees-section">
+                    <div class="section-header" style="border-color: #667eea; margin-bottom: 1rem;">ATTENDEES</div>
+
+                    <div class="attendees-header">
+                        <div class="attendees-toggle">
+                            <label class="radio-option">
+                                <input type="radio" name="attendeeMode" value="all" checked onchange="toggleAttendeeMode()">
+                                <span style="font-weight: 600;">All Committee Members (8)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attendeeMode" value="select" onchange="toggleAttendeeMode()">
+                                <span>Select Specific Members</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="attendees-table">
+                        <div class="table-header">
+                            <div><input type="checkbox" id="selectAllAttendees" checked onchange="toggleAllAttendees()"></div>
+                            <div>Name</div>
+                            <div>Email</div>
+                            <div>Role</div>
+                            <div>RSVP</div>
+                            <div>Actions</div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Sarah Johnson</div>
+                            <div>sarah.j@org.com</div>
+                            <div><span class="member-role-badge">Chair</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Michael Chen</div>
+                            <div>michael.c@org.com</div>
+                            <div><span class="member-role-badge">Vice Chair</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Jennifer Lee</div>
+                            <div>jennifer.l@org.com</div>
+                            <div><span class="member-role-badge">Member</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">David Kim</div>
+                            <div>david.k@org.com</div>
+                            <div><span class="member-role-badge">Member</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Lisa Wang</div>
+                            <div>lisa.w@org.com</div>
+                            <div><span class="member-role-badge">Member</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Robert Taylor</div>
+                            <div>robert.t@org.com</div>
+                            <div><span class="member-role-badge">Member</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">Emily Davis</div>
+                            <div>emily.d@org.com</div>
+                            <div><span class="member-role-badge">Secretary</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div><input type="checkbox" class="attendee-checkbox" checked></div>
+                            <div class="member-name">James Wilson</div>
+                            <div>james.w@org.com</div>
+                            <div><span class="member-role-badge">Member</span></div>
+                            <div>-</div>
+                            <div class="action-icons">
+                                <button class="action-icon" title="Send email">✉</button>
+                                <button class="action-icon" title="Contact info">📞</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="additional-attendees">
+                        <div class="panel-title">Additional Attendees</div>
+                        <div class="additional-attendee-item">
+                            <span>• John Smith (CFO) - john.smith@org.com</span>
+                            <button class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        </div>
+                        <div class="additional-attendee-item">
+                            <span>• Amy Johnson (External Auditor) - amy.j@external.com</span>
+                            <button class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        </div>
+                        <div class="add-attendee-btns">
+                            <button class="add-btn" onclick="alert('Add person search dialog')">+ Add Person</button>
+                            <button class="add-btn" onclick="alert('Add email dialog')">+ Add Email</button>
+                            <button class="add-btn" onclick="alert('Import from list dialog')">+ Import from List</button>
+                        </div>
+                    </div>
+
+                    <div class="bulk-actions">
+                        <button class="add-btn">✉ Email All</button>
+                        <button class="add-btn">📋 Export List</button>
+                        <button class="add-btn">📊 Attendance Report</button>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div class="section-box">
+                    <div class="section-box-header">NOTIFICATIONS</div>
+                    <div class="notification-grid">
+                        <div class="notification-group">
+                            <div class="notification-group-title">Send When</div>
+                            <label class="checkbox-option">
+                                <input type="radio" name="sendWhen" value="now" checked>
+                                <span>Now (on save)</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="radio" name="sendWhen" value="scheduled">
+                                <span>Scheduled: <input type="datetime-local" class="form-input" style="display: inline-block; width: auto; margin-left: 0.5rem; padding: 0.375rem;"></span>
+                            </label>
+                        </div>
+
+                        <div class="notification-group">
+                            <div class="notification-group-title">Email Invitation</div>
+                            <label class="checkbox-option">
+                                <input type="checkbox" checked>
+                                <span>Send to all attendees</span>
+                            </label>
+                        </div>
+
+                        <div class="notification-group">
+                            <div class="notification-group-title">Calendar Sync</div>
+                            <label class="checkbox-option">
+                                <input type="checkbox" checked>
+                                <span>Google Calendar</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" checked>
+                                <span>Outlook</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox">
+                                <span>iCal Export</span>
+                            </label>
+                        </div>
+
+                        <div class="notification-group">
+                            <div class="notification-group-title">Reminders</div>
+                            <div class="reminder-options">
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox" checked>
+                                    <span>7 days before</span>
+                                </label>
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox" checked>
+                                    <span>1 day before</span>
+                                </label>
+                                <label class="checkbox-option" style="margin: 0;">
+                                    <input type="checkbox" checked>
+                                    <span>1 hour before</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="notification-group">
+                            <div class="notification-group-title">Follow-up</div>
+                            <label class="checkbox-option">
+                                <input type="checkbox" checked>
+                                <span>Request RSVP (deadline: 2 days before)</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" checked>
+                                <span>Send agenda 3 days before</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox">
+                                <span>Send pre-reading materials</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="section-box">
+                    <div class="section-box-header">DOCUMENTS</div>
+                    <div class="notification-group">
+                        <div class="notification-group-title">Meeting Folder</div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="add-btn">📁 Create in Google Drive</button>
+                            <button class="add-btn">📁 Create in SharePoint</button>
+                        </div>
+                    </div>
+                    <div class="notification-group" style="margin-top: 1rem;">
+                        <div class="notification-group-title">Linked Documents (0)</div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="add-btn">+ Link Document</button>
+                            <button class="add-btn">+ Upload File</button>
+                            <button class="add-btn">+ Use Template</button>
+                        </div>
+                        <div class="form-hint" style="margin-top: 0.75rem;">Documents can also be added after meeting is created</div>
+                    </div>
+                </div>
+
+                <!-- Agenda Section -->
+                <div class="section-box">
+                    <div class="section-box-header">AGENDA</div>
+                    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+                        <button class="add-btn">Build agenda now</button>
+                        <button class="add-btn">Build agenda later</button>
+                        <button class="add-btn">Use template</button>
+                    </div>
+                    <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                        <label class="radio-option">
+                            <input type="radio" name="agenda" value="now">
+                            <span>Build now</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="agenda" value="later" checked>
+                            <span>Build later (you can add agenda items after creation)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="actions-bar">
+                <div class="status-indicator">
+                    <span>Status:</span>
+                    <span class="status-badge">Draft</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-cancel" onclick="alert('Cancel and close')">Cancel</button>
+                    <button class="btn btn-draft" onclick="saveAsDraft()">Save as Draft</button>
+                    <button class="btn btn-schedule-later" onclick="scheduleSendLater()">Schedule & Send Later</button>
+                    <button class="btn btn-primary" onclick="scheduleAndSend()">Schedule & Send Invites</button>
+                </div>
+                <div class="keyboard-hint">
+                    Ctrl+S: Save • Esc: Cancel
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="successContent" class="hidden">
+            <div class="success-screen">
+                <div class="success-icon">✓</div>
+                <div class="success-title">Meeting Scheduled Successfully!</div>
+                <div class="success-subtitle">Invitations have been sent to all attendees</div>
+
+                <div class="success-details">
+                    <div style="font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem;">What We Did</div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Created "Finance Committee - March 2026"</span>
+                    </div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Sent 10 email invitations (8 members + 2 guests)</span>
+                    </div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Added events to 10 calendars (Google/Outlook sync)</span>
+                    </div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Generated Zoom meeting link with waiting room</span>
+                    </div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Scheduled 3 reminders (7 days, 1 day, 1 hour before)</span>
+                    </div>
+                    <div class="success-item">
+                        <span style="color: #4caf50; font-size: 1.25rem;">✓</span>
+                        <span>Set up RSVP tracking (deadline: 2 days before)</span>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #e0e0e0;">
+                        <div style="margin-bottom: 0.5rem;"><strong>Zoom Meeting Link:</strong></div>
+                        <div style="background: white; padding: 0.75rem; border-radius: 4px; border: 1px solid #e0e0e0;">
+                            <a href="#" style="color: #667eea; text-decoration: none; font-weight: 500;">https://zoom.us/j/987654321?pwd=abc123</a>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">Meeting ID: 987 654 321 • Passcode: 456789</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">What's Next?</div>
+                </div>
+                <div class="next-steps">
+                    <div class="next-step-card" onclick="alert('Navigate to Agenda Builder')">
+                        <div class="next-step-icon">📝</div>
+                        <div class="next-step-title">Build Agenda</div>
+                        <div class="next-step-desc">Add discussion items</div>
+                    </div>
+                    <div class="next-step-card" onclick="alert('Navigate to Meeting Details')">
+                        <div class="next-step-icon">📄</div>
+                        <div class="next-step-title">View Meeting</div>
+                        <div class="next-step-desc">Edit or add documents</div>
+                    </div>
+                    <div class="next-step-card" onclick="alert('Navigate to Attendees')">
+                        <div class="next-step-icon">👥</div>
+                        <div class="next-step-title">Track RSVPs</div>
+                        <div class="next-step-desc">See who's coming</div>
+                    </div>
+                    <div class="next-step-card" onclick="alert('Navigate to Calendar')">
+                        <div class="next-step-icon">📅</div>
+                        <div class="next-step-title">Back to Calendar</div>
+                        <div class="next-step-desc">See all meetings</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="location.reload()">Schedule Another Meeting</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle recurring meeting panel
+        function toggleRecurrence() {
+            const panel = document.getElementById('recurringPanel');
+            const checkbox = document.getElementById('recurringCheck');
+            panel.classList.toggle('active', checkbox.checked);
+        }
+
+        // Update location panel based on selection
+        function updateLocationPanel() {
+            const locationPanel = document.getElementById('locationPanel');
+            const virtualRadio = document.querySelector('input[name="location"][value="virtual"]');
+            const inPersonRadio = document.querySelector('input[name="location"][value="inperson"]');
+
+            if (virtualRadio.checked) {
+                locationPanel.innerHTML = `
+                    <div class="panel-title">Virtual Platform</div>
+                    <div class="virtual-settings">
+                        <div>
+                            <select class="form-select" id="virtualPlatform">
+                                <option value="zoom" selected>Zoom</option>
+                                <option value="teams">Microsoft Teams</option>
+                                <option value="meet">Google Meet</option>
+                            </select>
+                        </div>
+                        <div class="virtual-setting-row">
+                            <label style="flex: 1; font-size: 0.875rem;">Meeting ID:</label>
+                            <input type="text" class="form-input" value="AUTO" disabled style="flex: 2;">
+                        </div>
+                        <div class="virtual-setting-row">
+                            <label style="flex: 1; font-size: 0.875rem;">Passcode:</label>
+                            <input type="text" class="form-input" value="AUTO" disabled style="flex: 2;">
+                        </div>
+                        <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem;">
+                            <label class="checkbox-option" style="margin: 0;">
+                                <input type="checkbox" checked>
+                                <span>Waiting Room</span>
+                            </label>
+                            <label class="checkbox-option" style="margin: 0;">
+                                <input type="checkbox" checked>
+                                <span>Recording</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            } else if (inPersonRadio.checked) {
+                locationPanel.innerHTML = `
+                    <div class="panel-title">Room Booking</div>
+                    <div class="virtual-settings">
+                        <div>
+                            <select class="form-select">
+                                <option value="">Select a room...</option>
+                                <option value="conf-a">Conference Room A (12 seats)</option>
+                                <option value="conf-b">Conference Room B (8 seats)</option>
+                                <option value="boardroom">Boardroom (20 seats)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="text" class="form-input" placeholder="Or enter address...">
+                        </div>
+                    </div>
+                `;
+            } else { // hybrid
+                locationPanel.innerHTML = `
+                    <div class="panel-title">Hybrid Setup</div>
+                    <div class="virtual-settings">
+                        <div>
+                            <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Virtual Platform</label>
+                            <select class="form-select">
+                                <option value="zoom" selected>Zoom</option>
+                                <option value="teams">Microsoft Teams</option>
+                                <option value="meet">Google Meet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Physical Location</label>
+                            <select class="form-select">
+                                <option value="">Select a room...</option>
+                                <option value="conf-a">Conference Room A</option>
+                                <option value="conf-b">Conference Room B</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Toggle all attendees
+        function toggleAllAttendees() {
+            const selectAll = document.getElementById('selectAllAttendees');
+            const checkboxes = document.querySelectorAll('.attendee-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        // Toggle attendee mode
+        function toggleAttendeeMode() {
+            const allMode = document.querySelector('input[name="attendeeMode"][value="all"]');
+            const selectAll = document.getElementById('selectAllAttendees');
+            if (allMode.checked) {
+                selectAll.checked = true;
+                toggleAllAttendees();
+            }
+        }
+
+        // Quick action functions
+        function useTemplate() {
+            alert('Template loaded: Monthly Finance Review\n\n- Title updated\n- Duration set to 1.5 hours\n- All committee members selected\n- Recurring monthly pattern applied');
+        }
+
+        function copyLastMeeting() {
+            alert('Copied from last meeting:\n\n- Duration: 1 hour\n- Location: Virtual via Zoom\n- Attendees: Same 8 members + 2 guests\n- Date incremented to next month');
+        }
+
+        function findAvailableTime() {
+            alert('Availability Analysis:\n\n🟢 Mar 15, 3:30 PM - 0 conflicts\n🟢 Mar 16, 10:00 AM - 0 conflicts\n🟡 Mar 17, 2:00 PM - 1 conflict\n🔴 Mar 18, 9:00 AM - 3 conflicts\n\nClick a time slot to auto-fill the schedule.');
+        }
+
+        // Save functions
+        function saveAsDraft() {
+            alert('Meeting saved as draft.\n\nYou can continue editing and send invites later.');
+        }
+
+        function scheduleSendLater() {
+            alert('Meeting scheduled!\n\nInvitations will be sent on: [selected date/time]');
+        }
+
+        function scheduleAndSend() {
+            document.getElementById('formContent').classList.add('hidden');
+            document.getElementById('successContent').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + S for save as draft
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveAsDraft();
+            }
+            // Ctrl/Cmd + Enter for schedule and send
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                scheduleAndSend();
+            }
+            // Escape to cancel
+            if (e.key === 'Escape') {
+                if (confirm('Cancel and close? Any unsaved changes will be lost.')) {
+                    alert('Prototype closed');
+                }
+            }
+        });
+
+        // Initialize
+        updateLocationPanel();
+    </script>
+</body>
+</html>

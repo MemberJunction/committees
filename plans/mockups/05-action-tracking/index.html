@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 5: Action Tracking - Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .intro {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .user-story {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card ul {
+            margin-left: 1.5rem;
+            color: #666;
+        }
+
+        .feature-card li {
+            margin: 0.25rem 0;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .option-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .option-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-header p {
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+        .option-preview {
+            position: relative;
+            height: 300px;
+            background: #f9f9f9;
+            overflow: hidden;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .option-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 4rem;
+            color: #ddd;
+        }
+
+        .option-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-content h4 {
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .strengths, .best-for {
+            margin-bottom: 1rem;
+        }
+
+        .strengths ul, .best-for ul {
+            margin-left: 1.5rem;
+            color: #666;
+        }
+
+        .strengths li, .best-for li {
+            margin: 0.25rem 0;
+        }
+
+        .option-actions {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .comparison-link {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .comparison-link h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-link p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .evaluation-criteria {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .evaluation-criteria h3 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .criteria-item {
+            border-left: 3px solid #667eea;
+            padding-left: 1rem;
+        }
+
+        .criteria-item h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .criteria-item p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Journey 5: Action Tracking</h1>
+        <p>Empowering committee members to efficiently manage and complete their assigned action items</p>
+    </div>
+
+    <div class="container">
+        <div class="intro">
+            <h2>Overview</h2>
+            <div class="user-story">
+                As a committee member, I need to view and manage my assigned action items from meetings so that I can track my progress, update status, and ensure timely completion of my responsibilities.
+            </div>
+
+            <h3 style="color: #667eea; margin-top: 2rem; margin-bottom: 1rem;">Key Features</h3>
+            <div class="key-features">
+                <div class="feature-card">
+                    <h4>📋 Comprehensive View</h4>
+                    <ul>
+                        <li>All assigned action items</li>
+                        <li>Committee context</li>
+                        <li>Due dates and priorities</li>
+                        <li>Assignment source</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 Smart Filtering</h4>
+                    <ul>
+                        <li>By status and committee</li>
+                        <li>By date ranges</li>
+                        <li>By priority level</li>
+                        <li>Keyword search</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Progress Tracking</h4>
+                    <ul>
+                        <li>Status updates</li>
+                        <li>Progress percentage</li>
+                        <li>Notes and comments</li>
+                        <li>File attachments</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>⚠️ Alerts & Notifications</h4>
+                    <ul>
+                        <li>Overdue indicators</li>
+                        <li>Upcoming deadlines</li>
+                        <li>New assignments</li>
+                        <li>Dependency alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 1rem; color: #667eea;">Design Options</h2>
+        <p style="margin-bottom: 2rem; color: #666;">We've developed three distinct approaches to action tracking, each optimized for different workflows and user preferences. Explore each option below:</p>
+
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option A: List View</h3>
+                    <p>Traditional list interface with inline editing and detailed modal views</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📋</div>
+                </div>
+                <div class="option-content">
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Familiar, table-based interface</li>
+                            <li>Dense information display</li>
+                            <li>Quick scanning of many items</li>
+                            <li>Inline editing for efficiency</li>
+                            <li>Excellent keyboard navigation</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Managing many action items</li>
+                            <li>Quick status updates</li>
+                            <li>Detail-oriented users</li>
+                            <li>Keyboard-first workflows</li>
+                        </ul>
+                    </div>
+                    <div class="option-actions">
+                        <a href="option-A/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option B: Kanban Board</h3>
+                    <p>Visual workflow board with drag-and-drop status management</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📊</div>
+                </div>
+                <div class="option-content">
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Visual workflow representation</li>
+                            <li>Intuitive drag-and-drop</li>
+                            <li>Clear status distribution</li>
+                            <li>Engaging interaction model</li>
+                            <li>Great for collaboration</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Visual thinkers</li>
+                            <li>Workflow management</li>
+                            <li>Team collaboration</li>
+                            <li>Progress visualization</li>
+                        </ul>
+                    </div>
+                    <div class="option-actions">
+                        <a href="option-B/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option C: Timeline View</h3>
+                    <p>Gantt-style timeline showing items by due date with dependencies</p>
+                </div>
+                <div class="option-preview">
+                    <div class="preview-placeholder">📅</div>
+                </div>
+                <div class="option-content">
+                    <div class="strengths">
+                        <h4>Strengths</h4>
+                        <ul>
+                            <li>Time-based organization</li>
+                            <li>Dependency visualization</li>
+                            <li>Deadline awareness</li>
+                            <li>Planning and scheduling focus</li>
+                            <li>Identifies bottlenecks</li>
+                        </ul>
+                    </div>
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Time-sensitive work</li>
+                            <li>Dependent tasks</li>
+                            <li>Project planning</li>
+                            <li>Deadline management</li>
+                        </ul>
+                    </div>
+                    <div class="option-actions">
+                        <a href="option-C/prototype.html" class="btn btn-primary">View Prototype</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="evaluation-criteria">
+            <h3>Evaluation Criteria</h3>
+            <div class="criteria-grid">
+                <div class="criteria-item">
+                    <h4>Usability</h4>
+                    <p>How quickly can users find items, update status, and add documentation? How intuitive is the interface?</p>
+                </div>
+                <div class="criteria-item">
+                    <h4>Efficiency</h4>
+                    <p>How many clicks for common tasks? How well does it support bulk operations and filtering?</p>
+                </div>
+                <div class="criteria-item">
+                    <h4>Information Architecture</h4>
+                    <p>How well organized is the information? How clear are relationships and dependencies?</p>
+                </div>
+                <div class="criteria-item">
+                    <h4>Flexibility</h4>
+                    <p>How well does it adapt to different workflows and user types? How customizable is the view?</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-link">
+            <h3>Detailed Comparison</h3>
+            <p>See all three options side-by-side with detailed analysis of strengths, weaknesses, and use cases</p>
+            <a href="COMPARISON.md" class="btn btn-primary" style="max-width: 300px; margin: 0 auto;">View Comparison Document</a>
+        </div>
+    </div>
+</body>
+</html>

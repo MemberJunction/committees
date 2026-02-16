@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Meeting Details Section -->
+    <!-- Meeting Overview Section -->
     <mj-collapsible-panel
-        SectionKey="meetingDetails"
-        SectionName="Meeting Details"
-        Icon="fa fa-file-alt"
+        SectionKey="meetingOverview"
+        SectionName="Meeting Overview"
+        Icon="fa fa-align-left"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -48,22 +48,14 @@
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="CalendarEventID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
 
     </mj-collapsible-panel>
 
-    <!-- Schedule Section -->
+    <!-- Schedule & Timing Section -->
     <mj-collapsible-panel
-        SectionKey="schedule"
-        SectionName="Schedule"
-        Icon="fa fa-calendar-alt"
+        SectionKey="scheduleTiming"
+        SectionName="Schedule & Timing"
+        Icon="fa fa-calendar"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -90,14 +82,22 @@
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="CalendarEventID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+        ></mj-form-field>
 
     </mj-collapsible-panel>
 
-    <!-- Venue & Media Section -->
+    <!-- Venue & Access Section -->
     <mj-collapsible-panel
-        SectionKey="venueMedia"
-        SectionName="Venue & Media"
-        Icon="fa fa-video"
+        SectionKey="venueAccess"
+        SectionName="Venue & Access"
+        Icon="fa fa-map-marker-alt"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -127,19 +127,29 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="VideoMeetingID"
-            Type="textbox"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
             FieldName="VideoJoinURL"
             Type="textbox"
             [EditMode]="EditMode"
             [FormContext]="formContext"
             LinkType="URL"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Recording & Transcript Section -->
+    <mj-collapsible-panel
+        SectionKey="recordingTranscript"
+        SectionName="Recording & Transcript"
+        Icon="fa fa-file-alt"
+        [Form]="this"
+        [FormContext]="formContext">
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="VideoMeetingID"
+            Type="textbox"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
         ></mj-form-field>
         <mj-form-field 
             [Record]="record"
@@ -196,7 +206,7 @@
     <mj-collapsible-panel
         SectionKey="committeesAttendances"
         SectionName="Committees: Attendances"
-        Icon="fa fa-calendar"
+        Icon="fa fa-calendar-check"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -242,31 +252,6 @@
         }
     </mj-collapsible-panel>
 
-    <!-- Committees: Motions Section -->
-    <mj-collapsible-panel
-        SectionKey="committeesMotions"
-        SectionName="Committees: Motions"
-        Icon="fa fa-gavel"
-        Variant="related-entity"
-        [Form]="this"
-        [FormContext]="formContext"
-        [BadgeCount]="GetSectionRowCount('committeesMotions')"
-        [DefaultExpanded]="false">
-        @if (record.IsSaved) {
-        <div>
-            <mj-explorer-entity-data-grid
-                [Params]="BuildRelationshipViewParamsByEntityName('Committees: Motions','MeetingID')"
-                [NewRecordValues]="NewRecordValues('Committees: Motions')"
-                [AllowLoad]="IsSectionExpanded('committeesMotions')"
-                [ShowToolbar]="false"
-                (Navigate)="OnFormNavigate($event)"
-                (AfterDataLoad)="SetSectionRowCount('committeesMotions', $event.totalRowCount)"
-                >
-            </mj-explorer-entity-data-grid>
-        </div>
-        }
-    </mj-collapsible-panel>
-
     <!-- Committees: Agenda Items Section -->
     <mj-collapsible-panel
         SectionKey="committeesAgendaItems"
@@ -292,11 +277,36 @@
         }
     </mj-collapsible-panel>
 
+    <!-- Committees: Motions Section -->
+    <mj-collapsible-panel
+        SectionKey="committeesMotions"
+        SectionName="Committees: Motions"
+        Icon="fa fa-gavel"
+        Variant="related-entity"
+        [Form]="this"
+        [FormContext]="formContext"
+        [BadgeCount]="GetSectionRowCount('committeesMotions')"
+        [DefaultExpanded]="false">
+        @if (record.IsSaved) {
+        <div>
+            <mj-explorer-entity-data-grid
+                [Params]="BuildRelationshipViewParamsByEntityName('Committees: Motions','MeetingID')"
+                [NewRecordValues]="NewRecordValues('Committees: Motions')"
+                [AllowLoad]="IsSectionExpanded('committeesMotions')"
+                [ShowToolbar]="false"
+                (Navigate)="OnFormNavigate($event)"
+                (AfterDataLoad)="SetSectionRowCount('committeesMotions', $event.totalRowCount)"
+                >
+            </mj-explorer-entity-data-grid>
+        </div>
+        }
+    </mj-collapsible-panel>
+
     <!-- Committees: Action Items Section -->
     <mj-collapsible-panel
         SectionKey="committeesActionItems"
         SectionName="Committees: Action Items"
-        Icon="fa fa-tasks"
+        Icon="fa fa-clipboard-list"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"
@@ -321,7 +331,7 @@
     <mj-collapsible-panel
         SectionKey="committeesArtifacts"
         SectionName="Committees: Artifacts"
-        Icon="fa fa-file"
+        Icon="fa fa-paperclip"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

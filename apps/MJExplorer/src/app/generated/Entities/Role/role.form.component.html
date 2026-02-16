@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Role Basics Section -->
+    <!-- Role Definition Section -->
     <mj-collapsible-panel
-        SectionKey="roleBasics"
-        SectionName="Role Basics"
-        Icon="fa fa-id-badge"
+        SectionKey="roleDefinition"
+        SectionName="Role Definition"
+        Icon="fa fa-file-alt"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -34,6 +34,24 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
+            FieldName="Sequence"
+            Type="number"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+        ></mj-form-field>
+
+    </mj-collapsible-panel>
+
+    <!-- Role Settings Section -->
+    <mj-collapsible-panel
+        SectionKey="roleSettings"
+        SectionName="Role Settings"
+        Icon="fa fa-sliders-h"
+        [Form]="this"
+        [FormContext]="formContext">
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
             FieldName="IsOfficer"
             Type="checkbox"
             [EditMode]="EditMode"
@@ -50,24 +68,6 @@
         <mj-form-field 
             [Record]="record"
             [ShowLabel]="true"
-            FieldName="Sequence"
-            Type="number"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
-
-    </mj-collapsible-panel>
-
-    <!-- Permissions Section -->
-    <mj-collapsible-panel
-        SectionKey="permissions"
-        SectionName="Permissions"
-        Icon="fa fa-sliders-h"
-        [Form]="this"
-        [FormContext]="formContext">
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="false"
             FieldName="DefaultPermissionsJSON"
             Type="textarea"
             [EditMode]="EditMode"

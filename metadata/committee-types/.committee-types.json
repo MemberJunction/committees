@@ -6,6 +6,13 @@
       "IsStandards": false,
       "DefaultTermMonths": 12,
       "IconClass": "fa-solid fa-landmark"
+    },
+    "primaryKey": {
+      "ID": "DDAB76A3-49C0-400F-A3D2-E525E0B6801D"
+    },
+    "sync": {
+      "lastModified": "2026-02-15T20:47:08.248Z",
+      "checksum": "138419b6ba31d8b19b5ac6dc7e110606307516982b9040b5486ec18fca9dd813"
     }
   },
   {
@@ -15,6 +22,13 @@
       "IsStandards": false,
       "DefaultTermMonths": 12,
       "IconClass": "fa-solid fa-users"
+    },
+    "primaryKey": {
+      "ID": "1AA03C7C-27E0-44A3-B24F-681AAC0CE092"
+    },
+    "sync": {
+      "lastModified": "2026-02-15T20:47:08.261Z",
+      "checksum": "efed1f4fb88baacdfc6fd7b96c4ceae5478428a5f4da3b9e9378fb9fd7168dec"
     }
   },
   {
@@ -24,6 +38,13 @@
       "IsStandards": false,
       "DefaultTermMonths": null,
       "IconClass": "fa-solid fa-clock"
+    },
+    "primaryKey": {
+      "ID": "0D118EF8-8297-4E20-A296-8425A0AB147D"
+    },
+    "sync": {
+      "lastModified": "2026-02-15T20:47:08.274Z",
+      "checksum": "f3150f9421fd03e7fe3b568a342ab37e69f5822655a45f0e831b25a19a0016a7"
     }
   },
   {
@@ -33,6 +54,13 @@
       "IsStandards": false,
       "DefaultTermMonths": null,
       "IconClass": "fa-solid fa-briefcase"
+    },
+    "primaryKey": {
+      "ID": "15B526DA-737B-453A-96C2-FF5F3A72423B"
+    },
+    "sync": {
+      "lastModified": "2026-02-15T20:47:08.287Z",
+      "checksum": "72000b8c7661bebbd08e3bf19640c5aba1aa2968d03963b586cf5aaa1ff4c8ba"
     }
   },
   {
@@ -42,6 +70,13 @@
       "IsStandards": true,
       "DefaultTermMonths": null,
       "IconClass": "fa-solid fa-file-contract"
+    },
+    "primaryKey": {
+      "ID": "BD2AF204-1DE5-4CEB-B5CD-65F757272FED"
+    },
+    "sync": {
+      "lastModified": "2026-02-15T20:47:08.298Z",
+      "checksum": "4ce8ec89fe091ab79aa22f85541b698d727debebe4467c4182f7e7dd4de5875d"
     }
   }
 ]

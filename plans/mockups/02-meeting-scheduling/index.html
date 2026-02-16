@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Scheduling - Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .breadcrumb a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .journey-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .overview {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .overview h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .overview p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .user-story {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .requirements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .requirement-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .requirement-box h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .requirement-box ul {
+            list-style: none;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .requirement-box li {
+            padding: 0.25rem 0;
+        }
+
+        .requirement-box li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .option-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .option-header {
+            padding: 2rem;
+            color: white;
+            position: relative;
+        }
+
+        .option-a .option-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .option-b .option-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .option-c .option-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .option-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-philosophy {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .option-body {
+            padding: 2rem;
+        }
+
+        .option-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            color: #555;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background: #e8f5e9;
+        }
+
+        .cons {
+            background: #ffebee;
+        }
+
+        .pros h4 {
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .cons h4 {
+            color: #c62828;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            font-size: 0.85rem;
+        }
+
+        .pros li:before {
+            content: "✓ ";
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .cons li:before {
+            content: "✗ ";
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .best-for {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .best-for h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .best-for ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .best-for li {
+            padding: 0.25rem 0;
+        }
+
+        .best-for li:before {
+            content: "→ ";
+            color: #667eea;
+        }
+
+        .view-design-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: #667eea;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .view-design-btn:hover {
+            background: #5568d3;
+        }
+
+        .comparison {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .comparison h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #667eea;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: #666;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .recommendation h2 {
+            margin-bottom: 1rem;
+        }
+
+        .recommendation p {
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .recommendation-box h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="breadcrumb">
+                <a href="../index.html">← Back to All Journeys</a>
+            </div>
+            <h1>📅 Meeting Scheduling</h1>
+            <p class="subtitle">Schedule a committee meeting and send invitations</p>
+            <div class="journey-meta">
+                <div class="meta-item">
+                    <strong>👤 Persona:</strong> Committee Chair
+                </div>
+                <div class="meta-item">
+                    <strong>🎯 Goal:</strong> Schedule meeting in &lt;90 seconds
+                </div>
+                <div class="meta-item">
+                    <strong>🎨 Options:</strong> 3 Design Variations
+                </div>
+                <div class="meta-item">
+                    <strong>✅ Status:</strong> Completed
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Overview -->
+        <div class="overview">
+            <h2>User Story</h2>
+            <div class="user-story">
+                "As a Committee Chair, I want to schedule a meeting and automatically send calendar invites to all members, so that everyone knows when and where to attend without manual coordination."
+            </div>
+
+            <h3 style="margin-top: 2rem; color: #667eea;">Journey Context</h3>
+            <p><strong>Before:</strong> Committee exists with active members, user has Chair or Admin role</p>
+            <p><strong>After:</strong> Meeting created, calendar events sent, video link generated, invites delivered</p>
+
+            <div class="requirements">
+                <div class="requirement-box">
+                    <h4>Must Have</h4>
+                    <ul>
+                        <li>Quick scheduling (&lt;2 min)</li>
+                        <li>Auto-invite all members</li>
+                        <li>Calendar integration</li>
+                        <li>Video link generation</li>
+                        <li>Recurring meetings</li>
+                        <li>Time zone handling</li>
+                    </ul>
+                </div>
+                <div class="requirement-box">
+                    <h4>Nice to Have</h4>
+                    <ul>
+                        <li>Smart scheduling</li>
+                        <li>Meeting templates</li>
+                        <li>Location lookup</li>
+                        <li>Agenda preview</li>
+                        <li>Conflict detection</li>
+                    </ul>
+                </div>
+                <div class="requirement-box">
+                    <h4>Success Metrics</h4>
+                    <ul>
+                        <li>Speed: &lt;90 seconds</li>
+                        <li>Delivery: 95%+ success</li>
+                        <li>Adoption: 80%+ usage</li>
+                        <li>RSVP: 70%+ within 24h</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Options -->
+        <h2 style="color: #667eea; margin-bottom: 1.5rem;">Design Options</h2>
+        <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-card option-a">
+                <div class="option-header">
+                    <div class="option-label">OPTION A</div>
+                    <div class="option-title">Minimal & Clean</div>
+                    <div class="option-philosophy">Simplicity first - 3-step wizard</div>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        Guide users through a clear 3-step wizard with minimal cognitive load. Each step focuses on a single task with smart defaults and inline help.
+                    </p>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>First-time users</li>
+                            <li>Less technical committee chairs</li>
+                            <li>Mobile users</li>
+                            <li>When clarity matters most</li>
+                        </ul>
+                    </div>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Strengths</h4>
+                            <ul>
+                                <li>Easy to learn</li>
+                                <li>Clear guidance</li>
+                                <li>Mobile-friendly</li>
+                                <li>Accessible</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Weaknesses</h4>
+                            <ul>
+                                <li>Slower for experts</li>
+                                <li>Missing advanced features</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <a href="option-A/prototype.html" class="view-design-btn">🚀 Try Interactive Prototype →</a>
+                </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="option-card option-b">
+                <div class="option-header">
+                    <div class="option-label">OPTION B</div>
+                    <div class="option-title">Functional & Comprehensive</div>
+                    <div class="option-philosophy">Power user - all controls visible</div>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        Single-screen form with all information and controls visible at once. Optimized for experienced users who value efficiency over simplicity.
+                    </p>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Experienced users</li>
+                            <li>Desktop with large monitors</li>
+                            <li>Complex meetings</li>
+                            <li>When speed is critical</li>
+                        </ul>
+                    </div>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Strengths</h4>
+                            <ul>
+                                <li>Maximum efficiency</li>
+                                <li>All features accessible</li>
+                                <li>Keyboard shortcuts</li>
+                                <li>Templates support</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Weaknesses</h4>
+                            <ul>
+                                <li>Overwhelming for beginners</li>
+                                <li>Poor mobile experience</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <a href="option-B/prototype.html" class="view-design-btn">🚀 Try Interactive Prototype →</a>
+                </div>
+            </div>
+
+            <!-- Option C -->
+            <div class="option-card option-c">
+                <div class="option-header">
+                    <div class="option-label">OPTION C</div>
+                    <div class="option-title">Modern & Visual</div>
+                    <div class="option-philosophy">Calendar-first with drag-and-drop</div>
+                </div>
+                <div class="option-body">
+                    <p class="option-description">
+                        Calendar-centric interface with drag-and-drop scheduling and progressive disclosure. Visual, interactive, and optimized for touch.
+                    </p>
+
+                    <div class="best-for">
+                        <h4>Best For</h4>
+                        <ul>
+                            <li>Mobile/tablet users</li>
+                            <li>Visual learners</li>
+                            <li>Modern UX expectations</li>
+                            <li>Touch-friendly interactions</li>
+                        </ul>
+                    </div>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Strengths</h4>
+                            <ul>
+                                <li>Excellent mobile UX</li>
+                                <li>Drag-and-drop</li>
+                                <li>Smooth animations</li>
+                                <li>Visual appeal</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Weaknesses</h4>
+                            <ul>
+                                <li>Higher dev complexity</li>
+                                <li>More clicks for advanced</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <parameter name="new_string">                    <a href="option-C/prototype.html" class="view-design-btn">🚀 Try Interactive Prototype →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison">
+            <h2>Quick Comparison</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Option A</th>
+                        <th>Option B</th>
+                        <th>Option C</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Learning Curve</strong></td>
+                        <td><span class="rating">★★★★★</span> Easy</td>
+                        <td><span class="rating">★★★☆☆</span> Moderate</td>
+                        <td><span class="rating">★★★★☆</span> Easy-Mod</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Speed (Expert)</strong></td>
+                        <td>90 seconds</td>
+                        <td><strong>45 seconds</strong></td>
+                        <td>60 seconds</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mobile</strong></td>
+                        <td><span class="rating">★★★★☆</span> Good</td>
+                        <td><span class="rating">★☆☆☆☆</span> Poor</td>
+                        <td><span class="rating">★★★★★</span> Excellent</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Visual Appeal</strong></td>
+                        <td><span class="rating">★★★☆☆</span> Clean</td>
+                        <td><span class="rating">★★☆☆☆</span> Functional</td>
+                        <td><span class="rating">★★★★★</span> Modern</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dev Complexity</strong></td>
+                        <td>Low (2-3 weeks)</td>
+                        <td>Medium (3-4 weeks)</td>
+                        <td>High (4-5 weeks)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recommendation -->
+        <div class="recommendation">
+            <h2>🏆 Recommendation</h2>
+            <p>
+                <strong>Start with Option A (Minimal & Clean Wizard)</strong> as the initial implementation. It works for all user types, has the lowest development complexity, and provides a solid foundation.
+            </p>
+            <div class="recommendation-box">
+                <h3>Phased Approach:</h3>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li style="padding: 0.5rem 0;">✓ <strong>Phase 1:</strong> Build Option A (Wizard) for launch</li>
+                    <li style="padding: 0.5rem 0;">→ <strong>Phase 2:</strong> Add Option C (Visual) for mobile users</li>
+                    <li style="padding: 0.5rem 0;">→ <strong>Phase 3:</strong> Add Option B (Comprehensive) for power users</li>
+                </ul>
+            </div>
+            <p style="margin-top: 1rem;">
+                Users can switch between options via preferences, or the system can auto-detect (mobile → Option C, expert → Option B, default → Option A).
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="../index.html">← Back to All Journeys</a> | <a href="COMPARISON.md">View Detailed Comparison</a></p>
+        <p style="margin-top: 0.5rem;">Committees App UX Design • February 2026</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Interactive Prototype - Modern & Visual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* Main App Container */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 2rem);
+        }
+
+        /* Header */
+        .app-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: #666;
+        }
+
+        /* Committee Header */
+        .committee-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .committee-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Calendar Container */
+        .calendar-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #f5f5f5;
+            border-color: #667eea;
+        }
+
+        .month-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .weekday {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            padding: 0.75rem;
+            border-right: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day:hover:not(.disabled) {
+            background: #f9f9f9;
+        }
+
+        .calendar-day.weekend {
+            background: #fafafa;
+        }
+
+        .calendar-day.disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: default;
+        }
+
+        .day-number {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .calendar-day.weekend .day-number {
+            color: #999;
+        }
+
+        .calendar-day.today .day-number {
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Meeting Card on Calendar */
+        .meeting-card-mini {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: slideInMeeting 0.3s ease-out;
+        }
+
+        @keyframes slideInMeeting {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .meeting-card-mini:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .meeting-time {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .meeting-title-mini {
+            opacity: 0.9;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Schedule Button */
+        .schedule-btn-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .schedule-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recent-activity h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .activity-item {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .activity-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+
+        /* Quick Create Dialog (Modal) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .quick-create-modal {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Mobile Bottom Sheet */
+        @media (max-width: 768px) {
+            .quick-create-modal {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                max-width: 100%;
+                border-radius: 16px 16px 0 0;
+                animation: slideUpSheet 0.3s ease-out;
+            }
+
+            @keyframes slideUpSheet {
+                from {
+                    transform: translateY(100%);
+                }
+                to {
+                    transform: translateY(0);
+                }
+            }
+
+            .sheet-handle {
+                width: 40px;
+                height: 4px;
+                background: #ccc;
+                border-radius: 2px;
+                margin: -1rem auto 1rem;
+            }
+        }
+
+        .modal-header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .location-options {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .location-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .location-option:hover {
+            border-color: #667eea;
+            background: #f9f9f9;
+        }
+
+        .location-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .radio-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .location-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .location-details {
+            margin-top: 0.75rem;
+            padding-left: 2rem;
+        }
+
+        .attendees-section {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .attendees-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+
+        .attendees-list {
+            color: #666;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .add-guest-btn {
+            background: none;
+            border: 1px dashed #667eea;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .add-guest-btn:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .create-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .more-options-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .more-options-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .more-options-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            max-width: 90vw;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            overflow-y: auto;
+            transition: right 0.3s ease-in-out;
+        }
+
+        .detail-panel.show {
+            right: 0;
+        }
+
+        .detail-panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0.5rem;
+        }
+
+        .detail-panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .detail-panel-content {
+            padding: 1.5rem;
+        }
+
+        .card-section {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recurring-preview {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .recurring-pattern {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .recurring-dates {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .recurring-date-dot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .date-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+        }
+
+        .date-label {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        /* Success Animation */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-overlay.show {
+            display: flex;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: successPop 0.5s ease-out;
+        }
+
+        @keyframes successPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .checkmark-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #4caf50;
+            position: relative;
+            animation: checkmarkDraw 0.5s ease-out;
+        }
+
+        @keyframes checkmarkDraw {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .checkmark-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #4caf50;
+            animation: checkmarkPop 0.3s 0.3s ease-out both;
+        }
+
+        @keyframes checkmarkPop {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .meeting-summary {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-item {
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .success-btn {
+            flex: 1;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .success-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .success-btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .success-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .auto-close-notice {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            animation: confettiFall 3s ease-out forwards;
+            z-index: 2001;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .calendar-container {
+                padding: 1rem;
+            }
+
+            .calendar-day {
+                min-height: 80px;
+                padding: 0.5rem;
+            }
+
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-panel {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .tab-nav {
+                overflow-x: auto;
+                gap: 1rem;
+            }
+        }
+
+        /* Availability Heatmap */
+        .availability-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .availability-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .availability-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .availability-row {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .member-name {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .availability-blocks {
+            display: flex;
+            gap: 2px;
+        }
+
+        .availability-block {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .availability-block:hover {
+            transform: scale(1.1);
+        }
+
+        .availability-block.available {
+            background: #4caf50;
+        }
+
+        .availability-block.maybe {
+            background: #ffc107;
+        }
+
+        .availability-block.busy {
+            background: #f44336;
+        }
+
+        .availability-legend {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .create-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="app-title">Committees App</div>
+            <div class="user-section">
+                <div class="user-avatar">SJ</div>
+                <button class="menu-btn">☰</button>
+            </div>
+        </div>
+
+        <!-- Committee Header -->
+        <div class="committee-header">
+            <div class="committee-name">Finance Committee</div>
+            <nav class="tab-nav">
+                <button class="tab-btn active">📅 Calendar</button>
+                <button class="tab-btn">📋 Meetings</button>
+                <button class="tab-btn">👥 Members</button>
+                <button class="tab-btn">📊 Dashboard</button>
+            </nav>
+        </div>
+
+        <!-- Calendar Container -->
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="previousMonth()">←</button>
+                    <div class="month-title">March 2026</div>
+                    <button class="nav-btn" onclick="nextMonth()">→</button>
+                    <button class="nav-btn" onclick="goToToday()">Today</button>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn">Week View</button>
+                    <button class="view-btn active">Month View</button>
+                    <button class="view-btn">Agenda</button>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="calendar-weekdays">
+                    <div class="weekday">Mon</div>
+                    <div class="weekday">Tue</div>
+                    <div class="weekday">Wed</div>
+                    <div class="weekday">Thu</div>
+                    <div class="weekday">Fri</div>
+                    <div class="weekday">Sat</div>
+                    <div class="weekday">Sun</div>
+                </div>
+                <div class="calendar-days" id="calendarDays">
+                    <!-- Calendar days will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="schedule-btn-container">
+                <button class="schedule-btn" onclick="openQuickCreate()">➕ Schedule New Meeting</button>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-item">Last meeting: Feb 21, 2026 - All members attended</div>
+                <div class="activity-item">3 action items pending completion</div>
+                <div class="activity-item">Next scheduled: Mar 27, 2:00 PM</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Create Modal -->
+    <div class="modal-overlay" id="quickCreateOverlay" onclick="closeQuickCreate(event)">
+        <div class="quick-create-modal" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="modal-header-section">
+                <div class="modal-title">Schedule Meeting</div>
+                <button class="close-btn" onclick="closeQuickCreate()">&times;</button>
+            </div>
+
+            <form id="quickCreateForm">
+                <div class="form-group">
+                    <label class="form-label">What's this meeting about?</label>
+                    <input type="text" class="form-input" id="meetingTitle"
+                           value="Finance Committee - March 2026" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">When?</label>
+                    <div class="time-inputs">
+                        <input type="date" class="form-input" id="meetingDate" required>
+                        <input type="time" class="form-input" id="meetingTime" value="14:00" required>
+                        <select class="form-input" id="meetingDuration">
+                            <option value="30">30 min</option>
+                            <option value="60" selected>1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Where?</label>
+                    <div class="location-options">
+                        <div class="location-option selected" onclick="selectLocation('virtual')">
+                            <input type="radio" name="location" value="virtual" class="radio-input" checked>
+                            <div class="location-label">
+                                <span>💻 Virtual</span>
+                            </div>
+                            <select class="form-input" style="width: auto;">
+                                <option>Zoom (Auto-generated)</option>
+                                <option>Microsoft Teams</option>
+                                <option>Google Meet</option>
+                            </select>
+                        </div>
+                        <div class="location-option" onclick="selectLocation('inperson')">
+                            <input type="radio" name="location" value="inperson" class="radio-input">
+                            <div class="location-label">
+                                <span>🏢 In Person</span>
+                            </div>
+                        </div>
+                        <div class="location-option" onclick="selectLocation('hybrid')">
+                            <input type="radio" name="location" value="hybrid" class="radio-input">
+                            <div class="location-label">
+                                <span>🔄 Hybrid</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Who's invited?</label>
+                    <div class="attendees-section">
+                        <div class="attendees-header">
+                            <input type="checkbox" checked style="width: 20px; height: 20px; cursor: pointer;">
+                            <strong>All committee members (8)</strong>
+                        </div>
+                        <div class="attendees-list">
+                            👥 Sarah J., Michael C., Jennifer L., David K., Lisa W., Robert T., Emily D., James W.
+                        </div>
+                        <button type="button" class="add-guest-btn">+ Add guest</button>
+                    </div>
+                </div>
+
+                <!-- Availability Heatmap (Optional Enhancement) -->
+                <div class="availability-section" style="display: none;" id="availabilitySection">
+                    <div class="availability-title">Member Availability for Selected Date</div>
+                    <div class="availability-grid">
+                        <div class="availability-row">
+                            <div class="member-name">Sarah J.</div>
+                            <div class="availability-blocks">
+                                <div class="availability-block available" title="9 AM - Available"></div>
+                                <div class="availability-block available" title="10 AM - Available"></div>
+                                <div class="availability-block available" title="11 AM - Available"></div>
+                                <div class="availability-block available" title="12 PM - Available"></div>
+                                <div class="availability-block maybe" title="1 PM - Maybe"></div>
+                                <div class="availability-block maybe" title="2 PM - Maybe"></div>
+                                <div class="availability-block available" title="3 PM - Available"></div>
+                                <div class="availability-block available" title="4 PM - Available"></div>
+                            </div>
+                        </div>
+                        <div class="availability-row">
+                            <div class="member-name">Michael C.</div>
+                            <div class="availability-blocks">
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block busy"></div>
+                                <div class="availability-block busy"></div>
+                                <div class="availability-block busy"></div>
+                                <div class="availability-block maybe"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                            </div>
+                        </div>
+                        <div class="availability-row">
+                            <div class="member-name">Jennifer L.</div>
+                            <div class="availability-blocks">
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block maybe"></div>
+                            </div>
+                        </div>
+                        <div class="availability-row">
+                            <div class="member-name">David K.</div>
+                            <div class="availability-blocks">
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                                <div class="availability-block available"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="availability-legend">
+                        <div class="legend-item">
+                            <div class="legend-color available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color maybe"></div>
+                            <span>Maybe</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color busy"></div>
+                            <span>Busy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="create-btn" id="createBtn">
+                    Create Meeting & Send Invites
+                </button>
+
+                <div class="more-options-link">
+                    <a onclick="openDetailPanel()">More options</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel-header">
+            <button class="back-btn" onclick="closeDetailPanel()">←</button>
+            <div class="detail-panel-title">Meeting Details</div>
+        </div>
+        <div class="detail-panel-content">
+            <div class="card-section">
+                <div class="card-section-title">📝 Basic Information</div>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" value="Finance Committee - March 2026">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" rows="3"
+                              placeholder="Quarterly financial review and budget planning..."></textarea>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="card-section-title">📅 Schedule</div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-input" id="detailDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Time</label>
+                    <div class="time-inputs">
+                        <input type="time" class="form-input" value="14:00">
+                        <select class="form-input">
+                            <option value="60" selected>1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🌍 Time Zone</label>
+                    <select class="form-input">
+                        <option>EST (New York)</option>
+                        <option>GMT (London)</option>
+                        <option>JST (Tokyo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="card-section-title">🔁 Recurring</div>
+                <select class="form-input" id="recurringSelect" onchange="updateRecurringPreview()">
+                    <option value="none">Does not repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="custom">Custom...</option>
+                </select>
+                <div class="recurring-preview" id="recurringPreview">
+                    <div class="recurring-pattern">
+                        Monthly on 3rd Friday, 4 meetings
+                    </div>
+                    <div class="recurring-dates">
+                        <div class="recurring-date-dot">
+                            <div class="date-dot"></div>
+                            <div class="date-label">Mar 15</div>
+                        </div>
+                        <div class="recurring-date-dot">
+                            <div class="date-dot"></div>
+                            <div class="date-label">Apr 19</div>
+                        </div>
+                        <div class="recurring-date-dot">
+                            <div class="date-dot"></div>
+                            <div class="date-label">May 17</div>
+                        </div>
+                        <div class="recurring-date-dot">
+                            <div class="date-dot"></div>
+                            <div class="date-label">Jun 21</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="card-section-title">👥 Attendees</div>
+                <div class="attendees-section">
+                    <div class="attendees-header">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <strong>All committee members (8)</strong>
+                    </div>
+                    <button type="button" class="add-guest-btn">View list</button>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="card-section-title">🔔 Notifications</div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span>Email invitations</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span>Calendar events</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span>Reminders (1 day before, 1 hour before)</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="create-btn" onclick="createMeetingFromPanel()">
+                Create Meeting
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Animation -->
+    <div class="success-overlay" id="successOverlay" onclick="closeSuccess()">
+        <div class="success-content" onclick="event.stopPropagation()">
+            <div class="checkmark-container">
+                <div class="checkmark">
+                    <div class="checkmark-icon">✓</div>
+                </div>
+            </div>
+            <div class="success-title">Meeting Created!</div>
+            <div class="success-message">Invitations sent to 8 members</div>
+
+            <div class="meeting-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Meeting</span>
+                    <span id="successTitle">Finance Committee - March 2026</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">When</span>
+                    <span id="successDate">Friday, March 15, 2026</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time</span>
+                    <span id="successTime">2:00 PM - 3:00 PM</span>
+                </div>
+            </div>
+
+            <div class="success-actions">
+                <button class="success-btn success-btn-secondary" onclick="closeSuccess()">
+                    Close
+                </button>
+                <button class="success-btn success-btn-primary" onclick="viewMeeting()">
+                    View Meeting
+                </button>
+            </div>
+
+            <div class="auto-close-notice">
+                Auto-closes in <span id="countdown">3</span> seconds
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calendar state
+        let currentDate = new Date(2026, 2, 1); // March 2026
+        let selectedDate = null;
+        let meetings = [
+            { date: '2026-03-27', time: '14:00', title: 'Finance Committee', duration: 60 }
+        ];
+
+        // Generate calendar
+        function generateCalendar() {
+            const daysContainer = document.getElementById('calendarDays');
+            daysContainer.innerHTML = '';
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Get first day of month
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            // Get starting day (Monday = 0)
+            let startingDay = firstDay.getDay() - 1;
+            if (startingDay === -1) startingDay = 6;
+
+            // Add previous month's days
+            const prevLastDay = new Date(year, month, 0);
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = prevLastDay.getDate() - i;
+                const dayDiv = createDayElement(day, true);
+                daysContainer.appendChild(dayDiv);
+            }
+
+            // Add current month's days
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayDiv = createDayElement(day, false);
+                daysContainer.appendChild(dayDiv);
+            }
+
+            // Add next month's days to fill the grid
+            const remainingDays = 42 - daysContainer.children.length;
+            for (let day = 1; day <= remainingDays; day++) {
+                const dayDiv = createDayElement(day, true);
+                daysContainer.appendChild(dayDiv);
+            }
+        }
+
+        function createDayElement(day, isDisabled) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day';
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const date = new Date(year, month, day);
+            const dateStr = date.toISOString().split('T')[0];
+
+            if (isDisabled) {
+                dayDiv.classList.add('disabled');
+            } else {
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    dayDiv.classList.add('weekend');
+                }
+
+                // Check if today
+                const today = new Date();
+                if (date.getDate() === today.getDate() &&
+                    date.getMonth() === today.getMonth() &&
+                    date.getFullYear() === today.getFullYear()) {
+                    dayDiv.classList.add('today');
+                }
+
+                dayDiv.onclick = () => openQuickCreate(dateStr);
+            }
+
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = day;
+            dayDiv.appendChild(dayNumber);
+
+            // Check for meetings on this day
+            if (!isDisabled) {
+                const meeting = meetings.find(m => m.date === dateStr);
+                if (meeting) {
+                    const meetingCard = document.createElement('div');
+                    meetingCard.className = 'meeting-card-mini';
+                    meetingCard.innerHTML = `
+                        <div class="meeting-time">${formatTime(meeting.time)}</div>
+                        <div class="meeting-title-mini">${meeting.title}</div>
+                    `;
+                    meetingCard.onclick = (e) => {
+                        e.stopPropagation();
+                        viewMeetingDetails(meeting);
+                    };
+                    dayDiv.appendChild(meetingCard);
+                }
+            }
+
+            return dayDiv;
+        }
+
+        function formatTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':');
+            const h = parseInt(hours);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const displayHour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            updateMonthTitle();
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            updateMonthTitle();
+            generateCalendar();
+        }
+
+        function goToToday() {
+            currentDate = new Date(2026, 2, 1); // March 2026 for demo
+            updateMonthTitle();
+            generateCalendar();
+        }
+
+        function updateMonthTitle() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthTitle = document.querySelector('.month-title');
+            monthTitle.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        }
+
+        // Quick Create Dialog
+        function openQuickCreate(date = null) {
+            const overlay = document.getElementById('quickCreateOverlay');
+            overlay.classList.add('show');
+
+            if (date) {
+                document.getElementById('meetingDate').value = date;
+            } else {
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                document.getElementById('meetingDate').value = dateStr;
+            }
+
+            // Show availability section for selected date
+            setTimeout(() => {
+                const availSection = document.getElementById('availabilitySection');
+                availSection.style.display = 'block';
+                availSection.style.animation = 'slideUp 0.3s ease-out';
+            }, 300);
+        }
+
+        function closeQuickCreate(event) {
+            if (event && event.target !== document.getElementById('quickCreateOverlay')) {
+                return;
+            }
+            const overlay = document.getElementById('quickCreateOverlay');
+            overlay.classList.remove('show');
+        }
+
+        function selectLocation(type) {
+            document.querySelectorAll('.location-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            event.currentTarget.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // Detail Panel
+        function openDetailPanel() {
+            const panel = document.getElementById('detailPanel');
+            panel.classList.add('show');
+
+            // Copy date from quick create
+            const date = document.getElementById('meetingDate').value;
+            document.getElementById('detailDate').value = date;
+
+            // Close quick create
+            closeQuickCreate();
+        }
+
+        function closeDetailPanel() {
+            const panel = document.getElementById('detailPanel');
+            panel.classList.remove('show');
+        }
+
+        function updateRecurringPreview() {
+            const select = document.getElementById('recurringSelect');
+            const preview = document.getElementById('recurringPreview');
+
+            if (select.value === 'none') {
+                preview.style.display = 'none';
+            } else {
+                preview.style.display = 'block';
+            }
+        }
+
+        // Form submission
+        document.getElementById('quickCreateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            createMeeting();
+        });
+
+        function createMeeting() {
+            const btn = document.getElementById('createBtn');
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="loading-spinner"></span> Creating...';
+
+            setTimeout(() => {
+                const title = document.getElementById('meetingTitle').value;
+                const date = document.getElementById('meetingDate').value;
+                const time = document.getElementById('meetingTime').value;
+                const duration = document.getElementById('meetingDuration').value;
+
+                // Add to meetings array
+                meetings.push({ date, time, title, duration: parseInt(duration) });
+
+                // Show success
+                showSuccess(title, date, time, duration);
+
+                // Reset form
+                btn.classList.remove('loading');
+                btn.innerHTML = 'Create Meeting & Send Invites';
+                closeQuickCreate();
+            }, 1500);
+        }
+
+        function createMeetingFromPanel() {
+            const title = document.querySelector('#detailPanel input[type="text"]').value;
+            const date = document.getElementById('detailDate').value;
+            const time = document.querySelector('#detailPanel input[type="time"]').value;
+            const duration = 60;
+
+            meetings.push({ date, time, title, duration });
+
+            closeDetailPanel();
+            showSuccess(title, date, time, duration);
+        }
+
+        // Success Animation
+        function showSuccess(title, date, time, duration) {
+            const overlay = document.getElementById('successOverlay');
+
+            // Format date
+            const dateObj = new Date(date);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            const formattedDate = `${days[dateObj.getDay()]}, ${months[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()}`;
+
+            // Format time
+            const [hours, minutes] = time.split(':');
+            const h = parseInt(hours);
+            const endH = h + Math.floor(duration / 60);
+            const endM = (parseInt(minutes) + (duration % 60)) % 60;
+            const formattedTime = `${formatTime(time)} - ${formatTime(`${endH}:${endM.toString().padStart(2, '0')}`)}`;
+
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successDate').textContent = formattedDate;
+            document.getElementById('successTime').textContent = formattedTime;
+
+            overlay.classList.add('show');
+
+            // Confetti
+            createConfetti();
+
+            // Auto-close countdown
+            let countdown = 3;
+            const countdownEl = document.getElementById('countdown');
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    closeSuccess();
+                }
+            }, 1000);
+        }
+
+        function createConfetti() {
+            const colors = ['#667eea', '#764ba2', '#4caf50', '#ffc107', '#f44336'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function closeSuccess() {
+            const overlay = document.getElementById('successOverlay');
+            overlay.classList.remove('show');
+
+            // Refresh calendar to show new meeting
+            generateCalendar();
+        }
+
+        function viewMeeting() {
+            closeSuccess();
+            alert('This would open the meeting details view');
+        }
+
+        function viewMeetingDetails(meeting) {
+            alert(`Meeting: ${meeting.title}\nDate: ${meeting.date}\nTime: ${formatTime(meeting.time)}`);
+        }
+
+        // Initialize calendar on load
+        generateCalendar();
+    </script>
+</body>
+</html>

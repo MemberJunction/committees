@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Scrolling Page - Member Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .prototype-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .prototype-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .anchor-nav {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 60px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .anchor-nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            padding: 0 2rem;
+        }
+
+        .anchor-link {
+            padding: 1rem 1.5rem;
+            color: #666;
+            text-decoration: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .anchor-link:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .anchor-link.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #667eea;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-info h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 2rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            scroll-margin-top: 140px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header h3 {
+            font-size: 1.8rem;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .collapse-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .collapse-btn:hover {
+            color: #667eea;
+        }
+
+        .section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .committees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .committee-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .committee-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .committee-card h4 {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-upcoming {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .badge-completed {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .committee-role {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .committee-meta {
+            display: flex;
+            gap: 1rem;
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .action-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-item {
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .action-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .action-item.priority-high {
+            border-left-color: #f44336;
+        }
+
+        .action-item.priority-medium {
+            border-left-color: #ff9800;
+        }
+
+        .action-item.priority-low {
+            border-left-color: #4caf50;
+        }
+
+        .action-item h4 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-item-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .meetings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .meeting-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .meeting-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .meeting-date {
+            text-align: center;
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+
+        .meeting-date .day {
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .meeting-date .month {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .meeting-info {
+            flex: 1;
+        }
+
+        .meeting-info h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .meeting-info p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meeting-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .achievement.earned {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .achievement.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .availability-calendar {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .calendar-day:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .calendar-day.unavailable {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .calendar-day.header {
+            font-weight: 600;
+            background: #667eea;
+            color: white;
+            cursor: default;
+        }
+
+        .subsection {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .subsection:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .subsection h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .committees-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .anchor-nav-inner {
+                padding: 0 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-header">
+        <h1>Option B: Scrolling Page Interface</h1>
+        <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Comparison</a>
+    </div>
+
+    <nav class="anchor-nav">
+        <div class="anchor-nav-inner">
+            <a href="#overview" class="anchor-link active">
+                <i class="fas fa-home"></i> Overview
+            </a>
+            <a href="#committees" class="anchor-link">
+                <i class="fas fa-users"></i> Committees
+            </a>
+            <a href="#actions" class="anchor-link">
+                <i class="fas fa-tasks"></i> Action Items
+            </a>
+            <a href="#meetings" class="anchor-link">
+                <i class="fas fa-calendar"></i> Meetings
+            </a>
+            <a href="#engagement" class="anchor-link">
+                <i class="fas fa-chart-line"></i> Engagement
+            </a>
+            <a href="#availability" class="anchor-link">
+                <i class="fas fa-clock"></i> Availability
+            </a>
+            <a href="#settings" class="anchor-link">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-header" id="overview">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h2>Sarah Johnson</h2>
+                <p>Senior Product Manager | Engineering Department</p>
+                <div class="profile-meta">
+                    <span><i class="fas fa-envelope"></i> sarah.johnson@company.com</span>
+                    <span><i class="fas fa-phone"></i> (555) 123-4567</span>
+                    <span><i class="fas fa-calendar"></i> Joined Jan 2024</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">92</div>
+                <div class="label">Engagement Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4</div>
+                <div class="label">Active Committees</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">95%</div>
+                <div class="label">Meeting Attendance</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">23</div>
+                <div class="label">Completed Actions</div>
+            </div>
+        </div>
+
+        <!-- Committees Section -->
+        <div class="section" id="committees">
+            <div class="section-header">
+                <h3><i class="fas fa-users"></i> My Committees</h3>
+                <div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Join Committee
+                    </button>
+                    <button class="collapse-btn" data-target="committees-content">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="section-content" id="committees-content">
+                <div class="committees-grid">
+                    <div class="committee-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4>Product Strategy Committee</h4>
+                                <p class="committee-role">Chair</p>
+                            </div>
+                            <span class="badge badge-active">Active</span>
+                        </div>
+                        <p>Strategic planning and roadmap development for product initiatives.</p>
+                        <div class="committee-meta">
+                            <span><i class="fas fa-users"></i> 8 members</span>
+                            <span><i class="fas fa-tasks"></i> 5 active items</span>
+                            <span><i class="fas fa-calendar"></i> Next: Feb 18</span>
+                        </div>
+                    </div>
+                    <div class="committee-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4>Engineering Excellence</h4>
+                                <p class="committee-role">Member</p>
+                            </div>
+                            <span class="badge badge-active">Active</span>
+                        </div>
+                        <p>Driving technical excellence and best practices across engineering teams.</p>
+                        <div class="committee-meta">
+                            <span><i class="fas fa-users"></i> 12 members</span>
+                            <span><i class="fas fa-tasks"></i> 3 active items</span>
+                            <span><i class="fas fa-calendar"></i> Next: Feb 20</span>
+                        </div>
+                    </div>
+                    <div class="committee-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4>Q1 Planning Committee</h4>
+                                <p class="committee-role">Co-Chair</p>
+                            </div>
+                            <span class="badge badge-completed">Completed</span>
+                        </div>
+                        <p>Quarterly planning and resource allocation for Q1 2026.</p>
+                        <div class="committee-meta">
+                            <span><i class="fas fa-users"></i> 6 members</span>
+                            <span><i class="fas fa-check"></i> Completed Jan 31</span>
+                        </div>
+                    </div>
+                    <div class="committee-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4>Innovation Council</h4>
+                                <p class="committee-role">Member</p>
+                            </div>
+                            <span class="badge badge-active">Active</span>
+                        </div>
+                        <p>Evaluating and sponsoring innovative projects and initiatives.</p>
+                        <div class="committee-meta">
+                            <span><i class="fas fa-users"></i> 10 members</span>
+                            <span><i class="fas fa-tasks"></i> 2 active items</span>
+                            <span><i class="fas fa-calendar"></i> Next: Feb 25</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Items Section -->
+        <div class="section" id="actions">
+            <div class="section-header">
+                <h3><i class="fas fa-tasks"></i> My Action Items</h3>
+                <button class="collapse-btn" data-target="actions-content">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content" id="actions-content">
+                <div class="action-items-list">
+                    <div class="action-item priority-high">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4>Complete Q2 roadmap presentation</h4>
+                                <div class="action-item-meta">
+                                    <span><i class="fas fa-users"></i> Product Strategy Committee</span>
+                                    <span><i class="fas fa-calendar"></i> Due: Feb 17, 2026</span>
+                                    <span><i class="fas fa-flag"></i> High Priority</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-upcoming">In Progress</span>
+                        </div>
+                        <p>Prepare comprehensive presentation covering Q2 product roadmap with resource requirements and timelines.</p>
+                        <div class="action-item-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Mark Complete</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                    <div class="action-item priority-medium">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4>Review engineering best practices document</h4>
+                                <div class="action-item-meta">
+                                    <span><i class="fas fa-users"></i> Engineering Excellence</span>
+                                    <span><i class="fas fa-calendar"></i> Due: Feb 19, 2026</span>
+                                    <span><i class="fas fa-flag"></i> Medium Priority</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-active">Pending</span>
+                        </div>
+                        <p>Review and provide feedback on the updated engineering best practices documentation.</p>
+                        <div class="action-item-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Mark Complete</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                    <div class="action-item priority-medium">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4>Evaluate innovation proposals</h4>
+                                <div class="action-item-meta">
+                                    <span><i class="fas fa-users"></i> Innovation Council</span>
+                                    <span><i class="fas fa-calendar"></i> Due: Feb 24, 2026</span>
+                                    <span><i class="fas fa-flag"></i> Medium Priority</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-active">Pending</span>
+                        </div>
+                        <p>Review 5 innovation proposals submitted for Q2 and provide ratings and feedback.</p>
+                        <div class="action-item-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Mark Complete</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                    <div class="action-item priority-low">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4>Update committee charter</h4>
+                                <div class="action-item-meta">
+                                    <span><i class="fas fa-users"></i> Product Strategy Committee</span>
+                                    <span><i class="fas fa-calendar"></i> Due: Mar 1, 2026</span>
+                                    <span><i class="fas fa-flag"></i> Low Priority</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-active">Pending</span>
+                        </div>
+                        <p>Review and update the committee charter to reflect new responsibilities and scope.</p>
+                        <div class="action-item-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Mark Complete</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meetings Section -->
+        <div class="section" id="meetings">
+            <div class="section-header">
+                <h3><i class="fas fa-calendar"></i> Meeting Schedule</h3>
+                <button class="collapse-btn" data-target="meetings-content">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content" id="meetings-content">
+                <div class="meetings-list">
+                    <div class="meeting-card">
+                        <div class="meeting-date">
+                            <div class="day">18</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-info">
+                            <h4>Product Strategy Committee - Monthly Review</h4>
+                            <p><i class="fas fa-clock"></i> 2:00 PM - 3:30 PM | <i class="fas fa-map-marker-alt"></i> Conference Room A</p>
+                            <p>Monthly review of product roadmap and strategic initiatives.</p>
+                            <div class="meeting-actions">
+                                <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Confirm Attendance</button>
+                                <button class="btn btn-secondary btn-small"><i class="fas fa-calendar"></i> Add to Calendar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="meeting-card">
+                        <div class="meeting-date">
+                            <div class="day">20</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-info">
+                            <h4>Engineering Excellence - Best Practices Workshop</h4>
+                            <p><i class="fas fa-clock"></i> 10:00 AM - 12:00 PM | <i class="fas fa-map-marker-alt"></i> Virtual</p>
+                            <p>Workshop on implementing engineering best practices across teams.</p>
+                            <div class="meeting-actions">
+                                <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Confirm Attendance</button>
+                                <button class="btn btn-secondary btn-small"><i class="fas fa-calendar"></i> Add to Calendar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="meeting-card">
+                        <div class="meeting-date">
+                            <div class="day">25</div>
+                            <div class="month">FEB</div>
+                        </div>
+                        <div class="meeting-info">
+                            <h4>Innovation Council - Q2 Proposal Review</h4>
+                            <p><i class="fas fa-clock"></i> 3:00 PM - 5:00 PM | <i class="fas fa-map-marker-alt"></i> Innovation Lab</p>
+                            <p>Review and discussion of Q2 innovation proposals.</p>
+                            <div class="meeting-actions">
+                                <button class="btn btn-primary btn-small"><i class="fas fa-check"></i> Confirm Attendance</button>
+                                <button class="btn btn-secondary btn-small"><i class="fas fa-calendar"></i> Add to Calendar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Engagement Section -->
+        <div class="section" id="engagement">
+            <div class="section-header">
+                <h3><i class="fas fa-chart-line"></i> My Engagement</h3>
+                <button class="collapse-btn" data-target="engagement-content">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content" id="engagement-content">
+                <div class="subsection">
+                    <h4>Achievements & Badges</h4>
+                    <div class="achievements-grid">
+                        <div class="achievement earned">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-name">Perfect Attendance</div>
+                            <div class="achievement-desc">100% attendance in Q1</div>
+                        </div>
+                        <div class="achievement earned">
+                            <div class="achievement-icon">⚡</div>
+                            <div class="achievement-name">Action Hero</div>
+                            <div class="achievement-desc">Completed 50+ actions</div>
+                        </div>
+                        <div class="achievement earned">
+                            <div class="achievement-icon">🌟</div>
+                            <div class="achievement-name">Committee Champion</div>
+                            <div class="achievement-desc">Active in 5+ committees</div>
+                        </div>
+                        <div class="achievement earned">
+                            <div class="achievement-icon">🎯</div>
+                            <div class="achievement-name">Early Bird</div>
+                            <div class="achievement-desc">Consistently early to meetings</div>
+                        </div>
+                        <div class="achievement locked">
+                            <div class="achievement-icon">🔒</div>
+                            <div class="achievement-name">Year Veteran</div>
+                            <div class="achievement-desc">Active for 1 year</div>
+                        </div>
+                        <div class="achievement locked">
+                            <div class="achievement-icon">🔒</div>
+                            <div class="achievement-name">Innovator</div>
+                            <div class="achievement-desc">Submit 10 ideas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability Section -->
+        <div class="section" id="availability">
+            <div class="section-header">
+                <h3><i class="fas fa-clock"></i> Availability & Preferences</h3>
+                <button class="collapse-btn" data-target="availability-content">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content" id="availability-content">
+                <div class="subsection">
+                    <h4>General Availability</h4>
+                    <div class="form-group">
+                        <label>Time Zone</label>
+                        <select>
+                            <option>Eastern Time (ET)</option>
+                            <option>Central Time (CT)</option>
+                            <option>Mountain Time (MT)</option>
+                            <option>Pacific Time (PT)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Meeting Times</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked> Morning (8 AM - 12 PM)
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked> Afternoon (12 PM - 5 PM)
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox"> Evening (5 PM - 8 PM)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h4>Unavailable Dates</h4>
+                    <p>Click on dates to mark as unavailable</p>
+                    <div class="availability-calendar">
+                        <div class="calendar-grid">
+                            <div class="calendar-day header">Sun</div>
+                            <div class="calendar-day header">Mon</div>
+                            <div class="calendar-day header">Tue</div>
+                            <div class="calendar-day header">Wed</div>
+                            <div class="calendar-day header">Thu</div>
+                            <div class="calendar-day header">Fri</div>
+                            <div class="calendar-day header">Sat</div>
+                            <div class="calendar-day"></div>
+                            <div class="calendar-day"></div>
+                            <div class="calendar-day"></div>
+                            <div class="calendar-day"></div>
+                            <div class="calendar-day"></div>
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day">3</div>
+                            <div class="calendar-day">4</div>
+                            <div class="calendar-day">5</div>
+                            <div class="calendar-day">6</div>
+                            <div class="calendar-day">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day">9</div>
+                            <div class="calendar-day">10</div>
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day">15</div>
+                            <div class="calendar-day">16</div>
+                            <div class="calendar-day">17</div>
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day">20</div>
+                            <div class="calendar-day unavailable">21</div>
+                            <div class="calendar-day unavailable">22</div>
+                            <div class="calendar-day unavailable">23</div>
+                            <div class="calendar-day">24</div>
+                            <div class="calendar-day">25</div>
+                            <div class="calendar-day">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-save"></i> Save Availability
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="section" id="settings">
+            <div class="section-header">
+                <h3><i class="fas fa-cog"></i> Profile Settings</h3>
+                <button class="collapse-btn" data-target="settings-content">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content" id="settings-content">
+                <div class="subsection">
+                    <h4>Personal Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" value="Sarah">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" value="Johnson">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" value="Senior Product Manager">
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select>
+                            <option selected>Engineering</option>
+                            <option>Product</option>
+                            <option>Operations</option>
+                            <option>Marketing</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h4>Contact Information</h4>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="sarah.johnson@company.com">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" value="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile</label>
+                            <input type="tel" value="(555) 987-6543">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h4>Notification Preferences</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked> Email notifications for new action items
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked> Email reminders for upcoming meetings
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox"> Daily digest of committee activity
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked> Mobile push notifications
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox"> Weekly engagement report
+                        </label>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Anchor navigation
+        const anchorLinks = document.querySelectorAll('.anchor-link');
+        const sections = document.querySelectorAll('.section');
+
+        // Update active link on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            anchorLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Handle overview section
+            if (window.pageYOffset < 300) {
+                anchorLinks.forEach(link => link.classList.remove('active'));
+                anchorLinks[0].classList.add('active');
+            }
+        });
+
+        // Collapse functionality
+        const collapseButtons = document.querySelectorAll('.collapse-btn');
+        collapseButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.target;
+                const content = document.getElementById(targetId);
+                const icon = btn.querySelector('i');
+
+                content.classList.toggle('collapsed');
+
+                if (content.classList.contains('collapsed')) {
+                    icon.className = 'fas fa-chevron-down';
+                } else {
+                    icon.className = 'fas fa-chevron-up';
+                }
+            });
+        });
+
+        // Calendar day click handler
+        const calendarDays = document.querySelectorAll('.calendar-day:not(.header)');
+        calendarDays.forEach(day => {
+            if (day.textContent) {
+                day.addEventListener('click', () => {
+                    day.classList.toggle('unavailable');
+                });
+            }
+        });
+
+        // Action item complete button handlers
+        document.querySelectorAll('.action-item-actions .btn-primary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const actionItem = e.target.closest('.action-item');
+                if (confirm('Mark this action item as complete?')) {
+                    actionItem.style.opacity = '0.5';
+                    const badge = actionItem.querySelector('.badge');
+                    badge.textContent = 'Completed';
+                    badge.className = 'badge badge-completed';
+                }
+            });
+        });
+
+        // Meeting RSVP handlers
+        document.querySelectorAll('.meeting-actions .btn-primary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.innerHTML = '<i class="fas fa-check"></i> Confirmed';
+                e.target.disabled = true;
+                e.target.style.opacity = '0.7';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C: Visual Dashboard - Executive Overview</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .top-bar-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .top-bar-subtitle {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #4facfe;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .time-range {
+            padding: 0.75rem 1rem;
+            border: 1px solid white;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .time-range option {
+            color: #333;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value.good { color: #28a745; }
+        .kpi-value.warning { color: #ffc107; }
+        .kpi-value.danger { color: #dc3545; }
+
+        .kpi-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .kpi-change.positive {
+            color: #28a745;
+        }
+
+        .kpi-change.negative {
+            color: #dc3545;
+        }
+
+        .kpi-change.neutral {
+            color: #666;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .widget-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .widget-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .widget-btn:hover {
+            background: #f8f9fa;
+            border-color: #4facfe;
+            color: #4facfe;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .large-chart {
+            height: 400px;
+        }
+
+        .widget-full {
+            grid-column: span 12;
+        }
+
+        .widget-half {
+            grid-column: span 6;
+        }
+
+        .widget-third {
+            grid-column: span 4;
+        }
+
+        .widget-two-thirds {
+            grid-column: span 8;
+        }
+
+        .heatmap-container {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-top: 1rem;
+        }
+
+        .heatmap-header {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 600;
+            padding: 0.5rem;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .heatmap-cell.high {
+            background: #28a745;
+            color: white;
+        }
+
+        .heatmap-cell.medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .heatmap-cell.low {
+            background: #dc3545;
+            color: white;
+        }
+
+        .heatmap-cell.empty {
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .committee-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .committee-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .committee-item:hover {
+            background: #f8f9fa;
+        }
+
+        .committee-info {
+            flex: 1;
+        }
+
+        .committee-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .committee-meta {
+            font-size: 0.813rem;
+            color: #666;
+        }
+
+        .committee-score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .score-value.good { color: #28a745; }
+        .score-value.warning { color: #ffc107; }
+        .score-value.danger { color: #dc3545; }
+
+        .mini-sparkline {
+            width: 60px;
+            height: 30px;
+        }
+
+        .alert-badge {
+            padding: 0.25rem 0.625rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #dc3545;
+            color: white;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.813rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .filters-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .filter-select {
+            padding: 0.625rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1200px) {
+            .widget-half, .widget-third, .widget-two-thirds {
+                grid-column: span 12;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .top-bar-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #4facfe;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <div>
+                <h1>Committee Health Dashboard</h1>
+                <div class="top-bar-subtitle">Executive Overview & Analytics</div>
+            </div>
+            <div class="top-bar-actions">
+                <select class="time-range" id="timeRange">
+                    <option value="30">Last 30 Days</option>
+                    <option value="60">Last 60 Days</option>
+                    <option value="90" selected>Last 90 Days</option>
+                    <option value="180">Last 6 Months</option>
+                    <option value="365">Last Year</option>
+                </select>
+                <button class="btn btn-secondary" onclick="refreshDashboard()">Refresh</button>
+                <button class="btn btn-primary" onclick="exportDashboard()">Export Report</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="filters-panel">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Committee Type</label>
+                    <select class="filter-select" id="filterType" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                        <option value="Standing">Standing</option>
+                        <option value="Ad-Hoc">Ad-Hoc</option>
+                        <option value="Steering">Steering</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Department</label>
+                    <select class="filter-select" id="filterDept" onchange="applyFilters()">
+                        <option value="">All Departments</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Health Status</label>
+                    <select class="filter-select" id="filterHealth" onchange="applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="good">Healthy (80-100)</option>
+                        <option value="warning">Warning (60-79)</option>
+                        <option value="danger">Critical (<60)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Committees</div>
+                <div class="kpi-value">20</div>
+                <div class="kpi-change neutral">
+                    <span>→</span>
+                    <span>No change from last period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Average Health Score</div>
+                <div class="kpi-value warning">78%</div>
+                <div class="kpi-change positive">
+                    <span>↑</span>
+                    <span>5% increase from last period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Healthy Committees</div>
+                <div class="kpi-value good">12</div>
+                <div class="kpi-change positive">
+                    <span>↑</span>
+                    <span>2 more than last period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">At-Risk Committees</div>
+                <div class="kpi-value warning">5</div>
+                <div class="kpi-change positive">
+                    <span>↓</span>
+                    <span>1 fewer than last period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Critical Status</div>
+                <div class="kpi-value danger">3</div>
+                <div class="kpi-change neutral">
+                    <span>→</span>
+                    <span>No change from last period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg Attendance</div>
+                <div class="kpi-value good">82%</div>
+                <div class="kpi-change positive">
+                    <span>↑</span>
+                    <span>3% increase from last period</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="widget widget-two-thirds">
+                <div class="widget-header">
+                    <h3 class="widget-title">Health Score Distribution</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="alert('Filter chart')">Filter</button>
+                        <button class="widget-btn" onclick="alert('Export chart')">Export</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="widget widget-third">
+                <div class="widget-header">
+                    <h3 class="widget-title">Committee Status</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="widget widget-half">
+                <div class="widget-header">
+                    <h3 class="widget-title">Performance Trends (12 Weeks)</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="alert('Change time range')">Time Range</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="widget widget-half">
+                <div class="widget-header">
+                    <h3 class="widget-title">Department Comparison</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+
+            <div class="widget widget-full">
+                <div class="widget-header">
+                    <h3 class="widget-title">Meeting Attendance Heatmap (Last 8 Weeks)</h3>
+                </div>
+                <div class="heatmap-container" id="heatmapContainer">
+                    <!-- Heatmap will be generated by JavaScript -->
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #28a745;"></div>
+                        <span>High (80-100%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffc107;"></div>
+                        <span>Medium (60-79%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #dc3545;"></div>
+                        <span>Low (<60%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f0f0f0;"></div>
+                        <span>No Meeting</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget widget-half">
+                <div class="widget-header">
+                    <h3 class="widget-title">Action Item Completion</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="actionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="widget widget-half">
+                <div class="widget-header">
+                    <h3 class="widget-title">Critical Committees Requiring Attention</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="viewAllCritical()">View All</button>
+                    </div>
+                </div>
+                <div class="committee-list" id="criticalList">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Committee Details</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const committees = [
+            { id: 1, name: "IT Steering Committee", type: "Steering", department: "IT", healthScore: 92, attendance: 95, completion: 88, engagement: 94, members: 12 },
+            { id: 2, name: "Budget Review Committee", type: "Standing", department: "Finance", healthScore: 85, attendance: 88, completion: 82, engagement: 86, members: 8 },
+            { id: 3, name: "Employee Wellness Committee", type: "Standing", department: "HR", healthScore: 78, attendance: 75, completion: 80, engagement: 82, members: 10 },
+            { id: 4, name: "Safety & Compliance Committee", type: "Standing", department: "Operations", healthScore: 88, attendance: 92, completion: 85, engagement: 87, members: 15 },
+            { id: 5, name: "Digital Transformation Task Force", type: "Ad-Hoc", department: "IT", healthScore: 72, attendance: 70, completion: 68, engagement: 78, members: 9 },
+            { id: 6, name: "Diversity & Inclusion Committee", type: "Standing", department: "HR", healthScore: 90, attendance: 93, completion: 88, engagement: 89, members: 11 },
+            { id: 7, name: "Audit Committee", type: "Standing", department: "Finance", healthScore: 95, attendance: 98, completion: 92, engagement: 96, members: 7 },
+            { id: 8, name: "Customer Experience Committee", type: "Standing", department: "Operations", healthScore: 68, attendance: 65, completion: 70, engagement: 72, members: 12 },
+            { id: 9, name: "Innovation Lab Committee", type: "Ad-Hoc", department: "IT", healthScore: 55, attendance: 58, completion: 52, engagement: 55, members: 10 },
+            { id: 10, name: "Compensation Committee", type: "Standing", department: "HR", healthScore: 82, attendance: 85, completion: 80, engagement: 81, members: 6 },
+            { id: 11, name: "Risk Management Committee", type: "Standing", department: "Finance", healthScore: 87, attendance: 90, completion: 85, engagement: 86, members: 9 },
+            { id: 12, name: "Facilities Planning Committee", type: "Ad-Hoc", department: "Operations", healthScore: 58, attendance: 60, completion: 55, engagement: 60, members: 8 }
+        ];
+
+        let filteredCommittees = [...committees];
+
+        function getHealthStatus(score) {
+            if (score >= 80) return 'good';
+            if (score >= 60) return 'warning';
+            return 'danger';
+        }
+
+        // Distribution Chart
+        new Chart(document.getElementById('distributionChart'), {
+            type: 'bar',
+            data: {
+                labels: committees.map(c => c.name),
+                datasets: [{
+                    label: 'Health Score',
+                    data: committees.map(c => c.healthScore),
+                    backgroundColor: committees.map(c => {
+                        const status = getHealthStatus(c.healthScore);
+                        return status === 'good' ? '#28a745' : status === 'warning' ? '#ffc107' : '#dc3545';
+                    }),
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `Health Score: ${context.parsed.y}%`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: (value) => value + '%'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+
+        // Status Pie Chart
+        const statusCounts = {
+            good: committees.filter(c => getHealthStatus(c.healthScore) === 'good').length,
+            warning: committees.filter(c => getHealthStatus(c.healthScore) === 'warning').length,
+            danger: committees.filter(c => getHealthStatus(c.healthScore) === 'danger').length
+        };
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Healthy', 'Warning', 'Critical'],
+                datasets: [{
+                    data: [statusCounts.good, statusCounts.warning, statusCounts.danger],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Trends Line Chart
+        const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12'];
+        new Chart(document.getElementById('trendsChart'), {
+            type: 'line',
+            data: {
+                labels: weeks,
+                datasets: [
+                    {
+                        label: 'Avg Health Score',
+                        data: [72, 73, 74, 75, 75, 76, 76, 77, 77, 78, 78, 78],
+                        borderColor: '#4facfe',
+                        backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Avg Attendance',
+                        data: [78, 79, 79, 80, 80, 81, 81, 82, 82, 82, 82, 82],
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Avg Completion',
+                        data: [70, 71, 72, 72, 73, 73, 74, 74, 75, 75, 75, 75],
+                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: (value) => value + '%'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Department Comparison
+        const deptData = {
+            IT: committees.filter(c => c.department === 'IT'),
+            HR: committees.filter(c => c.department === 'HR'),
+            Finance: committees.filter(c => c.department === 'Finance'),
+            Operations: committees.filter(c => c.department === 'Operations')
+        };
+
+        new Chart(document.getElementById('departmentChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Health Score', 'Attendance', 'Completion', 'Engagement'],
+                datasets: Object.keys(deptData).map((dept, index) => {
+                    const colors = ['#4facfe', '#28a745', '#ffc107', '#dc3545'];
+                    const avgHealth = deptData[dept].reduce((sum, c) => sum + c.healthScore, 0) / deptData[dept].length;
+                    const avgAttendance = deptData[dept].reduce((sum, c) => sum + c.attendance, 0) / deptData[dept].length;
+                    const avgCompletion = deptData[dept].reduce((sum, c) => sum + c.completion, 0) / deptData[dept].length;
+                    const avgEngagement = deptData[dept].reduce((sum, c) => sum + c.engagement, 0) / deptData[dept].length;
+
+                    return {
+                        label: dept,
+                        data: [avgHealth, avgAttendance, avgCompletion, avgEngagement],
+                        borderColor: colors[index],
+                        backgroundColor: colors[index] + '20',
+                        borderWidth: 2
+                    };
+                })
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Action Item Chart
+        new Chart(document.getElementById('actionChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
+                datasets: [{
+                    label: 'Action Items',
+                    data: [145, 62, 38, 15],
+                    backgroundColor: ['#28a745', '#4facfe', '#ffc107', '#dc3545'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Heatmap
+        function renderHeatmap() {
+            const container = document.getElementById('heatmapContainer');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            // Headers
+            container.innerHTML = days.map(day => `<div class="heatmap-header">${day}</div>`).join('');
+
+            // Generate random attendance data for demonstration
+            for (let week = 0; week < 8; week++) {
+                for (let day = 0; day < 7; day++) {
+                    const hasmeeting = Math.random() > 0.4;
+                    if (hasmeeting) {
+                        const attendance = Math.floor(Math.random() * 40) + 60;
+                        const status = attendance >= 80 ? 'high' : attendance >= 60 ? 'medium' : 'low';
+                        container.innerHTML += `
+                            <div class="heatmap-cell ${status}" onclick="alert('Week ${week + 1}, ${days[day]}: ${attendance}% attendance')">
+                                ${attendance}%
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML += `<div class="heatmap-cell empty">-</div>`;
+                    }
+                }
+            }
+        }
+
+        // Critical Committees List
+        function renderCriticalList() {
+            const critical = committees.filter(c => getHealthStatus(c.healthScore) === 'danger')
+                .sort((a, b) => a.healthScore - b.healthScore);
+
+            const container = document.getElementById('criticalList');
+            container.innerHTML = critical.map(c => `
+                <div class="committee-item" onclick="showDetails(${c.id})">
+                    <div class="committee-info">
+                        <div class="committee-name">${c.name}</div>
+                        <div class="committee-meta">${c.department} • ${c.type}</div>
+                    </div>
+                    <div class="committee-score">
+                        <span class="score-value danger">${c.healthScore}</span>
+                        <span class="alert-badge">!</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showDetails(id) {
+            const committee = committees.find(c => c.id === id);
+            if (!committee) return;
+
+            const modal = document.getElementById('detailModal');
+            document.getElementById('modalTitle').textContent = committee.name;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <strong>Type:</strong> ${committee.type}
+                    </div>
+                    <div>
+                        <strong>Department:</strong> ${committee.department}
+                    </div>
+                    <div>
+                        <strong>Members:</strong> ${committee.members}
+                    </div>
+                    <div>
+                        <strong>Health Score:</strong> <span class="${getHealthStatus(committee.healthScore)}">${committee.healthScore}%</span>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Performance Metrics</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; text-align: center;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">${committee.healthScore}%</div>
+                        <div style="font-size: 0.813rem; color: #666;">Health</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">${committee.attendance}%</div>
+                        <div style="font-size: 0.813rem; color: #666;">Attendance</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">${committee.completion}%</div>
+                        <div style="font-size: 0.813rem; color: #666;">Completion</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">${committee.engagement}%</div>
+                        <div style="font-size: 0.813rem; color: #666;">Engagement</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="alert('Navigate to full details')">
+                        View Full Details
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="alert('Generate report')">
+                        Generate Report
+                    </button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function applyFilters() {
+            // Filter logic would go here
+            alert('Filters applied - charts would update');
+        }
+
+        function resetFilters() {
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterDept').value = '';
+            document.getElementById('filterHealth').value = '';
+            applyFilters();
+        }
+
+        function refreshDashboard() {
+            alert('Dashboard refreshed with latest data');
+        }
+
+        function exportDashboard() {
+            alert('Exporting comprehensive dashboard report to PDF...');
+        }
+
+        function viewAllCritical() {
+            alert('Viewing all critical committees in detail view');
+        }
+
+        // Close modal on outside click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        renderHeatmap();
+        renderCriticalList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey 10: Member Profile - Design Options Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .intro {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .user-story {
+            background: white;
+            padding: 1.5rem;
+            border-left: 4px solid #667eea;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .user-story strong {
+            color: #667eea;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card ul {
+            margin-left: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .option-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .option-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-header .approach {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .option-preview {
+            background: #f5f5f5;
+            padding: 1rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .option-preview img {
+            max-width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .mockup-placeholder {
+            width: 100%;
+            height: 180px;
+            background: white;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 3rem;
+        }
+
+        .mockup-placeholder small {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .option-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+        }
+
+        .cons {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+        }
+
+        .pros h4, .cons h4 {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pros h4 {
+            color: #2e7d32;
+        }
+
+        .cons h4 {
+            color: #e65100;
+        }
+
+        .pros ul, .cons ul {
+            margin-left: 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        .pros li, .cons li {
+            margin: 0.3rem 0;
+        }
+
+        .best-for {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .best-for strong {
+            color: #667eea;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .comparison-link {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .comparison-link a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-link a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Journey 10: Member Profile</h1>
+            <p>Empowering members to track and manage their committee involvement</p>
+        </div>
+
+        <div class="intro">
+            <h2>User Journey Overview</h2>
+            <div class="user-story">
+                <p><strong>As a</strong> committee member</p>
+                <p><strong>I want to</strong> view my personal committee involvement and manage my profile</p>
+                <p><strong>So that</strong> I can track my contributions, stay organized with my responsibilities, and manage my availability and preferences</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h4>📋 Committee Overview</h4>
+                    <ul>
+                        <li>All joined committees</li>
+                        <li>Roles and positions</li>
+                        <li>Quick navigation</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Action Items</h4>
+                    <ul>
+                        <li>Consolidated view</li>
+                        <li>Filter and sort</li>
+                        <li>Quick updates</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>📅 Meetings</h4>
+                    <ul>
+                        <li>Personal calendar</li>
+                        <li>RSVP status</li>
+                        <li>Attendance history</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>⭐ Engagement</h4>
+                    <ul>
+                        <li>Personal score</li>
+                        <li>Badges & achievements</li>
+                        <li>Contribution stats</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🕐 Availability</h4>
+                    <ul>
+                        <li>Set preferences</li>
+                        <li>Block dates</li>
+                        <li>Recurring patterns</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>⚙️ Settings</h4>
+                    <ul>
+                        <li>Edit profile</li>
+                        <li>Contact details</li>
+                        <li>Notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="options">
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option A: Tabbed Interface</h3>
+                    <p class="approach">Traditional tabbed navigation separating major sections</p>
+                </div>
+                <div class="option-preview">
+                    <div class="mockup-placeholder">
+                        <div>📑</div>
+                        <small>Tabbed Layout</small>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>✓ Pros</h4>
+                            <ul>
+                                <li>Familiar pattern</li>
+                                <li>Clear separation</li>
+                                <li>Focused views</li>
+                                <li>Easy to navigate</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>⚠ Cons</h4>
+                            <ul>
+                                <li>Requires tab switching</li>
+                                <li>No full overview</li>
+                                <li>More clicks needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="best-for">
+                        <strong>Best For:</strong> Users who want focused, task-oriented views
+                    </div>
+                    <a href="option-A/prototype.html" class="cta-button">View Interactive Prototype →</a>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option B: Scrolling Page</h3>
+                    <p class="approach">Single page with anchor navigation and collapsible sections</p>
+                </div>
+                <div class="option-preview">
+                    <div class="mockup-placeholder">
+                        <div>📜</div>
+                        <small>Scrolling Layout</small>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>✓ Pros</h4>
+                            <ul>
+                                <li>All info accessible</li>
+                                <li>Natural scrolling</li>
+                                <li>Quick navigation</li>
+                                <li>Comprehensive view</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>⚠ Cons</h4>
+                            <ul>
+                                <li>Can feel overwhelming</li>
+                                <li>Longer load time</li>
+                                <li>More scrolling</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="best-for">
+                        <strong>Best For:</strong> Users who want comprehensive overview and context
+                    </div>
+                    <a href="option-B/prototype.html" class="cta-button">View Interactive Prototype →</a>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-header">
+                    <h3>Option C: Dashboard Widgets</h3>
+                    <p class="approach">Card-based layout with key metrics at a glance</p>
+                </div>
+                <div class="option-preview">
+                    <div class="mockup-placeholder">
+                        <div>📊</div>
+                        <small>Dashboard Layout</small>
+                    </div>
+                </div>
+                <div class="option-content">
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>✓ Pros</h4>
+                            <ul>
+                                <li>At-a-glance view</li>
+                                <li>Highly visual</li>
+                                <li>Modern feel</li>
+                                <li>Customizable</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>⚠ Cons</h4>
+                            <ul>
+                                <li>Less detail upfront</li>
+                                <li>Requires drill-down</li>
+                                <li>Can feel cluttered</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="best-for">
+                        <strong>Best For:</strong> Users who want quick insights and status updates
+                    </div>
+                    <a href="option-C/prototype.html" class="cta-button">View Interactive Prototype →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-link">
+            <a href="COMPARISON.md">📊 View Detailed Comparison Table</a>
+        </div>
+    </div>
+</body>
+</html>

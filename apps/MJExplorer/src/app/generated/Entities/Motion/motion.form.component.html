@@ -8,11 +8,11 @@
     <!-- ========================================
          FIELD PANELS
          ======================================== -->
-    <!-- Agenda & Participants Section -->
+    <!-- Motion Context Section -->
     <mj-collapsible-panel
-        SectionKey="agendaParticipants"
-        SectionName="Agenda & Participants"
-        Icon="fa fa-users"
+        SectionKey="motionContext"
+        SectionName="Motion Context"
+        Icon="fa fa-calendar"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -58,7 +58,7 @@
     <mj-collapsible-panel
         SectionKey="motionDetails"
         SectionName="Motion Details"
-        Icon="fa fa-gavel"
+        Icon="fa fa-file-alt"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -85,14 +85,22 @@
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
+        <mj-form-field 
+            [Record]="record"
+            [ShowLabel]="true"
+            FieldName="Notes"
+            Type="textarea"
+            [EditMode]="EditMode"
+            [FormContext]="formContext"
+        ></mj-form-field>
 
     </mj-collapsible-panel>
 
-    <!-- Voting Outcome Section -->
+    <!-- Voting Results Section -->
     <mj-collapsible-panel
-        SectionKey="votingOutcome"
-        SectionName="Voting Outcome"
-        Icon="fa fa-poll"
+        SectionKey="votingResults"
+        SectionName="Voting Results"
+        Icon="fa fa-check-circle"
         [Form]="this"
         [FormContext]="formContext">
         <mj-form-field 
@@ -135,14 +143,6 @@
             [EditMode]="EditMode"
             [FormContext]="formContext"
         ></mj-form-field>
-        <mj-form-field 
-            [Record]="record"
-            [ShowLabel]="true"
-            FieldName="Notes"
-            Type="textarea"
-            [EditMode]="EditMode"
-            [FormContext]="formContext"
-        ></mj-form-field>
 
     </mj-collapsible-panel>
 
@@ -180,7 +180,7 @@
     <mj-collapsible-panel
         SectionKey="committeesVotes"
         SectionName="Committees: Votes"
-        Icon="fa fa-gavel"
+        Icon="fa fa-balance-scale"
         Variant="related-entity"
         [Form]="this"
         [FormContext]="formContext"

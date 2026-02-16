@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option A: Minimal & Clean - Full Design</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; }
+        .breadcrumb { font-size: 0.9rem; opacity: 0.9; margin-bottom: 1rem; }
+        .breadcrumb a { color: white; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: #667eea; margin: 2rem 0 1rem 0; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem; }
+        h3 { color: #555; margin: 1.5rem 0 1rem 0; }
+        h4 { color: #666; margin: 1rem 0 0.5rem 0; font-size: 1.1rem; }
+        p { color: #666; margin-bottom: 1rem; }
+        ul, ol { margin-left: 2rem; margin-bottom: 1rem; color: #666; }
+        li { margin-bottom: 0.5rem; }
+        .mockup {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            line-height: 1.4;
+            white-space: pre;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .feature-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-box h4 { margin-top: 0; color: #667eea; }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .pros { background: #e8f5e9; padding: 1.5rem; border-radius: 8px; }
+        .cons { background: #ffebee; padding: 1.5rem; border-radius: 8px; }
+        .pros h4 { color: #2e7d32; }
+        .cons h4 { color: #c62828; }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        pre code { background: none; padding: 0; color: #333; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            text-align: left;
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: #666;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .toc h3 { margin-top: 0; color: #667eea; }
+        .toc ul { list-style: none; margin-left: 0; }
+        .toc a { color: #667eea; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .pros-cons, .feature-grid { grid-template-columns: 1fr; }
+            .content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="breadcrumb">
+                <a href="../../index.html">All Journeys</a> →
+                <a href="../index.html">Meeting Scheduling</a> →
+                Option A
+            </div>
+            <h1>Option A: Minimal & Clean</h1>
+            <p class="subtitle">Simplicity first - 3-step wizard with minimal cognitive load</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#philosophy">Design Philosophy</a></li>
+                    <li><a href="#screens">Screen Flow</a></li>
+                    <li><a href="#step1">Screen 1: Meeting Basics</a></li>
+                    <li><a href="#step2">Screen 2: Invites</a></li>
+                    <li><a href="#step3">Screen 3: Confirm & Send</a></li>
+                    <li><a href="#success">Screen 4: Success</a></li>
+                    <li><a href="#interactions">Interaction Details</a></li>
+                    <li><a href="#accessibility">Accessibility</a></li>
+                    <li><a href="#dev-notes">Developer Notes</a></li>
+                </ul>
+            </div>
+
+            <!-- Design Philosophy -->
+            <h2 id="philosophy">Design Philosophy</h2>
+            <p><strong>Simplicity first</strong> - guide users through a clear 3-step wizard with minimal cognitive load</p>
+
+            <div class="feature-grid">
+                <div class="feature-box">
+                    <h4>One thing at a time</h4>
+                    <p>Each step focuses on a single task</p>
+                </div>
+                <div class="feature-box">
+                    <h4>Smart defaults</h4>
+                    <p>Pre-fill common values to reduce clicks</p>
+                </div>
+                <div class="feature-box">
+                    <h4>Clear progress</h4>
+                    <p>Always show where you are in the process</p>
+                </div>
+                <div class="feature-box">
+                    <h4>Forgiving</h4>
+                    <p>Easy to go back and change</p>
+                </div>
+            </div>
+
+            <!-- Screen Flow -->
+            <h2 id="screens">Screen Flow</h2>
+            <div class="mockup">Entry → Step 1: Basics → Step 2: Invites → Step 3: Confirm → Success
+         (Meeting details)  (Who attends)    (Review)      (Invites sent)</div>
+
+            <!-- Screen 1 -->
+            <h2 id="step1">Screen 1: Meeting Basics</h2>
+            <p>Users enter core meeting information with smart defaults and inline help.</p>
+
+            <h3>Layout</h3>
+            <div class="mockup">┌─────────────────────────────────────────────────────────────────┐
+│ Schedule Meeting for Finance Committee                    [X]   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ ┌─ Progress ──────────────────────────────────────────────────┐│
+│ │  ● Basics    ○ Invites    ○ Confirm                         ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ Meeting Details                                                 │
+│                                                                 │
+│ Title *                                                         │
+│ ┌─────────────────────────────────────────────────────────────┐│
+│ │ Finance Committee - March 2026                              ││
+│ └─────────────────────────────────────────────────────────────┘│
+│ ℹ️  Auto-generated from committee name and date                 │
+│                                                                 │
+│ When                                                            │
+│ ┌───────────────────────────┬─────────────┬──────────────────┐ │
+│ │ Date                      │ Start Time  │ Duration         │ │
+│ │ ┌───────────────────────┐ │ ┌─────────┐ │ ┌──────────────┐ │ │
+│ │ │ Mar 15, 2026    [📅]  │ │ │ 2:00 PM │ │ │ 1 hour   [▼]│ │ │
+│ │ └───────────────────────┘ │ └─────────┘ │ └──────────────┘ │ │
+│ └───────────────────────────┴─────────────┴──────────────────┘ │
+│ 🌍 Meeting time will be shown in each member's local time zone │
+│                                                                 │
+│ Location                                                        │
+│ ( ) In Person    (●) Virtual    ( ) Hybrid                     │
+│                                                                 │
+│                                       ┌────────────────────────┐│
+│                                       │      Next: Invites     ││
+│                                       └────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <h3>Key Features</h3>
+            <div class="feature-grid">
+                <div class="feature-box">
+                    <h4>Smart Defaults</h4>
+                    <ul>
+                        <li>Title auto-filled: <code>{Committee Name} - {Month Year}</code></li>
+                        <li>Duration: 1 hour (most common)</li>
+                        <li>Location: Virtual (post-COVID preference)</li>
+                        <li>Platform: Organization's default (Zoom/Teams)</li>
+                    </ul>
+                </div>
+                <div class="feature-box">
+                    <h4>Validation</h4>
+                    <ul>
+                        <li>Title required (inline error if blank)</li>
+                        <li>Date must be in future</li>
+                        <li>Duration between 15 min - 4 hours</li>
+                        <li>Video platform required if Virtual selected</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Screen 2 -->
+            <h2 id="step2">Screen 2: Invites</h2>
+            <p>Select attendees and configure notification options.</p>
+
+            <div class="mockup">┌─────────────────────────────────────────────────────────────────┐
+│ Schedule Meeting for Finance Committee                    [X]   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ ┌─ Progress ──────────────────────────────────────────────────┐│
+│ │  ✓ Basics    ● Invites    ○ Confirm                         ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ Who to Invite                                                   │
+│                                                                 │
+│ ┌─ Committee Members (8) ────────────────────────────────────┐ │
+│ │ [✓] Select All                                             │ │
+│ │                                                            │ │
+│ │ ┌──────────────────────────────────────────────────────┐  │ │
+│ │ │ [✓] Sarah Johnson  sarah.j@org.com        Chair       │  │ │
+│ │ │ [✓] Michael Chen   michael.c@org.com      Vice Chair  │  │ │
+│ │ │ [✓] Jennifer Lee   jennifer.l@org.com     Member      │  │ │
+│ │ │ [✓] David Kim      david.k@org.com        Member      │  │ │
+│ │ └──────────────────────────────────────────────────────┘  │ │
+│ └────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ Notification Options                                            │
+│ ┌─────────────────────────────────────────────────────────────┐│
+│ │ [✓] Send email invitation now                               ││
+│ │ [✓] Add to members' calendars (Google/Outlook)              ││
+│ │ [✓] Send reminder 1 day before meeting                      ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ ┌──────────────┐                  ┌────────────────────────────┐│
+│ │  ← Back      │                  │      Next: Confirm         ││
+│ └──────────────┘                  └────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Screen 3 -->
+            <h2 id="step3">Screen 3: Confirm & Send</h2>
+            <p>Review all details before sending invitations.</p>
+
+            <div class="mockup">┌─────────────────────────────────────────────────────────────────┐
+│ Schedule Meeting for Finance Committee                    [X]   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ ┌─ Progress ──────────────────────────────────────────────────┐│
+│ │  ✓ Basics    ✓ Invites    ● Confirm                         ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ Review Meeting Details                                          │
+│                                                                 │
+│ ┌─ Meeting Information ───────────────────────────────────────┐│
+│ │ Finance Committee - March 2026                              ││
+│ │                                                             ││
+│ │ 📅 Friday, March 15, 2026                                   ││
+│ │ 🕐 2:00 PM - 3:00 PM EST                                    ││
+│ │ 🌍 Virtual via Zoom                                         ││
+│ │                                                             ││
+│ │                                          [Edit Basics]      ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ ┌─ What Happens Next ─────────────────────────────────────────┐│
+│ │ When you click "Send Invitations" below:                    ││
+│ │                                                             ││
+│ │ 1. ✉️  Email invitations sent to all 8 attendees            ││
+│ │ 2. 📅 Calendar events created in their Google/Outlook       ││
+│ │ 3. 🔗 Zoom meeting link auto-generated and included         ││
+│ │ 4. 🔔 Reminders scheduled (1 day before)                    ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ ┌──────────────┐           ┌─────────────────────────────────┐ │
+│ │  ← Back      │           │  Send Invitations               │ │
+│ └──────────────┘           └─────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Success -->
+            <h2 id="success">Screen 4: Success</h2>
+            <div class="mockup">┌─────────────────────────────────────────────────────────────────┐
+│                          ✓ Success!                             │
+│                                                                 │
+│         Meeting invitations have been sent                      │
+│                                                                 │
+│ ┌─ What We Did ───────────────────────────────────────────────┐│
+│ │ ✓  Created "Finance Committee - March 2026"                 ││
+│ │ ✓  Sent 8 email invitations                                 ││
+│ │ ✓  Added events to 8 calendars                              ││
+│ │ ✓  Generated Zoom meeting link                              ││
+│ └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│ Next Steps                                                      │
+│ ┌─────────────────────────────┐  ┌────────────────────────────┐│
+│ │   📝 Build Agenda            │  │   📅 Back to Calendar      ││
+│ └─────────────────────────────┘  └────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Pros & Cons -->
+            <h2>Strengths & Weaknesses</h2>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✓ Strengths</h4>
+                    <ul>
+                        <li>Easy to learn and use</li>
+                        <li>Clear guidance at each step</li>
+                        <li>Mobile-friendly design</li>
+                        <li>Excellent accessibility</li>
+                        <li>Forgiving (easy to go back)</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>✗ Weaknesses</h4>
+                    <ul>
+                        <li>Slower for expert users (3 steps)</li>
+                        <li>Missing some advanced features</li>
+                        <li>Not optimal for bulk scheduling</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Accessibility -->
+            <h2 id="accessibility">Accessibility</h2>
+            <div class="feature-grid">
+                <div class="feature-box">
+                    <h4>Keyboard Navigation</h4>
+                    <ul>
+                        <li>Tab order: Top to bottom, left to right</li>
+                        <li>Enter: Advance to next step</li>
+                        <li>Escape: Close dialog</li>
+                        <li>Arrows: Navigate within pickers</li>
+                    </ul>
+                </div>
+                <div class="feature-box">
+                    <h4>Screen Reader</h4>
+                    <ul>
+                        <li>Progress indicator announces step</li>
+                        <li>Required fields announced</li>
+                        <li>Validation errors read aloud</li>
+                        <li>Success screen announces completion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Developer Notes -->
+            <h2 id="dev-notes">Developer Notes</h2>
+            <h3>Components</h3>
+            <ul>
+                <li><code>MeetingScheduleWizard</code> - Parent container</li>
+                <li><code>MeetingBasicsStep</code> - Step 1</li>
+                <li><code>MeetingInvitesStep</code> - Step 2</li>
+                <li><code>MeetingConfirmStep</code> - Step 3</li>
+                <li><code>MeetingSuccessStep</code> - Step 4</li>
+            </ul>
+
+            <h3>State Management</h3>
+            <pre><code>interface MeetingScheduleState {
+  // Step 1
+  title: string;
+  description?: string;
+  date: Date;
+  startTime: string;
+  duration: number;
+  locationType: 'InPerson' | 'Virtual' | 'Hybrid';
+
+  // Step 2
+  attendeeIds: string[];
+  sendEmail: boolean;
+  addToCalendar: boolean;
+
+  // Runtime
+  currentStep: 1 | 2 | 3 | 4;
+  validationErrors: Record<string, string>;
+}</code></pre>
+
+            <!-- Back Link -->
+            <p style="margin-top: 3rem; text-align: center;">
+                <a href="../index.html" style="color: #667eea; text-decoration: none; font-weight: 600;">← Back to Meeting Scheduling Options</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
